@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muzi Adriyan - Portfolio & Market Intelligence</title>
+    
+    <!-- TradingView Lightweight Charts CDN -->
+    <script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #000000;
+            --card-bg: #111111;
+            --border-color: #222222;
+            --text-main: #ffffff;
+            --text-muted: #888888;
+            --accent-green: #00e676;
+            --accent-red: #ff5252;
+            --accent-yellow: #ffd600;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Profile & General Sections (Design Preserved) */
+        header, section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .profile-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #333;
+            object-fit: cover;
+        }
+
+        /* Market Intelligence Section */
+        .market-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .tab-btn {
+            background: #1a1a1a;
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .tab-btn.active {
+            color: var(--text-main);
+            background: #2a2a2a;
+            border-color: #555;
+        }
+
+        .status-badge {
+            font-size: 0.85rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            background: #222;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-muted);
+        }
+
+        .status-dot.live { background: var(--accent-green); }
+        .status-dot.connecting { background: var(--accent-yellow); }
+        .status-dot.offline { background: var(--accent-red); }
+
+        .timeframe-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .tf-btn {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .tf-btn.active {
+            color: var(--text-main);
+            border-color: var(--text-main);
+        }
+
+        /* Market Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: #161616;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        /* Chart Wrapper */
+        .chart-wrapper {
+            position: relative;
+            width: 100%;
+            height: 420px;
+            min-height: 300px;
+            background: #080808;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        #chart-container {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Overlay States */
+        .chart-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            gap: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .hidden { display: none !important; }
+
+        .btn-retry {
+            background: #333;
+            color: #fff;
+            border: 1px solid #555;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-retry:hover { background: #444; }
+
+        .chart-notice {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #444;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: var(--accent-yellow);
+            z-index: 5;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .chart-wrapper {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Profile & Information (Maintained) -->
+    <header>
+        <div class="profile-header">
+            <div class="profile-img"></div>
+            <div>
+                <h1>Muzi Adriyan</h1>
+                <p style="color: var(--text-muted);">Developer & Market Analyst</p>
+            </div>
+        </div>
+    </header>
+
+    <section id="about">
+        <h2>About Me</h2>
+        <p>Pengembangan sistem terintegrasi, visualisasi data market, dan aplikasi web performa tinggi.</p>
+    </section>
+
+    <!-- Market Intelligence Section -->
+    <section id="market-intelligence">
+        <div class="market-header">
+            <h2>Market Intelligence</h2>
+            <div class="status-badge">
+                <span id="status-dot" class="status-dot connecting"></span>
+                <span id="status-text">INITIALIZING</span>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchMarket('crypto')">BITCOIN</button>
+            <button class="tab-btn" onclick="switchMarket('stocks')">STOCKS</button>
+            <button class="tab-btn" onclick="switchMarket('forex')">FOREX</button>
+        </div>
+
+        <div class="timeframe-selector" id="tf-selector" style="margin-top: 15px;">
+            <button class="tf-btn" onclick="changeTimeframe('1m')">1m</button>
+            <button class="tf-btn" onclick="changeTimeframe('5m')">5m</button>
+            <button class="tf-btn active" onclick="changeTimeframe('15m')">15m</button>
+            <button class="tf-btn" onclick="changeTimeframe('1h')">1H</button>
+            <button class="tf-btn" onclick="changeTimeframe('4h')">4H</button>
+            <button class="tf-btn" onclick="changeTimeframe('1d')">1D</button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">PRICE</div>
+                <div class="stat-value" id="stat-price">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">24H CHANGE</div>
+                <div class="stat-value" id="stat-change">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">24H HIGH</div>
+                <div class="stat-value" id="stat-high">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">24H LOW</div>
+                <div class="stat-value" id="stat-low">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">24H VOLUME</div>
+                <div class="stat-value" id="stat-vol">—</div>
+            </div>
+        </div>
+
+        <div class="chart-wrapper">
+            <div id="chart-notice" class="chart-notice hidden"></div>
+            <div id="chart-overlay" class="chart-overlay">
+                <span id="overlay-msg">Memuat data market...</span>
+                <button id="retry-btn" class="btn-retry hidden" onclick="initMarketSystem()">RETRY</button>
+            </div>
+            <div id="chart-container"></div>
+        </div>
+    </section>
+
+    <section id="projects">
+        <h2>Projects</h2>
+        <p>Market visualizer, trading dashboard, dan web platform.</p>
+    </section>
+
+    <section id="skills">
+        <h2>Skills</h2>
+        <p>JavaScript, WebSockets, Financial Data Visualization, HTML/CSS.</p>
+    </section>
+</div>
+
+<script>
+    // State Management
+    let currentCategory = 'crypto';
+    let currentTimeframe = '15m';
+    let chart = null;
+    let mainSeries = null;
+    let ws = null;
+    let isLineChart = false;
+    let resizeObserver = null;
+
+    // Logging Utility
+    function log(msg, isError = false) {
+        const prefix = isError ? '[MARKET ERROR]' : '[MARKET]';
+        console.log(`${prefix} ${msg}`);
+    }
+
+    // Initialize System on DOM Content Loaded
+    document.addEventListener('DOMContentLoaded', () => {
+        initMarketSystem();
+    });
+
+    function updateStatus(text, stateClass) {
+        const dot = document.getElementById('status-dot');
+        const label = document.getElementById('status-text');
+        dot.className = `status-dot ${stateClass}`;
+        label.innerText = text;
+    }
+
+    function showOverlay(msg, showRetry = false) {
+        const overlay = document.getElementById('chart-overlay');
+        const msgEl = document.getElementById('overlay-msg');
+        const retryBtn = document.getElementById('retry-btn');
+        
+        msgEl.innerText = msg;
+        retryBtn.classList.toggle('hidden', !showRetry);
+        overlay.classList.remove('hidden');
+    }
+
+    function hideOverlay() {
+        document.getElementById('chart-overlay').classList.add('hidden');
+    }
+
+    function showNotice(msg) {
+        const notice = document.getElementById('chart-notice');
+        notice.innerText = msg;
+        notice.classList.remove('hidden');
+    }
+
+    function hideNotice() {
+        document.getElementById('chart-notice').classList.add('hidden');
+    }
+
+    // Initialize Main Engine
+    function initMarketSystem() {
+        log('Initializing Market Engine...');
+        showOverlay('Memuat library chart...');
+
+        // 1. Check Library
+        if (typeof LightweightCharts === 'undefined') {
+            log('Chart library failed to load.', true);
+            showOverlay('Chart library gagal dimuat.', true);
+            return;
+        }
+        log('Chart library loaded');
+
+        // 2. Setup Chart Container Framework
+        setupChartContainer();
+
+        // 3. Load Current Category Data
+        loadCategoryData();
+    }
+
+    function setupChartContainer() {
+        const container = document.getElementById('chart-container');
+        container.innerHTML = ''; // Clear container
+
+        chart = LightweightCharts.createChart(container, {
+            width: container.clientWidth,
+            height: container.clientHeight,
+            layout: {
+                backgroundColor: '#080808',
+                textColor: '#888888',
+            },
+            grid: {
+                vertLines: { color: '#1f1f1f' },
+                horzLines: { color: '#1f1f1f' },
+            },
+            timeScale: {
+                timeVisible: true,
+                secondsVisible: false,
+                borderColor: '#222222',
+            },
+        });
+
+        // Setup ResizeObserver for layout responsiveness
+        if (resizeObserver) resizeObserver.disconnect();
+        resizeObserver = new ResizeObserver(entries => {
+            if (entries.length === 0 || !entries[0].contentRect) return;
+            const { width, height } = entries[0].contentRect;
+            chart.applyOptions({ width, height });
+        });
+        resizeObserver.observe(container);
+    }
+
+    function switchMarket(category) {
+        if (currentCategory === category) return;
+        currentCategory = category;
+
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+
+        const tfSelector = document.getElementById('tf-selector');
+        tfSelector.style.display = (category === 'crypto') ? 'flex' : 'none';
+
+        loadCategoryData();
+    }
+
+    function changeTimeframe(tf) {
+        if (currentTimeframe === tf) return;
+        currentTimeframe = tf;
+
+        document.querySelectorAll('.tf-btn').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+
+        if (currentCategory === 'crypto') {
+            loadCategoryData();
+        }
+    }
+
+    function loadCategoryData() {
+        // Disconnect existing WebSockets when switching categories
+        if (ws) {
+            ws.close();
+            ws = null;
+        }
+
+        hideNotice();
+        resetStats();
+
+        if (currentCategory === 'crypto') {
+            fetchBitcoinData();
+        } else if (currentCategory === 'stocks') {
+            handleStocksUI();
+        } else if (currentCategory === 'forex') {
+            handleForexUI();
+        }
+    }
+
+    function resetStats() {
+        document.getElementById('stat-price').innerText = '—';
+        document.getElementById('stat-change').innerText = '—';
+        document.getElementById('stat-high').innerText = '—';
+        document.getElementById('stat-low').innerText = '—';
+        document.getElementById('stat-vol').innerText = '—';
+    }
+
+    // Data Processing & Validation
+    function validateAndCleanOHLC(data) {
+        if (!Array.isArray(data)) return [];
+        
+        const cleaned = [];
+        for (const item of data) {
+            const time = Number(item.time);
+            const open = Number(item.open);
+            const high = Number(item.high);
+            const low = Number(item.low);
+            const close = Number(item.close);
+            const volume = Number(item.volume || 0);
+
+            if (
+                !isNaN(time) && !isNaN(open) && !isNaN(high) &&
+                !isNaN(low) && !isNaN(close) &&
+                isFinite(time) && isFinite(open) && isFinite(high) &&
+                isFinite(low) && isFinite(close)
+            ) {
+                cleaned.push({ time, open, high, low, close, volume });
+            }
+        }
+
+        // Sort ascending by time & remove duplicates
+        cleaned.sort((a, b) => a.time - b.time);
+        return cleaned.filter((item, index, self) => index === 0 || item.time > self[index - 1].time);
+    }
+
+    // Bitcoin Engine
+    async function fetchBitcoinData() {
+        showOverlay('Historical data loading...');
+        updateStatus('CONNECTING', 'connecting');
+        log('Historical data loading');
+
+        const intervalMap = { '1m': '1m', '5m': '5m', '15m': '15m', '1h': '1h', '4h': '4h', '1d': '1d' };
+        const interval = intervalMap[currentTimeframe] || '15m';
+        const url = `https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=${interval}&limit=500`;
+
+        try {
+            const res = await fetch(url);
+            if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
+            const rawData = await res.json();
+
+            const parsedData = rawData.map(d => ({
+                time: Math.floor(d[0] / 1000),
+                open: d[1],
+                high: d[2],
+                low: d[3],
+                close: d[4],
+                volume: d[5]
+            }));
+
+            const cleanData = validateAndCleanOHLC(parsedData);
+
+            if (cleanData.length === 0) {
+                throw new Error('Data OHLC kosong.');
+            }
+
+            log('Historical data received');
+            renderChartSeries(cleanData, false);
+            fetchBinance24hStats();
+            hideOverlay();
+
+            // Connect WS for Real-Time Updates after historical data is set
+            connectBinanceWS(interval);
+
+        } catch (err) {
+            log(`Fetch error: ${err.message}`, true);
+            showOverlay('DATA UNAVAILABLE', true);
+            updateStatus('OFFLINE', 'offline');
+        }
+    }
+
+    async function fetchBinance24hStats() {
+        try {
+            const res = await fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT');
+            if (res.ok) {
+                const data = await res.json();
+                updateStatsUI(
+                    Number(data.lastPrice),
+                    Number(data.priceChangePercent),
+                    Number(data.highPrice),
+                    Number(data.lowPrice),
+                    Number(data.quoteVolume)
+                );
+            }
+        } catch (e) {
+            log('Gagal memuat 24h stats', true);
+        }
+    }
+
+    function renderChartSeries(data, forceLine = false) {
+        if (mainSeries) {
+            chart.removeSeries(mainSeries);
+            mainSeries = null;
+        }
+
+        if (!forceLine) {
+            isLineChart = false;
+            mainSeries = chart.addCandlestickSeries({
+                upColor: '#00e676',
+                downColor: '#ff5252',
+                borderVisible: false,
+                wickUpColor: '#00e676',
+                wickDownColor: '#ff5252'
+            });
+            mainSeries.setData(data);
+            log('Candlestick initialized');
+        } else {
+            isLineChart = true;
+            showNotice('Candlestick unavailable — showing price line');
+            mainSeries = chart.addLineSeries({
+                color: '#2196f3',
+                lineWidth: 2
+            });
+            const lineData = data.map(d => ({ time: d.time, value: d.close }));
+            mainSeries.setData(lineData);
+            log('Line chart fallback initialized');
+        }
+
+        chart.timeScale().fitContent();
+    }
+
+    function connectBinanceWS(interval) {
+        log('WebSocket connecting');
+        updateStatus('CONNECTING', 'connecting');
+
+        const wsUrl = `wss://stream.binance.com:9443/ws/btcusdt@kline_${interval}`;
+        ws = new WebSocket(wsUrl);
+
+        ws.onopen = () => {
+            log('WebSocket connected');
+            updateStatus('LIVE', 'live');
+        };
+
+        ws.onmessage = (event) => {
+            const msg = JSON.parse(event.data);
+            if (msg.e === 'kline') {
+                const k = msg.k;
+                const candle = {
+                    time: Math.floor(k.t / 1000),
+                    open: Number(k.o),
+                    high: Number(k.h),
+                    low: Number(k.l),
+                    close: Number(k.c),
+                    volume: Number(k.v)
+                };
+
+                if (isLineChart) {
+                    mainSeries.update({ time: candle.time, value: candle.close });
+                } else {
+                    mainSeries.update(candle);
+                }
+
+                updateStatsPriceOnly(candle.close);
+                log('Candle updated');
+            }
+        };
+
+        ws.onerror = (err) => {
+            log('WebSocket Error', true);
+        };
+
+        ws.onclose = () => {
+            log('WebSocket disconnected');
+            // If historical data is loaded, do not destroy chart
+            updateStatus('HISTORICAL DATA', 'offline');
+        };
+    }
+
+    function updateStatsUI(price, change, high, low, vol) {
+        document.getElementById('stat-price').innerText = `$${price.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+        
+        const changeEl = document.getElementById('stat-change');
+        changeEl.innerText = `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
+        changeEl.style.color = change >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+
+        document.getElementById('stat-high').innerText = `$${high.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+        document.getElementById('stat-low').innerText = `$${low.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+        document.getElementById('stat-vol').innerText = `$${Math.round(vol).toLocaleString()}`;
+    }
+
+    function updateStatsPriceOnly(price) {
+        document.getElementById('stat-price').innerText = `$${price.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+    }
+
+    // Stocks Section Handler
+    function handleStocksUI() {
+        updateStatus('OFFLINE', 'offline');
+        showOverlay('Data saham real-time belum tersedia dari provider saat ini.', false);
+    }
+
+    // Forex Section Handler
+    async function handleForexUI() {
+        showOverlay('Historical data loading...');
+        updateStatus('CONNECTING', 'connecting');
+
+        try {
+            // Fetch fallback Forex data (USD/EUR conversion rates)
+            const res = await fetch('https://open.er-api.com/v6/latest/USD');
+            if (!res.ok) throw new Error('Gagal mengambil data Forex.');
+            const data = await res.json();
+
+            if (data && data.rates && data.rates.EUR) {
+                const now = Math.floor(Date.now() / 1000);
+                const eurRate = data.rates.EUR;
+                
+                // Fallback Line Chart Simulation with single data point if OHLC unavailable
+                const dummyHistorical = [
+                    { time: now - 86400, close: eurRate },
+                    { time: now, close: eurRate }
+                ];
+
+                renderChartSeries(dummyHistorical.map(d => ({ ...d, open: d.close, high: d.close, low: d.close })), true);
+                
+                document.getElementById('stat-price').innerText = eurRate.toFixed(4);
+                document.getElementById('stat-change').innerText = '0.00%';
+                
+                hideOverlay();
+                updateStatus('HISTORICAL DATA', 'offline');
+            } else {
+                throw new Error('Format data Forex tidak valid.');
+            }
+        } catch (err) {
+            log(`Forex Error: ${err.message}`, true);
+            showOverlay('Data Forex tidak tersedia saat ini.', true);
+            updateStatus('OFFLINE', 'offline');
+        }
+    }
+</script>
+
+</body>
+</html>
