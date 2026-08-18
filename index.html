@@ -1,1281 +1,1259 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MUZI WALLET - Modern Digital Wallet</title>
-    
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <!-- QR Code Generator & Scanner CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="https://unpkg.com/html5-qrcode"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>MUZI WALLET - Modern Digital Wallet Demo</title>
+  <meta name="theme-color" content="#09090b">
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- QRCode Generator CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
-    <style>
-        :root {
-            --bg-main: #050505;
-            --bg-card: #111111;
-            --bg-input: #1a1a1a;
-            --border-color: #222222;
-            --text-primary: #ffffff;
-            --text-secondary: #a0a0a0;
-            --accent-color: #ffffff;
-            --accent-hover: #e6e6e6;
-            --danger-color: #ff4d4d;
-            --success-color: #00e676;
-            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            --bottom-nav-height: 65px;
-        }
+  <style>
+    /* ==========================================================================
+       1. VARIABLES & BASE STYLES
+       ========================================================================== */
+    :root {
+      --bg-color: #09090b;
+      --card-bg: rgba(24, 24, 27, 0.75);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --text-primary: #f4f4f5;
+      --text-secondary: #a1a1aa;
+      --accent: #6366f1; /* Indigo Accent */
+      --accent-hover: #4f46e5;
+      --positive: #10b981;
+      --negative: #ef4444;
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --bottom-nav-height: 65px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --radius-sm: 8px;
+    }
 
-        .light-theme {
-            --bg-main: #f4f4f5;
-            --bg-card: #ffffff;
-            --bg-input: #e4e4e7;
-            --border-color: #e4e4e7;
-            --text-primary: #09090b;
-            --text-secondary: #71717a;
-            --accent-color: #09090b;
-            --accent-hover: #27272a;
-        }
+    [data-theme="light"] {
+      --bg-color: #f4f4f5;
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --card-border: rgba(0, 0, 0, 0.08);
+      --text-primary: #09090b;
+      --text-secondary: #71717a;
+      --accent: #4f46e5;
+      --accent-hover: #4338ca;
+    }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: var(--font-family);
-            -webkit-tap-highlight-color: transparent;
-        }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-family); -webkit-tap-highlight-color: transparent; }
+    body { background-color: var(--bg-color); color: var(--text-primary); font-size: 14px; overflow-x: hidden; min-height: 100vh; padding-bottom: calc(var(--bottom-nav-height) + 20px); transition: background-color 0.3s, color 0.3s; }
 
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-primary);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+    /* Glass Effect & Cards */
+    .glass { background: var(--card-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--card-border); border-radius: var(--radius-lg); }
+    .btn { background: var(--accent); color: #fff; border: none; padding: 14px 20px; border-radius: var(--radius-md); font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; }
+    .btn:active { transform: scale(0.98); }
+    .btn-secondary { background: rgba(255,255,255,0.08); color: var(--text-primary); border: 1px solid var(--card-border); }
+    [data-theme="light"] .btn-secondary { background: rgba(0,0,0,0.05); }
 
-        /* App Wrapper */
-        #app-container {
-            width: 100%;
-            max-width: 480px;
-            height: 100vh;
-            max-height: 900px;
-            background-color: var(--bg-main);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--border-color);
-        }
+    .input-group { margin-bottom: 16px; text-align: left; }
+    .input-group label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; font-weight: 500; }
+    .input-field { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 14px 16px; color: var(--text-primary); font-size: 14px; outline: none; transition: border-color 0.2s; }
+    [data-theme="light"] .input-field { background: rgba(0, 0, 0, 0.03); }
+    .input-field:focus { border-color: var(--accent); }
 
-        @media (min-width: 481px) {
-            #app-container {
-                border-radius: 24px;
-                height: 92vh;
-            }
-        }
+    .badge-demo { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; }
 
-        /* Views System */
-        .view {
-            display: none;
-            flex-direction: column;
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            background: var(--bg-main);
-            z-index: 10;
-            overflow-y: auto;
-            padding-bottom: var(--bottom-nav-height);
-            transition: opacity 0.2s ease;
-        }
+    /* Page View Framework */
+    .view-page { display: none; padding: 20px 16px; max-width: 480px; margin: 0 auto; animation: fadeIn 0.25s ease-out; }
+    .view-page.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-        .view.active {
-            display: flex;
-        }
+    /* Header Component */
+    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-top: 4px; }
+    .page-title { font-size: 18px; font-weight: 700; }
+    .icon-btn { background: rgba(255, 255, 255, 0.06); border: 1px solid var(--card-border); color: var(--text-primary); width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; }
 
-        .view-no-nav {
-            padding-bottom: 0 !important;
-        }
+    /* Bottom Navigation */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: var(--bottom-nav-height); background: var(--card-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; max-width: 480px; margin: 0 auto; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-secondary); font-size: 10px; font-weight: 500; gap: 4px; text-decoration: none; cursor: pointer; width: 20%; height: 100%; transition: color 0.2s; }
+    .nav-item.active { color: var(--accent); font-weight: 700; }
 
-        /* Splash Screen */
-        #view-splash {
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            background: var(--bg-main);
-        }
+    /* Toast Notification */
+    #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: var(--text-primary); color: var(--bg-color); padding: 12px 24px; border-radius: 30px; font-weight: 600; font-size: 13px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 9999; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; gap: 8px; }
+    #toast.show { transform: translateX(-50%) translateY(0); }
 
-        .splash-logo {
-            font-size: 2rem;
-            font-weight: 800;
-            letter-spacing: 2px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
+    /* Modal Sheet */
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); display: none; align-items: flex-end; justify-content: center; z-index: 2000; }
+    .modal-sheet { background: var(--bg-color); border: 1px solid var(--card-border); border-top-left-radius: 28px; border-top-right-radius: 28px; padding: 24px; width: 100%; max-width: 480px; animation: slideUp 0.3s ease-out; max-height: 90vh; overflow-y: auto; }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-        .splash-spinner {
-            width: 30px;
-            height: 30px;
-            border: 3px solid var(--border-color);
-            border-top: 3px solid var(--text-primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
+    /* Balance Card */
+    .balance-card { padding: 24px; border-radius: 24px; background: linear-gradient(135deg, var(--accent) 0%, #312e81 100%); color: #fff; position: relative; overflow: hidden; margin-bottom: 20px; box-shadow: 0 15px 30px rgba(99, 102, 241, 0.25); }
+    .balance-card::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%); pointer-events: none; }
+    .balance-amount { font-size: 30px; font-weight: 700; margin: 10px 0; letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px; }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+    /* Action Grid */
+    .action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+    .action-item { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
+    .action-icon { width: 52px; height: 52px; border-radius: 18px; background: var(--card-bg); border: 1px solid var(--card-border); display: flex; align-items: center; justify-content: center; color: var(--accent); transition: transform 0.2s, background 0.2s; }
+    .action-item:active .action-icon { transform: scale(0.92); }
+    .action-label { font-size: 11px; color: var(--text-secondary); font-weight: 500; }
 
-        /* Common Elements */
-        .header {
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid var(--border-color);
-            background: var(--bg-main);
-            position: sticky;
-            top: 0;
-            z-index: 20;
-        }
+    /* Numeric Keypad for PIN */
+    .pin-display { display: flex; justify-content: center; gap: 14px; margin: 30px 0; }
+    .pin-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--card-border); transition: all 0.2s; }
+    .pin-dot.filled { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 10px rgba(99, 102, 241, 0.5); }
+    .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: 300px; margin: 0 auto; }
+    .key-btn { width: 64px; height: 64px; border-radius: 50%; background: var(--card-bg); border: 1px solid var(--card-border); font-size: 22px; font-weight: 600; display: flex; align-items: center; justify-content: center; cursor: pointer; margin: 0 auto; user-select: none; transition: background 0.15s; }
+    .key-btn:active { background: rgba(99, 102, 241, 0.2); }
 
-        .header-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-        }
+    /* List Item Modern */
+    .tx-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid var(--card-border); cursor: pointer; }
+    .tx-item:last-child { border-bottom: none; }
+    .tx-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .tx-icon.in { background: rgba(16, 185, 129, 0.12); color: var(--positive); }
+    .tx-icon.out { background: rgba(239, 68, 68, 0.12); color: var(--negative); }
+    .tx-details { flex-grow: 1; margin: 0 12px; }
+    .tx-title { font-weight: 600; font-size: 13px; margin-bottom: 2px; }
+    .tx-date { font-size: 11px; color: var(--text-secondary); }
+    .tx-amount { font-weight: 700; font-size: 14px; text-align: right; }
 
-        .btn-icon {
-            background: none;
-            border: none;
-            color: var(--text-primary);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 8px;
-            border-radius: 50%;
-        }
+    /* Chart Simulation Bar */
+    .chart-box { height: 140px; width: 100%; display: flex; align-items: flex-end; gap: 10px; padding: 16px 0; }
+    .chart-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; gap: 6px; }
+    .chart-bar { width: 100%; max-width: 24px; background: rgba(99, 102, 241, 0.2); border-radius: 6px; transition: height 0.5s ease; }
+    .chart-bar.active { background: var(--accent); }
+    .chart-label { font-size: 10px; color: var(--text-secondary); }
 
-        .btn-icon:hover {
-            background: var(--bg-card);
-        }
-
-        .content {
-            padding: 20px;
-            flex: 1;
-        }
-
-        /* Forms */
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 14px;
-            background: var(--bg-input);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            color: var(--text-primary);
-            font-size: 1rem;
-            outline: none;
-        }
-
-        .form-input:focus {
-            border-color: var(--text-primary);
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 14px;
-            background: var(--text-primary);
-            color: var(--bg-main);
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .btn-secondary {
-            width: 100%;
-            padding: 14px;
-            background: var(--bg-card);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        /* Dashboard & Balance Card */
-        .user-welcome {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .user-avatar {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            object-fit: cover;
-        }
-
-        .balance-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 24px;
-            position: relative;
-            margin-bottom: 24px;
-            perspective: 1000px;
-        }
-
-        .balance-label {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .balance-amount {
-            font-size: 2rem;
-            font-weight: 800;
-            margin: 12px 0;
-            letter-spacing: -0.5px;
-        }
-
-        .demo-tag {
-            display: inline-block;
-            font-size: 0.65rem;
-            background: var(--bg-input);
-            padding: 2px 8px;
-            border-radius: 4px;
-            border: 1px solid var(--border-color);
-            color: var(--text-secondary);
-        }
-
-        /* Action Grid */
-        .action-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin-bottom: 28px;
-        }
-
-        .action-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            background: none;
-            border: none;
-            color: var(--text-primary);
-            cursor: pointer;
-        }
-
-        .action-icon {
-            width: 52px;
-            height: 52px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.1s;
-        }
-
-        .action-item:active .action-icon {
-            transform: scale(0.95);
-        }
-
-        .action-text {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        /* Transaction List */
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .section-title {
-            font-size: 1rem;
-            font-weight: 700;
-        }
-
-        .tx-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .tx-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
-            cursor: pointer;
-        }
-
-        .tx-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .tx-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            background: var(--bg-input);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .tx-title {
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-        .tx-date {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-
-        .tx-amount {
-            font-size: 0.95rem;
-            font-weight: 700;
-            text-align: right;
-        }
-
-        .tx-amount.in { color: var(--success-color); }
-        .tx-amount.out { color: var(--text-primary); }
-
-        /* Keypad / PIN Modal */
-        .pin-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-        }
-
-        .pin-dots {
-            display: flex;
-            gap: 16px;
-            margin: 30px 0;
-        }
-
-        .pin-dot {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            border: 2px solid var(--border-color);
-            background: transparent;
-        }
-
-        .pin-dot.filled {
-            background: var(--text-primary);
-            border-color: var(--text-primary);
-        }
-
-        .keypad {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            width: 100%;
-            max-width: 280px;
-        }
-
-        .keypad-btn {
-            height: 60px;
-            border-radius: 50%;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            font-size: 1.5rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-
-        .keypad-btn:active {
-            background: var(--bg-input);
-        }
-
-        /* Bottom Nav */
-        .bottom-nav {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: var(--bottom-nav-height);
-            background: var(--bg-main);
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 50;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            cursor: pointer;
-            font-size: 0.7rem;
-            width: 20%;
-        }
-
-        .nav-item.active {
-            color: var(--text-primary);
-        }
-
-        /* Receipt Frame */
-        .receipt-card {
-            background: var(--bg-card);
-            border: 1px dashed var(--border-color);
-            border-radius: 16px;
-            padding: 20px;
-            margin: 20px 0;
-        }
-
-        .receipt-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 12px;
-            font-size: 0.85rem;
-        }
-
-        .receipt-label { color: var(--text-secondary); }
-        .receipt-val { font-weight: 600; }
-
-        .hidden { display: none !important; }
-    </style>
+    /* Splash Screen */
+    #splash-screen { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg-color); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .splash-logo { width: 80px; height: 80px; background: linear-gradient(135deg, var(--accent), #312e81); border-radius: 24px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 32px; font-weight: 800; box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3); animation: pulse3d 2s infinite alternate; }
+    @keyframes pulse3d { 0% { transform: scale(1) rotateY(0deg); } 100% { transform: scale(1.05) rotateY(15deg); } }
+  </style>
 </head>
 <body>
 
-<div id="app-container">
-    <!-- Splash Screen -->
-    <div id="view-splash" class="view active view-no-nav">
-        <div class="splash-logo">MUZI WALLET</div>
-        <div class="splash-spinner"></div>
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast"><i data-lucide="info" style="width: 16px; height: 16px;"></i> <span id="toast-msg">Notifikasi</span></div>
+
+  <!-- SPLASH SCREEN -->
+  <div id="splash-screen">
+    <div class="splash-logo">MW</div>
+    <h1 style="font-size: 22px; font-weight: 700; margin-top: 20px;">MUZI WALLET</h1>
+    <p style="color: var(--text-secondary); font-size: 12px; margin-top: 4px;">Digital Wallet Demo</p>
+    <div style="margin-top: 30px;"><span class="badge-demo">PROTOTYPE MODE</span></div>
+  </div>
+
+  <!-- VIEW: PIN SETUP / ENTER -->
+  <div id="view-pin" class="view-page">
+    <div style="text-align: center; margin-top: 30px;">
+      <div style="width: 56px; height: 56px; background: rgba(99, 102, 241, 0.1); color: var(--accent); border-radius: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+        <i data-lucide="lock" style="width: 28px; height: 28px;"></i>
+      </div>
+      <h2 style="font-size: 20px; font-weight: 700;" id="pin-title">Masukkan PIN</h2>
+      <p style="color: var(--text-secondary); font-size: 12px; margin-top: 6px;" id="pin-subtitle">Masukkan 6 digit PIN MUZI WALLET Anda.</p>
+
+      <div class="pin-display">
+        <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+        <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+      </div>
+
+      <div class="keypad">
+        <div class="key-btn" onclick="pressKeypad('1')">1</div>
+        <div class="key-btn" onclick="pressKeypad('2')">2</div>
+        <div class="key-btn" onclick="pressKeypad('3')">3</div>
+        <div class="key-btn" onclick="pressKeypad('4')">4</div>
+        <div class="key-btn" onclick="pressKeypad('5')">5</div>
+        <div class="key-btn" onclick="pressKeypad('6')">6</div>
+        <div class="key-btn" onclick="pressKeypad('7')">7</div>
+        <div class="key-btn" onclick="pressKeypad('8')">8</div>
+        <div class="key-btn" onclick="pressKeypad('9')">9</div>
+        <div class="key-btn" style="font-size: 12px;" onclick="clearKeypad()">C</div>
+        <div class="key-btn" onclick="pressKeypad('0')">0</div>
+        <div class="key-btn" onclick="backspaceKeypad()"><i data-lucide="delete" style="width: 20px;"></i></div>
+      </div>
+
+      <div style="margin-top: 24px;">
+        <button class="btn btn-secondary" style="width: auto; padding: 8px 16px; font-size: 12px;" onclick="triggerBiometrics()"><i data-lucide="fingerprint" style="width: 16px;"></i> Biometric Login</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW: HOME DASHBOARD -->
+  <div id="view-home" class="view-page">
+    <div style="padding: 6px; background: rgba(245, 158, 11, 0.1); border-radius: 10px; margin-bottom: 12px; font-size: 10px; color: #f59e0b; text-align: center;">
+      MUZI WALLET adalah aplikasi demo lokal. Tidak memproses uang sungguhan.
+    </div>
+    
+    <div class="page-header">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div id="home-avatar" style="width: 42px; height: 42px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px;">M</div>
+        <div>
+          <div style="font-size: 11px; color: var(--text-secondary);">Halo,</div>
+          <div style="font-weight: 700; font-size: 15px;" id="home-user-name">Muzi 👋</div>
+        </div>
+      </div>
+      <div class="icon-btn" onclick="navigateTo('notifications')">
+        <i data-lucide="bell" style="width: 18px;"></i>
+        <div id="notif-badge" style="position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; background: var(--negative); border-radius: 50%; display: none;"></div>
+      </div>
     </div>
 
-    <!-- Auth View (Login / Register) -->
-    <div id="view-auth" class="view view-no-nav">
-        <div class="content" style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
-            <div style="margin-bottom: 30px; text-align: center;">
-                <h1 style="font-size: 1.8rem; margin-bottom: 8px;">MUZI WALLET</h1>
-                <p style="color: var(--text-secondary); font-size: 0.9rem;">Sistem Keuangan Digital Modern</p>
-            </div>
-
-            <!-- Login Form -->
-            <form id="form-login" onsubmit="handleLogin(event)">
-                <div class="form-group">
-                    <label class="form-label">Email</label>
-                    <input type="email" id="login-email" class="form-input" required placeholder="email@domain.com">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Password</label>
-                    <input type="password" id="login-password" class="form-input" required placeholder="••••••••">
-                </div>
-                <button type="submit" id="btn-login-submit" class="btn-primary" style="margin-top: 10px;">Masuk</button>
-                <button type="button" class="btn-secondary" onclick="toggleAuthMode('register')">Buat Akun Baru</button>
-            </form>
-
-            <!-- Register Form -->
-            <form id="form-register" class="hidden" onsubmit="handleRegister(event)">
-                <div class="form-group">
-                    <label class="form-label">Nama Lengkap</label>
-                    <input type="text" id="reg-name" class="form-input" required placeholder="Muzi Example">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Email</label>
-                    <input type="email" id="reg-email" class="form-input" required placeholder="email@domain.com">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Nomor HP</label>
-                    <input type="tel" id="reg-phone" class="form-input" required placeholder="081234567890">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Password</label>
-                    <input type="password" id="reg-password" class="form-input" required placeholder="Min. 6 Karakter">
-                </div>
-                <button type="submit" id="btn-reg-submit" class="btn-primary" style="margin-top: 10px;">Daftar Sekarang</button>
-                <button type="button" class="btn-secondary" onclick="toggleAuthMode('login')">Sudah Punya Akun</button>
-            </form>
-        </div>
+    <!-- Balance Card -->
+    <div class="balance-card">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 12px; opacity: 0.8;">Saldo Utama</span>
+        <span class="badge-demo" style="background: rgba(255,255,255,0.2); color: #fff; border: none;">DEMO</span>
+      </div>
+      <div class="balance-amount">
+        <span id="home-balance-text">Rp 2.500.000</span>
+        <i id="btn-toggle-balance" data-lucide="eye" style="width: 20px; cursor: pointer; opacity: 0.8;" onclick="toggleBalance()"></i>
+      </div>
+      <div style="font-size: 11px; opacity: 0.8;" id="home-wallet-id">ID Wallet: MW-88492011</div>
     </div>
 
-    <!-- Set/Enter PIN View -->
-    <div id="view-pin" class="view view-no-nav">
-        <div class="header">
-            <button class="btn-icon" onclick="navigateBack()"><i data-lucide="arrow-left"></i></button>
-            <div class="header-title" id="pin-title">Masukkan PIN</div>
-            <div style="width: 32px;"></div>
-        </div>
-        <div class="content pin-container">
-            <p id="pin-subtitle" style="color: var(--text-secondary); font-size: 0.9rem;">Gunakan PIN 6 digit Anda</p>
-            <div class="pin-dots">
-                <div class="pin-dot"></div>
-                <div class="pin-dot"></div>
-                <div class="pin-dot"></div>
-                <div class="pin-dot"></div>
-                <div class="pin-dot"></div>
-                <div class="pin-dot"></div>
-            </div>
-            <div class="keypad">
-                <button class="keypad-btn" onclick="pressPin('1')">1</button>
-                <button class="keypad-btn" onclick="pressPin('2')">2</button>
-                <button class="keypad-btn" onclick="pressPin('3')">3</button>
-                <button class="keypad-btn" onclick="pressPin('4')">4</button>
-                <button class="keypad-btn" onclick="pressPin('5')">5</button>
-                <button class="keypad-btn" onclick="pressPin('6')">6</button>
-                <button class="keypad-btn" onclick="pressPin('7')">7</button>
-                <button class="keypad-btn" onclick="pressPin('8')">8</button>
-                <button class="keypad-btn" onclick="pressPin('9')">9</button>
-                <button class="keypad-btn" style="visibility: hidden;"></button>
-                <button class="keypad-btn" onclick="pressPin('0')">0</button>
-                <button class="keypad-btn" onclick="pressPin('del')"><i data-lucide="delete"></i></button>
-            </div>
-        </div>
+    <!-- Quick Action Cards -->
+    <div class="action-grid">
+      <div class="action-item" onclick="navigateTo('topup')">
+        <div class="action-icon"><i data-lucide="plus-circle"></i></div>
+        <span class="action-label">Top Up</span>
+      </div>
+      <div class="action-item" onclick="navigateTo('transfer')">
+        <div class="action-icon"><i data-lucide="send"></i></div>
+        <span class="action-label">Kirim</span>
+      </div>
+      <div class="action-item" onclick="navigateTo('receive')">
+        <div class="action-icon"><i data-lucide="arrow-down-left"></i></div>
+        <span class="action-label">Terima</span>
+      </div>
+      <div class="action-item" onclick="navigateTo('payment')">
+        <div class="action-icon"><i data-lucide="credit-card"></i></div>
+        <span class="action-label">Bayar</span>
+      </div>
     </div>
 
-    <!-- Dashboard View -->
-    <div id="view-dashboard" class="view">
-        <div class="content">
-            <div class="user-welcome">
-                <div class="user-avatar" id="dash-avatar">M</div>
-                <div>
-                    <div style="font-size: 0.8rem; color: var(--text-secondary);">Selamat Datang,</div>
-                    <div style="font-weight: 700;" id="dash-username">User</div>
-                </div>
-            </div>
-
-            <div class="balance-card">
-                <div class="balance-label">
-                    <span>Total Saldo</span>
-                    <span class="demo-tag">DEMO BALANCE</span>
-                </div>
-                <div class="balance-amount" id="dash-balance">Rp0</div>
-                <button class="btn-secondary" style="padding: 6px 12px; font-size: 0.75rem; width: auto; margin: 0;" onclick="toggleHideBalance()">
-                    <span id="hide-balance-text">Sembunyikan Saldo</span>
-                </button>
-            </div>
-
-            <div class="action-grid">
-                <button class="action-item" onclick="openView('view-transfer')">
-                    <div class="action-icon"><i data-lucide="send"></i></div>
-                    <span class="action-text">Transfer</span>
-                </button>
-                <button class="action-item" onclick="openView('view-topup')">
-                    <div class="action-icon"><i data-lucide="plus-circle"></i></div>
-                    <span class="action-text">Top Up</span>
-                </button>
-                <button class="action-item" onclick="openView('view-withdraw')">
-                    <div class="action-icon"><i data-lucide="arrow-down-right"></i></div>
-                    <span class="action-text">Tarik</span>
-                </button>
-                <button class="action-item" onclick="openView('view-qr')">
-                    <div class="action-icon"><i data-lucide="qr-code"></i></div>
-                    <span class="action-text">QRIS</span>
-                </button>
-            </div>
-
-            <div class="section-header">
-                <div class="section-title">Transaksi Terakhir</div>
-                <span style="font-size: 0.8rem; color: var(--text-secondary); cursor: pointer;" onclick="switchTab('history')">Lihat Semua</span>
-            </div>
-
-            <div class="tx-list" id="dash-tx-list">
-                <div style="text-align: center; color: var(--text-secondary); font-size: 0.85rem; padding: 20px;">Memuat transaksi...</div>
-            </div>
+    <!-- Analytics Summary Widget -->
+    <div class="glass" style="padding: 16px; margin-bottom: 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <span style="font-weight: 700; font-size: 13px;">Ringkasan Bulan Ini</span>
+        <span style="font-size: 11px; color: var(--accent); cursor: pointer;" onclick="navigateTo('finance')">Detail Analytics</span>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div style="background: rgba(16, 185, 129, 0.08); padding: 10px; border-radius: 12px;">
+          <div style="font-size: 10px; color: var(--positive); font-weight: 600;">Pemasukan</div>
+          <div style="font-weight: 700; font-size: 13px; margin-top: 2px;" id="home-stat-in">Rp 0</div>
         </div>
+        <div style="background: rgba(239, 68, 68, 0.08); padding: 10px; border-radius: 12px;">
+          <div style="font-size: 10px; color: var(--negative); font-weight: 600;">Pengeluaran</div>
+          <div style="font-weight: 700; font-size: 13px; margin-top: 2px;" id="home-stat-out">Rp 0</div>
+        </div>
+      </div>
     </div>
 
-    <!-- History View -->
-    <div id="view-history" class="view">
-        <div class="header">
-            <div class="header-title">Riwayat Transaksi</div>
-        </div>
-        <div class="content">
-            <div class="form-group">
-                <input type="text" id="history-search" class="form-input" placeholder="Cari transaksi..." onkeyup="filterHistory()">
-            </div>
-            <div class="tx-list" id="full-tx-list"></div>
-        </div>
+    <!-- Recent Transactions -->
+    <div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <span style="font-weight: 700; font-size: 14px;">Transaksi Terakhir</span>
+        <span style="font-size: 12px; color: var(--text-secondary); cursor: pointer;" onclick="navigateTo('history')">Lihat Semua</span>
+      </div>
+      <div class="glass" id="home-tx-list">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW: TOP UP -->
+  <div id="view-topup" class="view-page">
+    <div class="page-header">
+      <div class="icon-btn" onclick="navigateTo('home')"><i data-lucide="arrow-left"></i></div>
+      <div class="page-title">Top Up Saldo</div>
+      <div style="width: 40px;"></div>
     </div>
 
-    <!-- QR View -->
-    <div id="view-qr" class="view">
-        <div class="header">
-            <div class="header-title">QR Saya / Scan</div>
-        </div>
-        <div class="content" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
-            <div id="qrcode" style="background: white; padding: 16px; border-radius: 16px; margin-bottom: 20px;"></div>
-            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 20px;">Wallet ID Anda untuk menerima dana</p>
-            <div id="wallet-id-display" style="font-family: monospace; font-size: 1rem; font-weight: bold; margin-bottom: 30px;">MW-XXXXX</div>
-        </div>
+    <div class="glass" style="padding: 20px; margin-bottom: 16px;">
+      <label style="font-size: 12px; color: var(--text-secondary); display: block; margin-bottom: 12px;">Pilih Nominal Cepat</label>
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px;">
+        <button class="btn btn-secondary" onclick="selectTopupNominal(20000)">Rp 20.000</button>
+        <button class="btn btn-secondary" onclick="selectTopupNominal(50000)">Rp 50.000</button>
+        <button class="btn btn-secondary" onclick="selectTopupNominal(100000)">Rp 100.000</button>
+        <button class="btn btn-secondary" onclick="selectTopupNominal(200000)">Rp 200.000</button>
+        <button class="btn btn-secondary" onclick="selectTopupNominal(500000)">Rp 500.000</button>
+        <button class="btn btn-secondary" onclick="selectTopupNominal(1000000)">Rp 1.000.000</button>
+      </div>
+
+      <div class="input-group">
+        <label>Atau Masukkan Nominal Custom (Rp)</label>
+        <input type="number" id="topup-amount" class="input-field" placeholder="Minimal Rp 10.000" min="10000" />
+      </div>
+
+      <button class="btn" onclick="processTopUp()">Top Up Sekarang</button>
+    </div>
+  </div>
+
+  <!-- VIEW: KIRIM / TRANSFER -->
+  <div id="view-transfer" class="view-page">
+    <div class="page-header">
+      <div class="icon-btn" onclick="navigateTo('home')"><i data-lucide="arrow-left"></i></div>
+      <div class="page-title">Kirim Uang</div>
+      <div style="width: 40px;"></div>
     </div>
 
-    <!-- Profile View -->
-    <div id="view-profile" class="view">
-        <div class="header">
-            <div class="header-title">Profil Saya</div>
-        </div>
-        <div class="content">
-            <div style="text-align: center; margin-bottom: 24px;">
-                <div class="user-avatar" id="profile-avatar" style="width: 80px; height: 80px; margin: 0 auto 12px auto; font-size: 2rem;">M</div>
-                <h3 id="profile-name">User Name</h3>
-                <p id="profile-email" style="color: var(--text-secondary); font-size: 0.85rem;">user@email.com</p>
-            </div>
+    <div class="glass" style="padding: 20px;">
+      <div class="input-group">
+        <label>Nomor Tujuan / Wallet ID</label>
+        <input type="text" id="transfer-target" class="input-field" placeholder="081234567890 / MW-XXXX" />
+      </div>
+      <div class="input-group">
+        <label>Nama Penerima</label>
+        <input type="text" id="transfer-name" class="input-field" placeholder="Contoh: Andi" />
+      </div>
+      <div class="input-group">
+        <label>Nominal (Rp)</label>
+        <input type="number" id="transfer-amount" class="input-field" placeholder="0" min="1000" />
+      </div>
+      <div class="input-group">
+        <label>Catatan (Opsional)</label>
+        <input type="text" id="transfer-note" class="input-field" placeholder="Contoh: Uang makan" />
+      </div>
 
-            <button class="btn-secondary" style="margin-bottom: 12px;" onclick="handleThemeToggle()">Beralih Dark/Light Mode</button>
-            <button class="btn-secondary" style="color: var(--danger-color); border-color: var(--danger-color);" onclick="handleLogout()">Keluar / Logout</button>
-        </div>
+      <button class="btn" onclick="confirmTransferModal()">Lanjutkan Transfer</button>
+    </div>
+  </div>
+
+  <!-- VIEW: TERIMA UANG -->
+  <div id="view-receive" class="view-page">
+    <div class="page-header">
+      <div class="icon-btn" onclick="navigateTo('home')"><i data-lucide="arrow-left"></i></div>
+      <div class="page-title">Terima Uang</div>
+      <div style="width: 40px;"></div>
     </div>
 
-    <!-- Transfer View -->
-    <div id="view-transfer" class="view view-no-nav">
-        <div class="header">
-            <button class="btn-icon" onclick="navigateBack()"><i data-lucide="arrow-left"></i></button>
-            <div class="header-title">Transfer Dana</div>
-            <div style="width: 32px;"></div>
-        </div>
-        <div class="content">
-            <div class="form-group">
-                <label class="form-label">Wallet ID / Email Penerima</label>
-                <input type="text" id="transfer-target" class="form-input" placeholder="Masukkan ID atau Email">
-            </div>
-            <div class="form-group">
-                <label class="form-label">Nominal (Rp)</label>
-                <input type="number" id="transfer-amount" class="form-input" placeholder="0">
-            </div>
-            <button class="btn-primary" onclick="initiateTransfer()">Lanjutkan</button>
-        </div>
+    <div class="glass" style="padding: 24px; text-align: center; margin-bottom: 20px;">
+      <div style="font-weight: 700; font-size: 16px;" id="receive-user-name">Muzi Adriyan</div>
+      <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;" id="receive-wallet-id">ID: MW-88492011</div>
+
+      <div style="background: #fff; padding: 16px; border-radius: 16px; display: inline-block; margin-bottom: 16px;" id="qrcode-box"></div>
+
+      <div style="display: flex; gap: 10px;">
+        <button class="btn btn-secondary" onclick="copyWalletId()"><i data-lucide="copy" style="width: 16px;"></i> Salin ID</button>
+        <button class="btn btn-secondary" onclick="showToast('Link QR disebarkan')"><i data-lucide="share-2" style="width: 16px;"></i> Bagikan</button>
+      </div>
     </div>
 
-    <!-- TopUp Demo View -->
-    <div id="view-topup" class="view view-no-nav">
-        <div class="header">
-            <button class="btn-icon" onclick="navigateBack()"><i data-lucide="arrow-left"></i></button>
-            <div class="header-title">Top Up (DEMO)</div>
-            <div style="width: 32px;"></div>
-        </div>
-        <div class="content">
-            <div class="form-group">
-                <label class="form-label">Pilih Nominal Demo</label>
-                <select id="topup-amount" class="form-input">
-                    <option value="50000">Rp50.000</option>
-                    <option value="100000">Rp100.000</option>
-                    <option value="500000">Rp500.000</option>
-                </select>
-            </div>
-            <button class="btn-primary" onclick="executeTopUp()">Proses Top Up Demo</button>
-        </div>
+    <!-- Simulasi Uang Masuk Manual -->
+    <div class="glass" style="padding: 20px;">
+      <div style="font-weight: 700; font-size: 13px; margin-bottom: 12px;">Simulasi Terima Uang Masuk</div>
+      <div class="input-group">
+        <label>Nama Pengirim</label>
+        <input type="text" id="receive-sender-name" class="input-field" placeholder="Budi" />
+      </div>
+      <div class="input-group">
+        <label>Nominal (Rp)</label>
+        <input type="number" id="receive-amount" class="input-field" placeholder="50000" />
+      </div>
+      <button class="btn" onclick="processSimulatedReceive()">Terima Transfer Demo</button>
+    </div>
+  </div>
+
+  <!-- VIEW: PEMBAYARAN -->
+  <div id="view-payment" class="view-page">
+    <div class="page-header">
+      <div class="icon-btn" onclick="navigateTo('home')"><i data-lucide="arrow-left"></i></div>
+      <div class="page-title">Pembayaran / Tagihan</div>
+      <div style="width: 40px;"></div>
     </div>
 
-    <!-- Withdraw Demo View -->
-    <div id="view-withdraw" class="view view-no-nav">
-        <div class="header">
-            <button class="btn-icon" onclick="navigateBack()"><i data-lucide="arrow-left"></i></button>
-            <div class="header-title">Tarik Dana (DEMO)</div>
-            <div style="width: 32px;"></div>
-        </div>
-        <div class="content">
-            <div class="form-group">
-                <label class="form-label">Nominal Tarik (Rp)</label>
-                <input type="number" id="withdraw-amount" class="form-input" placeholder="0">
-            </div>
-            <button class="btn-primary" onclick="executeWithdraw()">Proses Tarik Dana</button>
-        </div>
+    <div class="action-grid" style="margin-bottom: 16px;">
+      <div class="action-item" onclick="openPayService('Pulsa & Data')">
+        <div class="action-icon"><i data-lucide="smartphone"></i></div>
+        <span class="action-label">Pulsa/Data</span>
+      </div>
+      <div class="action-item" onclick="openPayService('Listrik PLN')">
+        <div class="action-icon"><i data-lucide="zap"></i></div>
+        <span class="action-label">Listrik</span>
+      </div>
+      <div class="action-item" onclick="openPayService('Internet & TV')">
+        <div class="action-icon"><i data-lucide="wifi"></i></div>
+        <span class="action-label">Internet</span>
+      </div>
+      <div class="action-item" onclick="openPayService('Voucher Game')">
+        <div class="action-icon"><i data-lucide="gamepad-2"></i></div>
+        <span class="action-label">Game</span>
+      </div>
     </div>
 
-    <!-- Bottom Navigation Bar -->
-    <div id="bottom-nav" class="bottom-nav hidden">
-        <button class="nav-item active" onclick="switchTab('dashboard')">
-            <i data-lucide="home"></i>
-            <span>Home</span>
-        </button>
-        <button class="nav-item" onclick="switchTab('history')">
-            <i data-lucide="receipt"></i>
-            <span>Riwayat</span>
-        </button>
-        <button class="nav-item" onclick="switchTab('qr')">
-            <i data-lucide="qr-code"></i>
-            <span>QR</span>
-        </button>
-        <button class="nav-item" onclick="switchTab('profile')">
-            <i data-lucide="user"></i>
-            <span>Profil</span>
-        </button>
+    <div class="glass" style="padding: 20px;" id="pay-service-box">
+      <div style="font-size: 12px; color: var(--text-secondary); text-align: center;">Pilih kategori layanan pembayaran di atas.</div>
     </div>
-</div>
+  </div>
 
-<!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <!-- VIEW: RIWAYAT TRANSAKSI -->
+  <div id="view-history" class="view-page">
+    <div class="page-header">
+      <div class="page-title">Riwayat Transaksi</div>
+      <div style="width: 40px;"></div>
+    </div>
 
-<script>
-    // --- KONFIGURASI FIREBASE ---
-    // Ganti dengan kredensial Firebase Console Anda
-    const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-        projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_PROJECT_ID.appspot.com",
-        messagingSenderId: "YOUR_SENDER_ID",
-        appId: "YOUR_APP_ID"
+    <div class="input-group">
+      <input type="text" id="history-search" class="input-field" placeholder="Cari nama, kategori, catatan..." oninput="renderHistoryList()" />
+    </div>
+
+    <!-- Filter Tabs -->
+    <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+      <button class="btn btn-secondary filter-btn active" style="flex:1; padding: 8px; font-size: 11px;" onclick="setHistoryFilter('ALL', this)">Semua</button>
+      <button class="btn btn-secondary filter-btn" style="flex:1; padding: 8px; font-size: 11px;" onclick="setHistoryFilter('IN', this)">Masuk</button>
+      <button class="btn btn-secondary filter-btn" style="flex:1; padding: 8px; font-size: 11px;" onclick="setHistoryFilter('OUT', this)">Keluar</button>
+    </div>
+
+    <div class="glass" id="history-tx-container">
+      <!-- Dynamic Tx List -->
+    </div>
+  </div>
+
+  <!-- VIEW: FINANCE ANALYTICS -->
+  <div id="view-finance" class="view-page">
+    <div class="page-header">
+      <div class="page-title">Analytics Keuangan</div>
+      <div style="width: 40px;"></div>
+    </div>
+
+    <div class="glass" style="padding: 20px; margin-bottom: 16px;">
+      <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Visualisasi Transaksi (Demo)</div>
+      <div class="chart-box" id="analytics-chart">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+      <div class="glass" style="padding: 16px;">
+        <div style="font-size: 11px; color: var(--positive); font-weight: 600;">Total Pemasukan</div>
+        <div style="font-size: 16px; font-weight: 700; margin-top: 4px;" id="finance-total-in">Rp 0</div>
+      </div>
+      <div class="glass" style="padding: 16px;">
+        <div style="font-size: 11px; color: var(--negative); font-weight: 600;">Total Pengeluaran</div>
+        <div style="font-size: 16px; font-weight: 700; margin-top: 4px;" id="finance-total-out">Rp 0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW: PROFIL & SETTINGS -->
+  <div id="view-profile" class="view-page">
+    <div class="page-header">
+      <div class="page-title">Profil Saya</div>
+      <div class="icon-btn" onclick="toggleTheme()"><i data-lucide="moon" id="theme-icon"></i></div>
+    </div>
+
+    <div class="glass" style="padding: 20px; text-align: center; margin-bottom: 16px;">
+      <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 24px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;" id="profile-avatar">M</div>
+      <h3 style="font-size: 16px; font-weight: 700;" id="profile-name">Muzi Adriyan</h3>
+      <p style="font-size: 12px; color: var(--text-secondary);" id="profile-email">user@example.com</p>
+      <span class="badge-demo" style="margin-top: 8px;">ID: <span id="profile-wallet-id">MW-88492011</span></span>
+    </div>
+
+    <div class="glass" style="padding: 8px;">
+      <div class="tx-item" onclick="openEditProfileModal()">
+        <div style="display: flex; align-items: center; gap: 12px;"><i data-lucide="user"></i> <span>Edit Profil</span></div>
+        <i data-lucide="chevron-right" style="width: 16px; color: var(--text-secondary);"></i>
+      </div>
+      <div class="tx-item" onclick="openChangePinModal()">
+        <div style="display: flex; align-items: center; gap: 12px;"><i data-lucide="key-round"></i> <span>Ubah PIN</span></div>
+        <i data-lucide="chevron-right" style="width: 16px; color: var(--text-secondary);"></i>
+      </div>
+      <div class="tx-item" onclick="showToast('Sesi aktif: Perangkat Peramban Ini')">
+        <div style="display: flex; align-items: center; gap: 12px;"><i data-lucide="shield"></i> <span>Keamanan & Sesi</span></div>
+        <i data-lucide="chevron-right" style="width: 16px; color: var(--text-secondary);"></i>
+      </div>
+      <div class="tx-item" onclick="resetWalletDemo()">
+        <div style="display: flex; align-items: center; gap: 12px; color: var(--negative);"><i data-lucide="refresh-cw"></i> <span>Reset Wallet Demo</span></div>
+        <i data-lucide="chevron-right" style="width: 16px; color: var(--text-secondary);"></i>
+      </div>
+      <div class="tx-item" onclick="logoutApp()">
+        <div style="display: flex; align-items: center; gap: 12px;"><i data-lucide="log-out"></i> <span>Kunci Aplikasi / Logout</span></div>
+        <i data-lucide="chevron-right" style="width: 16px; color: var(--text-secondary);"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW: NOTIFIKASI -->
+  <div id="view-notifications" class="view-page">
+    <div class="page-header">
+      <div class="icon-btn" onclick="navigateTo('home')"><i data-lucide="arrow-left"></i></div>
+      <div class="page-title">Pusat Notifikasi</div>
+      <div style="width: 40px;"></div>
+    </div>
+
+    <div class="glass" id="notif-list-container">
+      <!-- Injected via JS -->
+    </div>
+  </div>
+
+  <!-- BOTTOM NAVIGATION BAR -->
+  <div class="bottom-nav" id="main-nav" style="display: none;">
+    <a class="nav-item active" id="nav-home" onclick="navigateTo('home')">
+      <i data-lucide="home" style="width: 20px;"></i>
+      <span>Beranda</span>
+    </a>
+    <a class="nav-item" id="nav-history" onclick="navigateTo('history')">
+      <i data-lucide="receipt" style="width: 20px;"></i>
+      <span>Riwayat</span>
+    </a>
+    <a class="nav-item" id="nav-payment" onclick="navigateTo('payment')">
+      <i data-lucide="credit-card" style="width: 20px;"></i>
+      <span>Bayar</span>
+    </a>
+    <a class="nav-item" id="nav-finance" onclick="navigateTo('finance')">
+      <i data-lucide="bar-chart-3" style="width: 20px;"></i>
+      <span>Analytics</span>
+    </a>
+    <a class="nav-item" id="nav-profile" onclick="navigateTo('profile')">
+      <i data-lucide="user" style="width: 20px;"></i>
+      <span>Profil</span>
+    </a>
+  </div>
+
+  <!-- MODAL CONFIRM TRANSACTION / PIN -->
+  <div class="modal-overlay" id="modal-confirm">
+    <div class="modal-sheet">
+      <h3 style="font-size: 16px; margin-bottom: 12px;" id="modal-confirm-title">Konfirmasi Transaksi</h3>
+      <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 14px; margin-bottom: 20px; font-size: 13px;" id="modal-confirm-body">
+        <!-- Dynamic content -->
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn btn-secondary" onclick="closeModal('modal-confirm')">Batal</button>
+        <button class="btn" onclick="executePendingTransaction()">Konfirmasi & PIN</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL EDIT PROFILE -->
+  <div class="modal-overlay" id="modal-edit-profile">
+    <div class="modal-sheet">
+      <h3 style="font-size: 16px; margin-bottom: 16px;">Edit Profil</h3>
+      <div class="input-group">
+        <label>Nama Lengkap</label>
+        <input type="text" id="edit-name" class="input-field" />
+      </div>
+      <div class="input-group">
+        <label>Email</label>
+        <input type="email" id="edit-email" class="input-field" />
+      </div>
+      <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button class="btn btn-secondary" onclick="closeModal('modal-edit-profile')">Batal</button>
+        <button class="btn" onclick="saveProfile()">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL TRANSACTION DETAIL & RECEIPT -->
+  <div class="modal-overlay" id="modal-tx-detail">
+    <div class="modal-sheet" style="text-align: center;">
+      <div style="width: 48px; height: 48px; border-radius: 50%; background: rgba(16,185,129,0.15); color: var(--positive); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
+        <i data-lucide="check-circle-2" style="width: 28px; height: 28px;"></i>
+      </div>
+      <span class="badge-demo">DEMO TRANSACTION</span>
+      <h2 style="font-size: 22px; font-weight: 700; margin: 8px 0;" id="detail-amount">Rp 0</h2>
+      <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 20px;" id="detail-title">Transaksi</div>
+
+      <div style="background: rgba(255,255,255,0.04); border: 1px solid var(--card-border); border-radius: 16px; padding: 16px; text-align: left; font-size: 12px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-secondary);">Status</span><span style="color: var(--positive); font-weight: 600;">Berhasil</span></div>
+        <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-secondary);">ID Transaksi</span><span id="detail-txid" style="font-family: monospace;">MWTX-123456</span></div>
+        <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-secondary);">Waktu</span><span id="detail-time">18 Agu 2026</span></div>
+        <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-secondary);">Catatan</span><span id="detail-note">-</span></div>
+      </div>
+
+      <button class="btn btn-secondary" onclick="closeModal('modal-tx-detail')">Tutup Bukti</button>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC ENGINE -->
+  <script>
+    /* ==========================================================================
+       APP STATE & PERSISTENCE ENGINE (LocalStorage / Web Crypto API)
+       ========================================================================== */
+    const STORAGE_KEY = "MUZI_WALLET_DATA_V1";
+
+    let state = {
+      profile: {
+        name: "Muzi Adriyan",
+        email: "user@example.com",
+        phone: "081234567890",
+        walletId: "MW-88492011",
+        avatar: "M"
+      },
+      pinHash: null,
+      balance: 2500000,
+      isBalanceHidden: false,
+      theme: "dark",
+      transactions: [],
+      notifications: []
     };
 
-    // Initialize Firebase
-    if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
+    let pinInputBuffer = "";
+    let pinSetupTemp = "";
+    let isPinSetupMode = false;
+    let pendingTxAction = null;
+    let currentHistoryFilter = "ALL";
+    let failedPinAttempts = 0;
+    let pinCooldownUntil = 0;
+
+    // Load initial data
+    function loadStorage() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        try {
+          state = { ...state, ...JSON.parse(saved) };
+        } catch(e) { console.error("Error loading storage", e); }
+      }
     }
-    const auth = firebase.auth();
-    const db = firebase.firestore();
 
-    // App State
-    let currentUser = null;
-    let currentUserDoc = null;
-    let pinInput = "";
-    let pinCallback = null;
-    let historyData = [];
-    let isBalanceHidden = false;
-    let viewHistoryStack = [];
+    function saveStorage() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
 
-    // Initialize Icons
-    lucide.createIcons();
+    // SHA-256 Hash Helper for PIN
+    async function hashPin(pin) {
+      const msgUint8 = new TextEncoder().encode(pin + "MUZI_SALT");
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
 
-    // Navigation System
-    function openView(viewId, pushHistory = true) {
-        if (pushHistory && document.querySelector('.view.active')) {
-            const currentActive = document.querySelector('.view.active').id;
-            if (currentActive !== viewId) viewHistoryStack.push(currentActive);
-        }
-        
-        document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
-        const targetView = document.getElementById(viewId);
-        if (targetView) targetView.classList.add('active');
+    // Toast Notifier
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-msg').innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
 
-        const nav = document.getElementById('bottom-nav');
-        const mainViews = ['view-dashboard', 'view-history', 'view-qr', 'view-profile'];
-        if (mainViews.includes(viewId)) {
-            nav.classList.remove('hidden');
+    /* ==========================================================================
+       NAVIGATION & ROUTING
+       ========================================================================== */
+    function navigateTo(pageId) {
+      document.querySelectorAll('.view-page').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+      const target = document.getElementById(`view-${pageId}`);
+      if (target) target.classList.add('active');
+
+      const navItem = document.getElementById(`nav-${pageId}`);
+      if (navItem) navItem.classList.add('active');
+
+      if (pageId === 'home') renderHomeView();
+      if (pageId === 'history') renderHistoryList();
+      if (pageId === 'finance') renderAnalytics();
+      if (pageId === 'receive') renderQRCode();
+
+      window.scrollTo(0, 0);
+    }
+
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    /* ==========================================================================
+       KEYPAD & PIN ENGINE
+       ========================================================================== */
+    function pressKeypad(num) {
+      if (Date.now() < pinCooldownUntil) {
+        showToast("PIN Terkunci Sementara. Silakan tunggu.");
+        return;
+      }
+
+      if (pinInputBuffer.length < 6) {
+        pinInputBuffer += num;
+        updatePinDots(pinInputBuffer.length);
+      }
+
+      if (pinInputBuffer.length === 6) {
+        setTimeout(handlePinComplete, 100);
+      }
+    }
+
+    function backspaceKeypad() {
+      if (pinInputBuffer.length > 0) {
+        pinInputBuffer = pinInputBuffer.slice(0, -1);
+        updatePinDots(pinInputBuffer.length);
+      }
+    }
+
+    function clearKeypad() {
+      pinInputBuffer = "";
+      updatePinDots(0);
+    }
+
+    function updatePinDots(count) {
+      const dots = document.querySelectorAll('#view-pin .pin-dot');
+      dots.forEach((dot, idx) => {
+        if (idx < count) dot.classList.add('filled');
+        else dot.classList.remove('filled');
+      });
+    }
+
+    async function handlePinComplete() {
+      const hashed = await hashPin(pinInputBuffer);
+
+      if (isPinSetupMode) {
+        if (!pinSetupTemp) {
+          pinSetupTemp = hashed;
+          pinInputBuffer = "";
+          updatePinDots(0);
+          document.getElementById('pin-title').innerText = "Konfirmasi PIN Baru";
+          document.getElementById('pin-subtitle').innerText = "Masukkan kembali 6 digit PIN Anda.";
         } else {
-            nav.classList.add('hidden');
+          if (pinSetupTemp === hashed) {
+            state.pinHash = hashed;
+            saveStorage();
+            showToast("PIN Berhasil Dibuat!");
+            isPinSetupMode = false;
+            document.getElementById('main-nav').style.display = 'flex';
+            navigateTo('home');
+          } else {
+            showToast("PIN Tidak Cocok! Ulangi.");
+            pinSetupTemp = "";
+            pinInputBuffer = "";
+            updatePinDots(0);
+            document.getElementById('pin-title').innerText = "Buat PIN Baru";
+          }
         }
-    }
+      } else {
+        // Mode Login / Verifikasi
+        if (hashed === state.pinHash) {
+          failedPinAttempts = 0;
+          pinInputBuffer = "";
+          updatePinDots(0);
 
-    function navigateBack() {
-        if (viewHistoryStack.length > 0) {
-            const prev = viewHistoryStack.pop();
-            openView(prev, false);
+          if (pendingTxAction) {
+            const action = pendingTxAction;
+            pendingTxAction = null;
+            action();
+          } else {
+            document.getElementById('main-nav').style.display = 'flex';
+            navigateTo('home');
+          }
         } else {
-            openView('view-dashboard', false);
+          failedPinAttempts++;
+          showToast("PIN Salah!");
+          pinInputBuffer = "";
+          updatePinDots(0);
+
+          if (failedPinAttempts >= 5) {
+            pinCooldownUntil = Date.now() + 30000; // 30s Cooldown
+            showToast("Salah 5x. Terkunci selama 30 detik.");
+          }
         }
+      }
     }
 
-    function switchTab(tab) {
-        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-        event.currentTarget.classList.add('active');
-        openView(`view-${tab}`);
+    function triggerBiometrics() {
+      if (window.PublicKeyCredential) {
+        showToast("Biometric authentication tidak tersedia pada perangkat ini.");
+      } else {
+        showToast("Biometric authentication tidak didukung.");
+      }
     }
 
-    // --- AUTHENTICATION FLOW ---
-    auth.onAuthStateChanged(async (user) => {
-        if (user) {
-            currentUser = user;
-            // Listen real-time to user document
-            db.collection('users').doc(user.uid).onSnapshot(doc => {
-                if (doc.exists) {
-                    currentUserDoc = doc.data();
-                    updateUIWithUserData();
-                    
-                    // Check PIN Setup
-                    if (!currentUserDoc.pin) {
-                        setupPinMode(true);
-                    } else if (document.getElementById('view-splash').classList.contains('active')) {
-                        openView('view-dashboard');
-                    }
-                }
-            });
-            listenTransactions();
-        } else {
-            currentUser = null;
-            currentUserDoc = null;
-            openView('view-auth');
+    function requirePinForAction(actionCallback) {
+      pendingTxAction = actionCallback;
+      pinInputBuffer = "";
+      updatePinDots(0);
+      document.getElementById('pin-title').innerText = "Masukkan PIN Transaksi";
+      document.getElementById('pin-subtitle').innerText = "Verifikasi PIN untuk melanjutkan transaksi.";
+      navigateTo('pin');
+    }
+
+    /* ==========================================================================
+       TRANSACTION ENGINE
+       ========================================================================== */
+    function recordTransaction({ type, category, title, description, amount, note = "" }) {
+      const fee = 0;
+      const total = amount + fee;
+
+      if (type === 'OUT' && state.balance < total) {
+        showToast("Saldo tidak mencukupi!");
+        return false;
+      }
+
+      if (type === 'IN') {
+        state.balance += amount;
+      } else if (type === 'OUT') {
+        state.balance -= total;
+      }
+
+      const txId = "MWTX-" + Math.floor(100000000000 + Math.random() * 900000000000);
+      const newTx = {
+        id: txId,
+        type,
+        category,
+        title,
+        description,
+        amount,
+        fee,
+        total,
+        note,
+        status: "SUCCESS",
+        timestamp: Date.now()
+      };
+
+      state.transactions.unshift(newTx);
+
+      // Add Notification
+      state.notifications.unshift({
+        id: "NOTIF-" + Date.now(),
+        title: title,
+        message: `${type === 'IN' ? 'Uang masuk' : 'Uang keluar'} sebesar Rp ${amount.toLocaleString('id-ID')}`,
+        time: Date.now(),
+        read: false
+      });
+
+      saveStorage();
+      return newTx;
+    }
+
+    /* ==========================================================================
+       VIEW RENDERERS & ACTIONS
+       ========================================================================== */
+    function renderHomeView() {
+      document.getElementById('home-user-name').innerText = `${state.profile.name} 👋`;
+      document.getElementById('home-wallet-id').innerText = `ID Wallet: ${state.profile.walletId}`;
+      document.getElementById('home-avatar').innerText = (state.profile.name || "M").charAt(0).toUpperCase();
+
+      renderBalance();
+      renderHomeStats();
+      renderHomeRecentTx();
+      updateNotifBadge();
+    }
+
+    function renderBalance() {
+      const balEl = document.getElementById('home-balance-text');
+      const iconEl = document.getElementById('btn-toggle-balance');
+
+      if (state.isBalanceHidden) {
+        balEl.innerText = "••••••••";
+        iconEl.setAttribute('data-lucide', 'eye-off');
+      } else {
+        balEl.innerText = `Rp ${state.balance.toLocaleString('id-ID')}`;
+        iconEl.setAttribute('data-lucide', 'eye');
+      }
+      lucide.createIcons();
+    }
+
+    function toggleBalance() {
+      state.isBalanceHidden = !state.isBalanceHidden;
+      saveStorage();
+      renderBalance();
+    }
+
+    function renderHomeStats() {
+      let totalIn = 0;
+      let totalOut = 0;
+
+      state.transactions.forEach(tx => {
+        if (tx.type === 'IN') totalIn += tx.amount;
+        if (tx.type === 'OUT') totalOut += tx.amount;
+      });
+
+      document.getElementById('home-stat-in').innerText = `Rp ${totalIn.toLocaleString('id-ID')}`;
+      document.getElementById('home-stat-out').innerText = `Rp ${totalOut.toLocaleString('id-ID')}`;
+    }
+
+    function renderHomeRecentTx() {
+      const container = document.getElementById('home-tx-list');
+      if (state.transactions.length === 0) {
+        container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-secondary); font-size: 12px;">Belum ada transaksi</div>';
+        return;
+      }
+
+      let html = '';
+      state.transactions.slice(0, 4).forEach(tx => {
+        const isIn = tx.type === 'IN';
+        html += `
+          <div class="tx-item" onclick="openTxDetail('${tx.id}')">
+            <div class="tx-icon ${isIn ? 'in' : 'out'}">
+              <i data-lucide="${isIn ? 'arrow-down-left' : 'arrow-up-right'}" style="width:20px;"></i>
+            </div>
+            <div class="tx-details">
+              <div class="tx-title">${tx.title}</div>
+              <div class="tx-date">${formatDate(tx.timestamp)}</div>
+            </div>
+            <div class="tx-amount" style="color: ${isIn ? 'var(--positive)' : 'var(--text-primary)'}">
+              ${isIn ? '+' : '-'}Rp ${tx.amount.toLocaleString('id-ID')}
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+      lucide.createIcons();
+    }
+
+    /* TOP UP */
+    function selectTopupNominal(amt) {
+      document.getElementById('topup-amount').value = amt;
+    }
+
+    function processTopUp() {
+      const amt = parseInt(document.getElementById('topup-amount').value);
+      if (!amt || amt < 10000) return showToast("Minimal Top Up Rp 10.000");
+
+      requirePinForAction(() => {
+        const tx = recordTransaction({
+          type: 'IN',
+          category: 'TOPUP',
+          title: 'Top Up Saldo Demo',
+          description: 'Top Up Via Internal Bank Demo',
+          amount: amt
+        });
+        if (tx) {
+          showToast("Top Up Berhasil!");
+          document.getElementById('topup-amount').value = "";
+          navigateTo('home');
         }
+      });
+    }
+
+    /* TRANSFER */
+    function confirmTransferModal() {
+      const target = document.getElementById('transfer-target').value.trim();
+      const name = document.getElementById('transfer-name').value.trim();
+      const amt = parseInt(document.getElementById('transfer-amount').value);
+      const note = document.getElementById('transfer-note').value.trim() || '-';
+
+      if (!target || !name) return showToast("Lengkapi data penerima");
+      if (!amt || amt < 1000) return showToast("Minimal transfer Rp 1.000");
+      if (amt > state.balance) return showToast("Saldo tidak mencukupi");
+
+      document.getElementById('modal-confirm-title').innerText = "Konfirmasi Transfer";
+      document.getElementById('modal-confirm-body').innerHTML = `
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>Penerima:</span> <strong>${name} (${target})</strong></div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>Nominal:</span> <strong>Rp ${amt.toLocaleString('id-ID')}</strong></div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>Biaya Admin:</span> <strong>Rp 0</strong></div>
+        <div style="display:flex; justify-content:space-between; border-top: 1px solid var(--card-border); padding-top:6px; margin-top:6px;"><span>Total:</span> <strong>Rp ${amt.toLocaleString('id-ID')}</strong></div>
+      `;
+
+      pendingTxAction = () => {
+        const tx = recordTransaction({
+          type: 'OUT',
+          category: 'TRANSFER',
+          title: `Kirim Uang ke ${name}`,
+          description: `Transfer ke ${target}`,
+          amount: amt,
+          note: note
+        });
+        if (tx) {
+          showToast("Transfer Berhasil!");
+          document.getElementById('transfer-target').value = "";
+          document.getElementById('transfer-name').value = "";
+          document.getElementById('transfer-amount').value = "";
+          document.getElementById('transfer-note').value = "";
+          closeModal('modal-confirm');
+          navigateTo('home');
+        }
+      };
+
+      openModal('modal-confirm');
+    }
+
+    function executePendingTransaction() {
+      closeModal('modal-confirm');
+      if (pendingTxAction) {
+        const action = pendingTxAction;
+        requirePinForAction(action);
+      }
+    }
+
+    /* RECEIVE */
+    function renderQRCode() {
+      document.getElementById('receive-user-name').innerText = state.profile.name;
+      document.getElementById('receive-wallet-id').innerText = `ID: ${state.profile.walletId}`;
+
+      const box = document.getElementById('qrcode-box');
+      box.innerHTML = "";
+      new QRCode(box, { text: state.profile.walletId, width: 140, height: 140 });
+    }
+
+    function copyWalletId() {
+      navigator.clipboard.writeText(state.profile.walletId);
+      showToast("ID Wallet disalin!");
+    }
+
+    function processSimulatedReceive() {
+      const sender = document.getElementById('receive-sender-name').value.trim() || 'Pengirim';
+      const amt = parseInt(document.getElementById('receive-amount').value);
+
+      if (!amt || amt < 1000) return showToast("Nominal tidak valid");
+
+      const tx = recordTransaction({
+        type: 'IN',
+        category: 'TRANSFER',
+        title: `Uang Masuk dari ${sender}`,
+        description: 'Simulasi menerima transfer',
+        amount: amt
+      });
+
+      if (tx) {
+        showToast("Uang Masuk Berhasil Diterima!");
+        document.getElementById('receive-sender-name').value = "";
+        document.getElementById('receive-amount').value = "";
+        navigateTo('home');
+      }
+    }
+
+    /* PAYMENTS */
+    function openPayService(title) {
+      document.getElementById('pay-service-box').innerHTML = `
+        <h4 style="font-size: 14px; margin-bottom: 12px;">Bayar ${title} (Simulasi)</h4>
+        <div class="input-group">
+          <label>Nomor Pelanggan / Tagihan</label>
+          <input type="text" id="pay-num" class="input-field" placeholder="08xxxxxxxxxx" />
+        </div>
+        <div class="input-group">
+          <label>Pilih Nominal / Paket</label>
+          <select id="pay-amt" class="input-field" style="background: var(--bg-color);">
+            <option value="15000">Paket Hemat - Rp 15.000</option>
+            <option value="50000">Paket Standar - Rp 50.000</option>
+            <option value="100000">Paket Premium - Rp 100.000</option>
+          </select>
+        </div>
+        <button class="btn" onclick="processPayment('${title}')">Proses Pembayaran</button>
+      `;
+    }
+
+    function processPayment(serviceTitle) {
+      const num = document.getElementById('pay-num').value.trim();
+      const amt = parseInt(document.getElementById('pay-amt').value);
+
+      if (!num) return showToast("Masukkan nomor tagihan");
+
+      requirePinForAction(() => {
+        const tx = recordTransaction({
+          type: 'OUT',
+          category: 'PAYMENT',
+          title: `Pembayaran ${serviceTitle}`,
+          description: `No. ${num} (Simulasi)`,
+          amount: amt
+        });
+        if (tx) {
+          showToast("Pembayaran Berhasil!");
+          navigateTo('home');
+        }
+      });
+    }
+
+    /* HISTORY & FILTER */
+    function renderHistoryList() {
+      const container = document.getElementById('history-tx-container');
+      const query = document.getElementById('history-search').value.toLowerCase();
+
+      let filtered = state.transactions;
+
+      if (currentHistoryFilter !== 'ALL') {
+        filtered = filtered.filter(tx => tx.type === currentHistoryFilter);
+      }
+
+      if (query) {
+        filtered = filtered.filter(tx => 
+          tx.title.toLowerCase().includes(query) || 
+          tx.category.toLowerCase().includes(query) ||
+          (tx.note && tx.note.toLowerCase().includes(query))
+        );
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div style="padding: 30px; text-align: center; color: var(--text-secondary);">Tidak ada transaksi ditemukan</div>';
+        return;
+      }
+
+      let html = '';
+      filtered.forEach(tx => {
+        const isIn = tx.type === 'IN';
+        html += `
+          <div class="tx-item" onclick="openTxDetail('${tx.id}')">
+            <div class="tx-icon ${isIn ? 'in' : 'out'}">
+              <i data-lucide="${isIn ? 'arrow-down-left' : 'arrow-up-right'}" style="width:20px;"></i>
+            </div>
+            <div class="tx-details">
+              <div class="tx-title">${tx.title}</div>
+              <div class="tx-date">${formatDate(tx.timestamp)}</div>
+            </div>
+            <div class="tx-amount" style="color: ${isIn ? 'var(--positive)' : 'var(--text-primary)'}">
+              ${isIn ? '+' : '-'}Rp ${tx.amount.toLocaleString('id-ID')}
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+      lucide.createIcons();
+    }
+
+    function setHistoryFilter(type, el) {
+      currentHistoryFilter = type;
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+      el.classList.add('active');
+      renderHistoryList();
+    }
+
+    function openTxDetail(txId) {
+      const tx = state.transactions.find(t => t.id === txId);
+      if (!tx) return;
+
+      document.getElementById('detail-amount').innerText = `${tx.type === 'IN' ? '+' : '-'}Rp ${tx.amount.toLocaleString('id-ID')}`;
+      document.getElementById('detail-title').innerText = tx.title;
+      document.getElementById('detail-txid').innerText = tx.id;
+      document.getElementById('detail-time').innerText = formatDate(tx.timestamp);
+      document.getElementById('detail-note').innerText = tx.note || '-';
+
+      openModal('modal-tx-detail');
+    }
+
+    /* FINANCE ANALYTICS */
+    function renderAnalytics() {
+      let totalIn = 0, totalOut = 0;
+      state.transactions.forEach(tx => {
+        if (tx.type === 'IN') totalIn += tx.amount;
+        if (tx.type === 'OUT') totalOut += tx.amount;
+      });
+
+      document.getElementById('finance-total-in').innerText = `Rp ${totalIn.toLocaleString('id-ID')}`;
+      document.getElementById('finance-total-out').innerText = `Rp ${totalOut.toLocaleString('id-ID')}`;
+
+      // Build simulated visual chart
+      const chartBox = document.getElementById('analytics-chart');
+      const days = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
+      let chartHtml = '';
+
+      days.forEach((d, idx) => {
+        const height = Math.floor(Math.random() * 60) + 20;
+        chartHtml += `
+          <div class="chart-bar-wrap">
+            <div class="chart-bar ${idx === 6 ? 'active' : ''}" style="height: ${height}%;"></div>
+            <span class="chart-label">${d}</span>
+          </div>
+        `;
+      });
+      chartBox.innerHTML = chartHtml;
+    }
+
+    /* PROFILE & SETTINGS */
+    function openEditProfileModal() {
+      document.getElementById('edit-name').value = state.profile.name;
+      document.getElementById('edit-email').value = state.profile.email;
+      openModal('modal-edit-profile');
+    }
+
+    function saveProfile() {
+      const name = document.getElementById('edit-name').value.trim();
+      const email = document.getElementById('edit-email').value.trim();
+
+      if (!name || !email) return showToast("Isi semua field");
+
+      state.profile.name = name;
+      state.profile.email = email;
+      saveStorage();
+
+      document.getElementById('profile-name').innerText = name;
+      document.getElementById('profile-email').innerText = email;
+      document.getElementById('profile-avatar').innerText = name.charAt(0).toUpperCase();
+
+      closeModal('modal-edit-profile');
+      showToast("Profil Diperbarui!");
+    }
+
+    function openChangePinModal() {
+      requirePinForAction(() => {
+        isPinSetupMode = true;
+        pinSetupTemp = "";
+        pinInputBuffer = "";
+        updatePinDots(0);
+        document.getElementById('pin-title').innerText = "Buat PIN Baru";
+        document.getElementById('pin-subtitle').innerText = "Masukkan 6 digit PIN baru Anda.";
+        navigateTo('pin');
+      });
+    }
+
+    function resetWalletDemo() {
+      if (confirm("Apakah Anda yakin ingin mereset semua data demo, saldo, dan PIN?")) {
+        localStorage.removeItem(STORAGE_KEY);
+        location.reload();
+      }
+    }
+
+    function logoutApp() {
+      pinInputBuffer = "";
+      updatePinDots(0);
+      document.getElementById('main-nav').style.display = 'none';
+      document.getElementById('pin-title').innerText = "Masukkan PIN";
+      navigateTo('pin');
+      showToast("Aplikasi Terkunci");
+    }
+
+    function toggleTheme() {
+      state.theme = state.theme === 'dark' ? 'light' : 'dark';
+      document.body.setAttribute('data-theme', state.theme);
+      saveStorage();
+    }
+
+    /* NOTIFICATIONS */
+    function renderNotifications() {
+      const container = document.getElementById('notif-list-container');
+      if (state.notifications.length === 0) {
+        container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-secondary);">Tidak ada notifikasi</div>';
+        return;
+      }
+
+      let html = '';
+      state.notifications.forEach(n => {
+        html += `
+          <div class="tx-item">
+            <div class="tx-icon in"><i data-lucide="bell" style="width:20px;"></i></div>
+            <div class="tx-details">
+              <div class="tx-title">${n.title}</div>
+              <div class="tx-date">${n.message} • ${formatDate(n.time)}</div>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+      lucide.createIcons();
+    }
+
+    function updateNotifBadge() {
+      const hasUnread = state.notifications.some(n => !n.read);
+      document.getElementById('notif-badge').style.display = hasUnread ? 'block' : 'none';
+    }
+
+    /* UTILS */
+    function formatDate(ts) {
+      const date = new Date(ts);
+      return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+    }
+
+    /* ==========================================================================
+       INITIALIZATION
+       ========================================================================== */
+    window.addEventListener('DOMContentLoaded', () => {
+      loadStorage();
+
+      if (state.theme) {
+        document.body.setAttribute('data-theme', state.theme);
+      }
+
+      // Hide Splash Screen after 1.5s
+      setTimeout(() => {
+        const splash = document.getElementById('splash-screen');
+        splash.style.opacity = '0';
+        splash.style.transition = 'opacity 0.4s';
+        setTimeout(() => {
+          splash.style.display = 'none';
+
+          // Route to PIN Setup or Enter PIN
+          if (!state.pinHash) {
+            isPinSetupMode = true;
+            document.getElementById('pin-title').innerText = "Buat PIN Baru";
+            document.getElementById('pin-subtitle').innerText = "Buat 6 digit PIN untuk mengamankan wallet Anda.";
+            navigateTo('pin');
+          } else {
+            navigateTo('pin');
+          }
+        }, 400);
+      }, 1500);
+
+      lucide.createIcons();
     });
-
-    function toggleAuthMode(mode) {
-        if (mode === 'register') {
-            document.getElementById('form-login').classList.add('hidden');
-            document.getElementById('form-register').classList.remove('hidden');
-        } else {
-            document.getElementById('form-register').classList.add('hidden');
-            document.getElementById('form-login').classList.remove('hidden');
-        }
-    }
-
-    async function handleLogin(e) {
-        e.preventDefault();
-        const email = document.getElementById('login-email').value;
-        const pass = document.getElementById('login-password').value;
-        const btn = document.getElementById('btn-login-submit');
-        
-        btn.disabled = true;
-        btn.innerText = "Memproses...";
-
-        try {
-            await auth.signInWithEmailAndPassword(email, pass);
-        } catch (err) {
-            alert("Login Gagal: " + err.message);
-        } finally {
-            btn.disabled = false;
-            btn.innerText = "Masuk";
-        }
-    }
-
-    async function handleRegister(e) {
-        e.preventDefault();
-        const name = document.getElementById('reg-name').value;
-        const email = document.getElementById('reg-email').value;
-        const phone = document.getElementById('reg-phone').value;
-        const pass = document.getElementById('reg-password').value;
-        const btn = document.getElementById('btn-reg-submit');
-
-        btn.disabled = true;
-        btn.innerText = "Membuat Akun...";
-
-        try {
-            const res = await auth.createUserWithEmailAndPassword(email, pass);
-            const walletId = 'MW-' + Math.floor(100000 + Math.random() * 900000);
-
-            await db.collection('users').doc(res.user.uid).set({
-                uid: res.user.uid,
-                name: name,
-                email: email,
-                phone: phone,
-                balance: 0,
-                walletId: walletId,
-                pin: null, // Force user to set PIN
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-
-        } catch (err) {
-            alert("Registrasi Gagal: " + err.message);
-        } finally {
-            btn.disabled = false;
-            btn.innerText = "Daftar Sekarang";
-        }
-    }
-
-    function handleLogout() {
-        auth.signOut();
-    }
-
-    // --- PIN SYSTEM ---
-    let isSettingPin = false;
-
-    function setupPinMode(isNew = false, callback = null) {
-        isSettingPin = isNew;
-        pinCallback = callback;
-        pinInput = "";
-        updatePinDots();
-        
-        document.getElementById('pin-title').innerText = isNew ? "Buat PIN Baru" : "Masukkan PIN";
-        document.getElementById('pin-subtitle').innerText = isNew ? "Atur 6 digit PIN Keamanan Anda" : "Gunakan PIN 6 digit Anda";
-        openView('view-pin');
-    }
-
-    function pressPin(val) {
-        if (val === 'del') {
-            pinInput = pinInput.slice(0, -1);
-        } else if (pinInput.length < 6) {
-            pinInput += val;
-        }
-
-        updatePinDots();
-
-        if (pinInput.length === 6) {
-            setTimeout(async () => {
-                if (isSettingPin) {
-                    // Simple hash placeholder (Production should use proper server backend/hashing)
-                    const hashedPin = btoa(pinInput); 
-                    await db.collection('users').doc(currentUser.uid).update({ pin: hashedPin });
-                    alert("PIN Berhasil Dibuat!");
-                    openView('view-dashboard');
-                } else {
-                    const hashedInput = btoa(pinInput);
-                    if (hashedInput === currentUserDoc.pin) {
-                        if (pinCallback) pinCallback();
-                    } else {
-                        alert("PIN Salah!");
-                        pinInput = "";
-                        updatePinDots();
-                    }
-                }
-            }, 100);
-        }
-    }
-
-    function updatePinDots() {
-        const dots = document.querySelectorAll('.pin-dot');
-        dots.forEach((dot, idx) => {
-            if (idx < pinInput.length) {
-                dot.classList.add('filled');
-            } else {
-                dot.classList.remove('filled');
-            }
-        });
-    }
-
-    // --- UI UPDATES & REALTIME LISTENER ---
-    function updateUIWithUserData() {
-        if (!currentUserDoc) return;
-
-        document.getElementById('dash-username').innerText = currentUserDoc.name;
-        document.getElementById('dash-avatar').innerText = currentUserDoc.name.charAt(0).toUpperCase();
-        document.getElementById('profile-name').innerText = currentUserDoc.name;
-        document.getElementById('profile-email').innerText = currentUserDoc.email;
-        document.getElementById('profile-avatar').innerText = currentUserDoc.name.charAt(0).toUpperCase();
-        document.getElementById('wallet-id-display').innerText = currentUserDoc.walletId;
-
-        // Balance Display
-        if (!isBalanceHidden) {
-            document.getElementById('dash-balance').innerText = `Rp${currentUserDoc.balance.toLocaleString('id-ID')}`;
-        }
-
-        // Generate QR
-        document.getElementById('qrcode').innerHTML = "";
-        new QRCode(document.getElementById("qrcode"), {
-            text: currentUserDoc.walletId,
-            width: 160,
-            height: 160
-        });
-    }
-
-    function toggleHideBalance() {
-        isBalanceHidden = !isBalanceHidden;
-        const btnText = document.getElementById('hide-balance-text');
-        const balanceDisplay = document.getElementById('dash-balance');
-
-        if (isBalanceHidden) {
-            balanceDisplay.innerText = "Rp ••••••••";
-            btnText.innerText = "Tampilkan Saldo";
-        } else {
-            balanceDisplay.innerText = `Rp${currentUserDoc.balance.toLocaleString('id-ID')}`;
-            btnText.innerText = "Sembunyikan Saldo";
-        }
-    }
-
-    function listenTransactions() {
-        db.collection('transactions')
-            .where('participants', 'array-contains', currentUser.uid)
-            .orderBy('createdAt', 'desc')
-            .onSnapshot(snapshot => {
-                historyData = [];
-                snapshot.forEach(doc => {
-                    historyData.push({ id: doc.id, ...doc.data() });
-                });
-                renderTransactions();
-            });
-    }
-
-    function renderTransactions() {
-        const dashContainer = document.getElementById('dash-tx-list');
-        const fullContainer = document.getElementById('full-tx-list');
-        
-        dashContainer.innerHTML = "";
-        fullContainer.innerHTML = "";
-
-        if (historyData.length === 0) {
-            const emptyMsg = `<div style="text-align: center; color: var(--text-secondary); font-size: 0.85rem; padding: 20px;">Belum ada transaksi.</div>`;
-            dashContainer.innerHTML = emptyMsg;
-            fullContainer.innerHTML = emptyMsg;
-            return;
-        }
-
-        historyData.forEach((tx, idx) => {
-            const isIncoming = tx.receiverId === currentUser.uid;
-            const amountClass = isIncoming ? 'in' : 'out';
-            const prefix = isIncoming ? '+' : '-';
-            
-            const html = `
-                <div class="tx-item">
-                    <div class="tx-left">
-                        <div class="tx-icon">
-                            <i data-lucide="${isIncoming ? 'arrow-down-left' : 'arrow-up-right'}"></i>
-                        </div>
-                        <div>
-                            <div class="tx-title">${tx.description}</div>
-                            <div class="tx-date">${tx.type} • ${tx.createdAt ? new Date(tx.createdAt.toDate()).toLocaleDateString('id-ID') : 'Baru saja'}</div>
-                        </div>
-                    </div>
-                    <div class="tx-amount ${amountClass}">${prefix}Rp${tx.amount.toLocaleString('id-ID')}</div>
-                </div>
-            `;
-
-            if (idx < 3) dashContainer.innerHTML += html;
-            fullContainer.innerHTML += html;
-        });
-
-        lucide.createIcons();
-    }
-
-    // --- TRANSACTIONS LOGIC (TRANSFER, TOPUP, WITHDRAW) ---
-    function initiateTransfer() {
-        const target = document.getElementById('transfer-target').value;
-        const amount = Number(document.getElementById('transfer-amount').value);
-
-        if (!target || amount <= 0) {
-            alert("Harap isi tujuan dan nominal secara benar.");
-            return;
-        }
-
-        if (amount > currentUserDoc.balance) {
-            alert("Saldo tidak mencukupi.");
-            return;
-        }
-
-        setupPinMode(false, () => executeTransfer(target, amount));
-    }
-
-    async function executeTransfer(target, amount) {
-        openView('view-dashboard');
-        
-        try {
-            // Find Recipient
-            const userQuery = await db.collection('users')
-                .where('walletId', '==', target)
-                .get();
-
-            let receiverDoc = null;
-            if (!userQuery.empty) {
-                receiverDoc = userQuery.docs[0];
-            } else {
-                // Try finding by Email
-                const emailQuery = await db.collection('users').where('email', '==', target).get();
-                if (!emailQuery.empty) receiverDoc = emailQuery.docs[0];
-            }
-
-            if (!receiverDoc) {
-                alert("Penerima tidak ditemukan.");
-                return;
-            }
-
-            if (receiverDoc.id === currentUser.uid) {
-                alert("Tidak dapat mengirim ke diri sendiri.");
-                return;
-            }
-
-            const receiverData = receiverDoc.data();
-            const txId = 'MW-' + Date.now();
-
-            // Firestore Batch Transaction (Atomic)
-            await db.runTransaction(async (transaction) => {
-                const senderRef = db.collection('users').doc(currentUser.uid);
-                const receiverRef = db.collection('users').doc(receiverDoc.id);
-                const txRef = db.collection('transactions').doc(txId);
-
-                const sfDoc = await transaction.get(senderRef);
-                if (sfDoc.data().balance < amount) {
-                    throw "Saldo tidak mencukupi!";
-                }
-
-                transaction.update(senderRef, { balance: sfDoc.data().balance - amount });
-                transaction.update(receiverRef, { balance: receiverData.balance + amount });
-
-                transaction.set(txRef, {
-                    transactionId: txId,
-                    senderId: currentUser.uid,
-                    receiverId: receiverDoc.id,
-                    participants: [currentUser.uid, receiverDoc.id],
-                    amount: amount,
-                    type: 'TRANSFER',
-                    description: `Transfer ke ${receiverData.name}`,
-                    status: 'SUCCESS',
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-            });
-
-            alert("Transfer Berhasil!");
-        } catch (err) {
-            alert("Transaksi Gagal: " + err);
-        }
-    }
-
-    async function executeTopUp() {
-        const amount = Number(document.getElementById('topup-amount').value);
-        const txId = 'MW-' + Date.now();
-
-        try {
-            await db.runTransaction(async (transaction) => {
-                const userRef = db.collection('users').doc(currentUser.uid);
-                const txRef = db.collection('transactions').doc(txId);
-                const doc = await transaction.get(userRef);
-
-                transaction.update(userRef, { balance: doc.data().balance + amount });
-                transaction.set(txRef, {
-                    transactionId: txId,
-                    senderId: 'SYSTEM',
-                    receiverId: currentUser.uid,
-                    participants: [currentUser.uid],
-                    amount: amount,
-                    type: 'TOPUP',
-                    description: 'Top Up Demo Balance',
-                    status: 'SUCCESS',
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-            });
-
-            alert("Top Up Demo Berhasil!");
-            openView('view-dashboard');
-        } catch (err) {
-            alert("Topup Gagal: " + err);
-        }
-    }
-
-    async function executeWithdraw() {
-        const amount = Number(document.getElementById('withdraw-amount').value);
-        if (amount <= 0 || amount > currentUserDoc.balance) {
-            alert("Nominal tidak valid atau saldo kurang.");
-            return;
-        }
-
-        setupPinMode(false, async () => {
-            const txId = 'MW-' + Date.now();
-            try {
-                await db.runTransaction(async (transaction) => {
-                    const userRef = db.collection('users').doc(currentUser.uid);
-                    const txRef = db.collection('transactions').doc(txId);
-                    const doc = await transaction.get(userRef);
-
-                    transaction.update(userRef, { balance: doc.data().balance - amount });
-                    transaction.set(txRef, {
-                        transactionId: txId,
-                        senderId: currentUser.uid,
-                        receiverId: 'BANK',
-                        participants: [currentUser.uid],
-                        amount: amount,
-                        type: 'WITHDRAW',
-                        description: 'Tarik Dana Demo',
-                        status: 'SUCCESS',
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                });
-
-                alert("Penarikan Berhasil!");
-                openView('view-dashboard');
-            } catch (err) {
-                alert("Gagal Tarik Dana: " + err);
-            }
-        });
-    }
-
-    // --- THEME TOGGLE ---
-    function handleThemeToggle() {
-        document.body.classList.toggle('light-theme');
-    }
-
-    <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyAmQ7BE8YvWLY-XgRHoppLVGE5V...",
-    authDomain: "muzi-e-walet.firebaseapp.com",
-    projectId: "muzi-e-walet",
-    storageBucket: "muzi-e-walet.firebasestor...",
-    messagingSenderId: "1061180104660",
-    appId: "1:1061180104660:web:1bece63ce4ca8...",
-    measurementId: "G-W4F3KCSKFX"
-  };
-
-  // Inisialisasi
-  const app = initializeApp(firebaseConfig);
-  
-  // Ekspor ke window agar bisa dibaca oleh script global Anda
-  window.auth = getAuth(app);
-  window.db = getFirestore(app);
-</script>
-
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyAmQ7BE8YvWLY-XgRHoppLVGE5Vjw2XTcE",
-    authDomain: "muzi-e-walet.firebaseapp.com",
-    projectId: "muzi-e-walet",
-    storageBucket: "muzi-e-walet.firebasestorage.app",
-    messagingSenderId: "1061180104660",
-    appId: "1:1061180104660:web:1bece63ce4ca860071c041",
-    measurementId: "G-W4F3KCSKFX"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
-    
-    // --- INITIALIZATION ---
-    setTimeout(() => {
-        if (!currentUser) openView('view-auth');
-    }, 1500);
-</script>
-
+  </script>
 </body>
 </html>
