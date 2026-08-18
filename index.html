@@ -1230,6 +1230,47 @@
         document.body.classList.toggle('light-theme');
     }
 
+    <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAmQ7BE8YvWLY-XgRHoppLVGE5V...",
+    authDomain: "muzi-e-walet.firebaseapp.com",
+    projectId: "muzi-e-walet",
+    storageBucket: "muzi-e-walet.firebasestor...",
+    messagingSenderId: "1061180104660",
+    appId: "1:1061180104660:web:1bece63ce4ca8...",
+    measurementId: "G-W4F3KCSKFX"
+  };
+
+  // Inisialisasi
+  const app = initializeApp(firebaseConfig);
+  
+  // Ekspor ke window agar bisa dibaca oleh script global Anda
+  window.auth = getAuth(app);
+  window.db = getFirestore(app);
+</script>
+
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyAmQ7BE8YvWLY-XgRHoppLVGE5Vjw2XTcE",
+    authDomain: "muzi-e-walet.firebaseapp.com",
+    projectId: "muzi-e-walet",
+    storageBucket: "muzi-e-walet.firebasestorage.app",
+    messagingSenderId: "1061180104660",
+    appId: "1:1061180104660:web:1bece63ce4ca860071c041",
+    measurementId: "G-W4F3KCSKFX"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
+    
     // --- INITIALIZATION ---
     setTimeout(() => {
         if (!currentUser) openView('view-auth');
