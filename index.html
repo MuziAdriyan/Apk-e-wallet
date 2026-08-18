@@ -1,1259 +1,1074 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>MUZI WALLET - Modern Digital Wallet Demo</title>
-  <meta name="theme-color" content="#09090b">
-  <!-- Lucide Icons CDN -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- QRCode Generator CDN -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MUZI WALLET - Digital Wallet Demo</title>
+    <style>
+        :root {
+            --primary: #FF6A00;
+            --primary-hover: #E05D00;
+            --bg: #F5F6F8;
+            --card: #FFFFFF;
+            --text: #202020;
+            --secondary: #6F6F6F;
+            --border: #E8E8E8;
+            --success: #10B981;
+            --danger: #EF4444;
+            --accent-blue: #2563EB;
+            --accent-green: #059669;
+            --accent-purple: #7C3AED;
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+        }
 
-  <style>
-    /* ==========================================================================
-       1. VARIABLES & BASE STYLES
-       ========================================================================== */
-    :root {
-      --bg-color: #09090b;
-      --card-bg: rgba(24, 24, 27, 0.75);
-      --card-border: rgba(255, 255, 255, 0.1);
-      --text-primary: #f4f4f5;
-      --text-secondary: #a1a1aa;
-      --accent: #6366f1; /* Indigo Accent */
-      --accent-hover: #4f46e5;
-      --positive: #10b981;
-      --negative: #ef4444;
-      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      --bottom-nav-height: 65px;
-      --radius-lg: 20px;
-      --radius-md: 14px;
-      --radius-sm: 8px;
-    }
+        [data-theme="dark"] {
+            --bg: #121212;
+            --card: #1E1E1E;
+            --text: #F5F6F8;
+            --secondary: #A0A0A0;
+            --border: #2A2A2A;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.2);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.3);
+        }
 
-    [data-theme="light"] {
-      --bg-color: #f4f4f5;
-      --card-bg: rgba(255, 255, 255, 0.85);
-      --card-border: rgba(0, 0, 0, 0.08);
-      --text-primary: #09090b;
-      --text-secondary: #71717a;
-      --accent: #4f46e5;
-      --accent-hover: #4338ca;
-    }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-family); -webkit-tap-highlight-color: transparent; }
-    body { background-color: var(--bg-color); color: var(--text-primary); font-size: 14px; overflow-x: hidden; min-height: 100vh; padding-bottom: calc(var(--bottom-nav-height) + 20px); transition: background-color 0.3s, color 0.3s; }
+        body {
+            background-color: #0d0d0d;
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
 
-    /* Glass Effect & Cards */
-    .glass { background: var(--card-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--card-border); border-radius: var(--radius-lg); }
-    .btn { background: var(--accent); color: #fff; border: none; padding: 14px 20px; border-radius: var(--radius-md); font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; }
-    .btn:active { transform: scale(0.98); }
-    .btn-secondary { background: rgba(255,255,255,0.08); color: var(--text-primary); border: 1px solid var(--card-border); }
-    [data-theme="light"] .btn-secondary { background: rgba(0,0,0,0.05); }
+        #app-container {
+            width: 100%;
+            max-width: 480px;
+            height: 100vh;
+            max-height: 900px;
+            background: var(--bg);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 40px rgba(0,0,0,0.5);
+        }
 
-    .input-group { margin-bottom: 16px; text-align: left; }
-    .input-group label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; font-weight: 500; }
-    .input-field { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 14px 16px; color: var(--text-primary); font-size: 14px; outline: none; transition: border-color 0.2s; }
-    [data-theme="light"] .input-field { background: rgba(0, 0, 0, 0.03); }
-    .input-field:focus { border-color: var(--accent); }
+        @media (min-width: 481px) {
+            #app-container {
+                height: 92vh;
+                border-radius: 32px;
+                border: 8px solid #222;
+            }
+        }
 
-    .badge-demo { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; }
+        /* SVG Icon Base Style */
+        .svg-icon {
+            width: 24px;
+            height: 24px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            display: inline-block;
+            vertical-align: middle;
+        }
 
-    /* Page View Framework */
-    .view-page { display: none; padding: 20px 16px; max-width: 480px; margin: 0 auto; animation: fadeIn 0.25s ease-out; }
-    .view-page.active { display: block; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        /* Screens & SPA Navigation */
+        .page-content {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 80px;
+            display: none;
+        }
+        .page-content.active {
+            display: block;
+            animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
 
-    /* Header Component */
-    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-top: 4px; }
-    .page-title { font-size: 18px; font-weight: 700; }
-    .icon-btn { background: rgba(255, 255, 255, 0.06); border: 1px solid var(--card-border); color: var(--text-primary); width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-    /* Bottom Navigation */
-    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: var(--bottom-nav-height); background: var(--card-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; max-width: 480px; margin: 0 auto; }
-    .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-secondary); font-size: 10px; font-weight: 500; gap: 4px; text-decoration: none; cursor: pointer; width: 20%; height: 100%; transition: color 0.2s; }
-    .nav-item.active { color: var(--accent); font-weight: 700; }
+        /* UI Elements */
+        .card {
+            background: var(--card);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            border: 1px solid var(--border);
+            margin-bottom: 14px;
+            box-shadow: var(--shadow-sm);
+        }
 
-    /* Toast Notification */
-    #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: var(--text-primary); color: var(--bg-color); padding: 12px 24px; border-radius: 30px; font-weight: 600; font-size: 13px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 9999; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; gap: 8px; }
-    #toast.show { transform: translateX(-50%) translateY(0); }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 14px;
+            border-radius: var(--radius-md);
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            font-size: 15px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            gap: 8px;
+        }
+        .btn:active { transform: scale(0.97); background: var(--primary-hover); }
+        .btn-secondary { background: var(--border); color: var(--text); }
+        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
 
-    /* Modal Sheet */
-    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); display: none; align-items: flex-end; justify-content: center; z-index: 2000; }
-    .modal-sheet { background: var(--bg-color); border: 1px solid var(--card-border); border-top-left-radius: 28px; border-top-right-radius: 28px; padding: 24px; width: 100%; max-width: 480px; animation: slideUp 0.3s ease-out; max-height: 90vh; overflow-y: auto; }
-    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        /* Navigation Header */
+        .nav-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .nav-header .title {
+            font-size: 17px;
+            font-weight: 700;
+            flex: 1;
+            text-align: center;
+        }
+        .nav-header .icon-btn {
+            background: none;
+            border: none;
+            color: var(--text);
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-    /* Balance Card */
-    .balance-card { padding: 24px; border-radius: 24px; background: linear-gradient(135deg, var(--accent) 0%, #312e81 100%); color: #fff; position: relative; overflow: hidden; margin-bottom: 20px; box-shadow: 0 15px 30px rgba(99, 102, 241, 0.25); }
-    .balance-card::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%); pointer-events: none; }
-    .balance-amount { font-size: 30px; font-weight: 700; margin: 10px 0; letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px; }
+        /* Header Dashboard */
+        .home-header {
+            padding: 16px 16px 10px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+        .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            box-shadow: 0 2px 8px rgba(255, 106, 0, 0.3);
+        }
 
-    /* Action Grid */
-    .action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
-    .action-item { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
-    .action-icon { width: 52px; height: 52px; border-radius: 18px; background: var(--card-bg); border: 1px solid var(--card-border); display: flex; align-items: center; justify-content: center; color: var(--accent); transition: transform 0.2s, background 0.2s; }
-    .action-item:active .action-icon { transform: scale(0.92); }
-    .action-label { font-size: 11px; color: var(--text-secondary); font-weight: 500; }
+        /* Balance Card */
+        .balance-card {
+            background: linear-gradient(135deg, #FF6A00 0%, #FF8533 100%);
+            color: white;
+            border: none;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+        .balance-card::after {
+            content: '';
+            position: absolute;
+            right: -20px;
+            bottom: -20px;
+            width: 120px;
+            height: 120px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
 
-    /* Numeric Keypad for PIN */
-    .pin-display { display: flex; justify-content: center; gap: 14px; margin: 30px 0; }
-    .pin-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--card-border); transition: all 0.2s; }
-    .pin-dot.filled { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 10px rgba(99, 102, 241, 0.5); }
-    .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: 300px; margin: 0 auto; }
-    .key-btn { width: 64px; height: 64px; border-radius: 50%; background: var(--card-bg); border: 1px solid var(--card-border); font-size: 22px; font-weight: 600; display: flex; align-items: center; justify-content: center; cursor: pointer; margin: 0 auto; user-select: none; transition: background 0.15s; }
-    .key-btn:active { background: rgba(99, 102, 241, 0.2); }
+        /* Grids & Services */
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            text-align: center;
+        }
+        .service-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            position: relative;
+        }
+        .service-item:active { transform: scale(0.94); }
+        .icon-wrapper {
+            width: 52px;
+            height: 52px;
+            border-radius: var(--radius-md);
+            background: var(--card);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-sm);
+            color: var(--primary);
+        }
+        .service-name {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text);
+            line-height: 1.2;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
 
-    /* List Item Modern */
-    .tx-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid var(--card-border); cursor: pointer; }
-    .tx-item:last-child { border-bottom: none; }
-    .tx-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
-    .tx-icon.in { background: rgba(16, 185, 129, 0.12); color: var(--positive); }
-    .tx-icon.out { background: rgba(239, 68, 68, 0.12); color: var(--negative); }
-    .tx-details { flex-grow: 1; margin: 0 12px; }
-    .tx-title { font-weight: 600; font-size: 13px; margin-bottom: 2px; }
-    .tx-date { font-size: 11px; color: var(--text-secondary); }
-    .tx-amount { font-weight: 700; font-size: 14px; text-align: right; }
+        /* Bottom Nav */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 68px;
+            background: var(--card);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 20;
+        }
+        .nav-tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--secondary);
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 20%;
+        }
+        .nav-tab.active { color: var(--primary); }
 
-    /* Chart Simulation Bar */
-    .chart-box { height: 140px; width: 100%; display: flex; align-items: flex-end; gap: 10px; padding: 16px 0; }
-    .chart-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; gap: 6px; }
-    .chart-bar { width: 100%; max-width: 24px; background: rgba(99, 102, 241, 0.2); border-radius: 6px; transition: height 0.5s ease; }
-    .chart-bar.active { background: var(--accent); }
-    .chart-label { font-size: 10px; color: var(--text-secondary); }
+        /* Keypad PIN Overlay */
+        .pin-overlay {
+            position: absolute;
+            inset: 0;
+            background: var(--card);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        .pin-dots {
+            display: flex;
+            gap: 16px;
+            margin: 32px 0;
+        }
+        .pin-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            transition: all 0.2s;
+        }
+        .pin-dot.filled {
+            background: var(--primary);
+            border-color: var(--primary);
+            transform: scale(1.1);
+        }
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            width: 100%;
+            max-width: 280px;
+        }
+        .key-btn {
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 22px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: auto;
+            cursor: pointer;
+        }
+        .key-btn:active { background: var(--border); }
 
-    /* Splash Screen */
-    #splash-screen { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg-color); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-    .splash-logo { width: 80px; height: 80px; background: linear-gradient(135deg, var(--accent), #312e81); border-radius: 24px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 32px; font-weight: 800; box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3); animation: pulse3d 2s infinite alternate; }
-    @keyframes pulse3d { 0% { transform: scale(1) rotateY(0deg); } 100% { transform: scale(1.05) rotateY(15deg); } }
-  </style>
+        /* Splash Screen */
+        .splash-screen {
+            position: absolute;
+            inset: 0;
+            background: var(--primary);
+            color: white;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease;
+        }
+
+        /* Search Input */
+        .search-box {
+            position: relative;
+            margin-bottom: 16px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 12px 16px 12px 42px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--text);
+            font-size: 14px;
+            outline: none;
+        }
+        .search-box .svg-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--secondary);
+        }
+
+        /* Section Title */
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 16px 0 10px 0;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: var(--text);
+            color: var(--bg);
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: var(--shadow-lg);
+            z-index: 300;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 80;
+            display: none;
+            align-items: flex-end;
+        }
+        .modal-content {
+            background: var(--card);
+            width: 100%;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            padding: 20px;
+            animation: slideUp 0.25s ease-out;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 14px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--secondary);
+            margin-bottom: 6px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 14px;
+            outline: none;
+        }
+    </style>
 </head>
 <body>
 
-  <!-- TOAST NOTIFICATION -->
-  <div id="toast"><i data-lucide="info" style="width: 16px; height: 16px;"></i> <span id="toast-msg">Notifikasi</span></div>
-
-  <!-- SPLASH SCREEN -->
-  <div id="splash-screen">
-    <div class="splash-logo">MW</div>
-    <h1 style="font-size: 22px; font-weight: 700; margin-top: 20px;">MUZI WALLET</h1>
-    <p style="color: var(--text-secondary); font-size: 12px; margin-top: 4px;">Digital Wallet Demo</p>
-    <div style="margin-top: 30px;"><span class="badge-demo">PROTOTYPE MODE</span></div>
-  </div>
-
-  <!-- VIEW: PIN SETUP / ENTER -->
-  <div id="view-pin" class="view-page">
-    <div style="text-align: center; margin-top: 30px;">
-      <div style="width: 56px; height: 56px; background: rgba(99, 102, 241, 0.1); color: var(--accent); border-radius: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
-        <i data-lucide="lock" style="width: 28px; height: 28px;"></i>
-      </div>
-      <h2 style="font-size: 20px; font-weight: 700;" id="pin-title">Masukkan PIN</h2>
-      <p style="color: var(--text-secondary); font-size: 12px; margin-top: 6px;" id="pin-subtitle">Masukkan 6 digit PIN MUZI WALLET Anda.</p>
-
-      <div class="pin-display">
-        <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
-        <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
-      </div>
-
-      <div class="keypad">
-        <div class="key-btn" onclick="pressKeypad('1')">1</div>
-        <div class="key-btn" onclick="pressKeypad('2')">2</div>
-        <div class="key-btn" onclick="pressKeypad('3')">3</div>
-        <div class="key-btn" onclick="pressKeypad('4')">4</div>
-        <div class="key-btn" onclick="pressKeypad('5')">5</div>
-        <div class="key-btn" onclick="pressKeypad('6')">6</div>
-        <div class="key-btn" onclick="pressKeypad('7')">7</div>
-        <div class="key-btn" onclick="pressKeypad('8')">8</div>
-        <div class="key-btn" onclick="pressKeypad('9')">9</div>
-        <div class="key-btn" style="font-size: 12px;" onclick="clearKeypad()">C</div>
-        <div class="key-btn" onclick="pressKeypad('0')">0</div>
-        <div class="key-btn" onclick="backspaceKeypad()"><i data-lucide="delete" style="width: 20px;"></i></div>
-      </div>
-
-      <div style="margin-top: 24px;">
-        <button class="btn btn-secondary" style="width: auto; padding: 8px 16px; font-size: 12px;" onclick="triggerBiometrics()"><i data-lucide="fingerprint" style="width: 16px;"></i> Biometric Login</button>
-      </div>
+<div id="app-container">
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <svg class="svg-icon" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        <span id="toast-msg">Notifikasi</span>
     </div>
-  </div>
 
-  <!-- VIEW: HOME DASHBOARD -->
-  <div id="view-home" class="view-page">
-    <div style="padding: 6px; background: rgba(245, 158, 11, 0.1); border-radius: 10px; margin-bottom: 12px; font-size: 10px; color: #f59e0b; text-align: center;">
-      MUZI WALLET adalah aplikasi demo lokal. Tidak memproses uang sungguhan.
+    <!-- Splash Screen -->
+    <div id="splash" class="splash-screen">
+        <svg class="svg-icon" style="width:64px; height:64px;" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+        <h2 style="margin-top: 12px; font-weight:800; letter-spacing:1px;">MUZI WALLET</h2>
+        <p style="font-size: 12px; opacity: 0.8;">Digital Wallet Demo</p>
     </div>
-    
-    <div class="page-header">
-      <div style="display: flex; align-items: center; gap: 12px;">
-        <div id="home-avatar" style="width: 42px; height: 42px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px;">M</div>
-        <div>
-          <div style="font-size: 11px; color: var(--text-secondary);">Halo,</div>
-          <div style="font-weight: 700; font-size: 15px;" id="home-user-name">Muzi 👋</div>
+
+    <!-- PIN Overlay -->
+    <div id="pin-overlay" class="pin-overlay" style="display:none;">
+        <h3 id="pin-title" style="font-size:18px;">Masukkan PIN Anda</h3>
+        <p style="font-size:12px; color:var(--secondary); margin-top:4px;">Verifikasi keamanan 6 digit</p>
+        <div class="pin-dots">
+            <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+            <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
         </div>
-      </div>
-      <div class="icon-btn" onclick="navigateTo('notifications')">
-        <i data-lucide="bell" style="width: 18px;"></i>
-        <div id="notif-badge" style="position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; background: var(--negative); border-radius: 50%; display: none;"></div>
-      </div>
-    </div>
-
-    <!-- Balance Card -->
-    <div class="balance-card">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <span style="font-size: 12px; opacity: 0.8;">Saldo Utama</span>
-        <span class="badge-demo" style="background: rgba(255,255,255,0.2); color: #fff; border: none;">DEMO</span>
-      </div>
-      <div class="balance-amount">
-        <span id="home-balance-text">Rp 2.500.000</span>
-        <i id="btn-toggle-balance" data-lucide="eye" style="width: 20px; cursor: pointer; opacity: 0.8;" onclick="toggleBalance()"></i>
-      </div>
-      <div style="font-size: 11px; opacity: 0.8;" id="home-wallet-id">ID Wallet: MW-88492011</div>
-    </div>
-
-    <!-- Quick Action Cards -->
-    <div class="action-grid">
-      <div class="action-item" onclick="navigateTo('topup')">
-        <div class="action-icon"><i data-lucide="plus-circle"></i></div>
-        <span class="action-label">Top Up</span>
-      </div>
-      <div class="action-item" onclick="navigateTo('transfer')">
-        <div class="action-icon"><i data-lucide="send"></i></div>
-        <span class="action-label">Kirim</span>
-      </div>
-      <div class="action-item" onclick="navigateTo('receive')">
-        <div class="action-icon"><i data-lucide="arrow-down-left"></i></div>
-        <span class="action-label">Terima</span>
-      </div>
-      <div class="action-item" onclick="navigateTo('payment')">
-        <div class="action-icon"><i data-lucide="credit-card"></i></div>
-        <span class="action-label">Bayar</span>
-      </div>
-    </div>
-
-    <!-- Analytics Summary Widget -->
-    <div class="glass" style="padding: 16px; margin-bottom: 20px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-        <span style="font-weight: 700; font-size: 13px;">Ringkasan Bulan Ini</span>
-        <span style="font-size: 11px; color: var(--accent); cursor: pointer;" onclick="navigateTo('finance')">Detail Analytics</span>
-      </div>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-        <div style="background: rgba(16, 185, 129, 0.08); padding: 10px; border-radius: 12px;">
-          <div style="font-size: 10px; color: var(--positive); font-weight: 600;">Pemasukan</div>
-          <div style="font-weight: 700; font-size: 13px; margin-top: 2px;" id="home-stat-in">Rp 0</div>
+        <div class="keypad">
+            <button class="key-btn" onclick="pressKey('1')">1</button>
+            <button class="key-btn" onclick="pressKey('2')">2</button>
+            <button class="key-btn" onclick="pressKey('3')">3</button>
+            <button class="key-btn" onclick="pressKey('4')">4</button>
+            <button class="key-btn" onclick="pressKey('5')">5</button>
+            <button class="key-btn" onclick="pressKey('6')">6</button>
+            <button class="key-btn" onclick="pressKey('7')">7</button>
+            <button class="key-btn" onclick="pressKey('8')">8</button>
+            <button class="key-btn" onclick="pressKey('9')">9</button>
+            <button class="key-btn" style="border:none; background:transparent;" onclick="clearPin()">C</button>
+            <button class="key-btn" onclick="pressKey('0')">0</button>
+            <button class="key-btn" style="border:none; background:transparent;" onclick="backspacePin()">
+                <svg class="svg-icon" viewBox="0 0 24 24"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path><line x1="18" y1="9" x2="12" y2="15"></line><line x1="12" y1="9" x2="18" y2="15"></line></svg>
+            </button>
         </div>
-        <div style="background: rgba(239, 68, 68, 0.08); padding: 10px; border-radius: 12px;">
-          <div style="font-size: 10px; color: var(--negative); font-weight: 600;">Pengeluaran</div>
-          <div style="font-weight: 700; font-size: 13px; margin-top: 2px;" id="home-stat-out">Rp 0</div>
+    </div>
+
+    <!-- Modal Popup Transaksi -->
+    <div id="modal-container" class="modal-overlay">
+        <div class="modal-content" id="modal-body"></div>
+    </div>
+
+    <!-- MAIN APP PAGES -->
+
+    <!-- Page: HOME -->
+    <div id="page-home" class="page-content active">
+        <div class="home-header">
+            <div class="profile-btn" onclick="navigateTo('profile')">
+                <div class="avatar">M</div>
+                <div>
+                    <div style="font-size:11px; color:var(--secondary);">Halo,</div>
+                    <strong style="font-size:14px;" id="home-username">Muzi Adriyan</strong>
+                </div>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <button class="icon-btn" onclick="navigateTo('notifications')" style="background:none; border:none; position:relative; cursor:pointer;">
+                    <svg class="svg-icon" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                    <span id="notif-badge" style="position:absolute; top:-2px; right:-2px; width:8px; height:8px; background:var(--danger); border-radius:50%; display:none;"></span>
+                </button>
+            </div>
         </div>
-      </div>
+
+        <div style="padding:0 16px;">
+            <!-- Saldo Card -->
+            <div class="card balance-card">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:12px; opacity:0.9;">Total Saldo</span>
+                    <button onclick="toggleBalanceHide()" style="background:none; border:none; color:white; cursor:pointer;">
+                        <svg id="eye-icon" class="svg-icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </button>
+                </div>
+                <div id="balance-display" style="font-size:26px; font-weight:800; margin:10px 0;">Rp 2.500.000</div>
+                <div style="font-size:11px; opacity:0.8; display:flex; justify-content:space-between;">
+                    <span>ID Wallet: <strong id="wallet-id-display">MW-88392011</strong></span>
+                    <span onclick="navigateTo('history')" style="cursor:pointer; text-decoration:underline;">Riwayat &gt;</span>
+                </div>
+            </div>
+
+            <!-- Quick Action Grid -->
+            <div class="card">
+                <div class="service-grid">
+                    <div class="service-item" onclick="navigateTo('transfer')">
+                        <div class="icon-wrapper"><svg class="svg-icon" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg></div>
+                        <span class="service-name">Transfer</span>
+                    </div>
+                    <div class="service-item" onclick="navigateTo('topup')">
+                        <div class="icon-wrapper"><svg class="svg-icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></div>
+                        <span class="service-name">Top Up</span>
+                    </div>
+                    <div class="service-item" onclick="navigateTo('receive')">
+                        <div class="icon-wrapper"><svg class="svg-icon" viewBox="0 0 24 24"><line x1="17" y1="7" x2="7" y2="17"></line><polyline points="17 17 7 17 7 7"></polyline></svg></div>
+                        <span class="service-name">Terima</span>
+                    </div>
+                    <div class="service-item" onclick="navigateTo('all-services')">
+                        <div class="icon-wrapper" style="background:rgba(255,106,0,0.1); color:var(--primary);"><svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg></div>
+                        <span class="service-name" style="color:var(--primary); font-weight:700;">Lihat Semua</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Layanan Favorit -->
+            <div class="section-title">Layanan Favorit</div>
+            <div class="card">
+                <div id="favorite-services-grid" class="service-grid"></div>
+            </div>
+
+            <!-- Terakhir Digunakan -->
+            <div class="section-title">Terakhir Digunakan</div>
+            <div class="card">
+                <div id="recent-services-list" style="display:flex; gap:10px; overflow-x:auto; padding-bottom:4px;"></div>
+            </div>
+
+            <!-- Ringkasan Keuangan -->
+            <div class="section-title">Ringkasan Keuangan</div>
+            <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <div style="font-size:12px; color:var(--secondary);">Tabungan Demo</div>
+                    <div style="font-size:16px; font-weight:700; color:var(--text);" id="savings-display">Rp 2.500.000</div>
+                </div>
+                <button class="btn btn-outline" style="width:auto; padding:6px 12px; font-size:12px;" onclick="navigateTo('financial')">Kelola</button>
+            </div>
+        </div>
     </div>
 
-    <!-- Recent Transactions -->
-    <div>
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-        <span style="font-weight: 700; font-size: 14px;">Transaksi Terakhir</span>
-        <span style="font-size: 12px; color: var(--text-secondary); cursor: pointer;" onclick="navigateTo('history')">Lihat Semua</span>
-      </div>
-      <div class="glass" id="home-tx-list">
-        <!-- Rendered via JS -->
-      </div>
-    </div>
-  </div>
+    <!-- Page: SEMUA LAYANAN (FULL PAGE) -->
+    <div id="page-all-services" class="page-content">
+        <div class="nav-header">
+            <button class="icon-btn" onclick="navigateTo('home')">
+                <svg class="svg-icon" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </button>
+            <div class="title">Semua Layanan</div>
+            <div style="width:24px;"></div>
+        </div>
 
-  <!-- VIEW: TOP UP -->
-  <div id="view-topup" class="view-page">
-    <div class="page-header">
-      <div class="icon-btn" onclick="navigateTo('home')"><i data-lucide="arrow-left"></i></div>
-      <div class="page-title">Top Up Saldo</div>
-      <div style="width: 40px;"></div>
-    </div>
+        <div style="padding:16px;">
+            <!-- Search System -->
+            <div class="search-box">
+                <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" id="service-search-input" placeholder="Cari layanan (misal: pulsa, listrik, bank)..." oninput="filterServices()">
+            </div>
 
-    <div class="glass" style="padding: 20px; margin-bottom: 16px;">
-      <label style="font-size: 12px; color: var(--text-secondary); display: block; margin-bottom: 12px;">Pilih Nominal Cepat</label>
-      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px;">
-        <button class="btn btn-secondary" onclick="selectTopupNominal(20000)">Rp 20.000</button>
-        <button class="btn btn-secondary" onclick="selectTopupNominal(50000)">Rp 50.000</button>
-        <button class="btn btn-secondary" onclick="selectTopupNominal(100000)">Rp 100.000</button>
-        <button class="btn btn-secondary" onclick="selectTopupNominal(200000)">Rp 200.000</button>
-        <button class="btn btn-secondary" onclick="selectTopupNominal(500000)">Rp 500.000</button>
-        <button class="btn btn-secondary" onclick="selectTopupNominal(1000000)">Rp 1.000.000</button>
-      </div>
-
-      <div class="input-group">
-        <label>Atau Masukkan Nominal Custom (Rp)</label>
-        <input type="number" id="topup-amount" class="input-field" placeholder="Minimal Rp 10.000" min="10000" />
-      </div>
-
-      <button class="btn" onclick="processTopUp()">Top Up Sekarang</button>
-    </div>
-  </div>
-
-  <!-- VIEW: KIRIM / TRANSFER -->
-  <div id="view-transfer" class="view-page">
-    <div class="page-header">
-      <div class="icon-btn" onclick="navigateTo('home')"><i data-lucide="arrow-left"></i></div>
-      <div class="page-title">Kirim Uang</div>
-      <div style="width: 40px;"></div>
+            <div id="services-render-container">
+                <!-- Dynamically Rendered Categories -->
+            </div>
+        </div>
     </div>
 
-    <div class="glass" style="padding: 20px;">
-      <div class="input-group">
-        <label>Nomor Tujuan / Wallet ID</label>
-        <input type="text" id="transfer-target" class="input-field" placeholder="081234567890 / MW-XXXX" />
-      </div>
-      <div class="input-group">
-        <label>Nama Penerima</label>
-        <input type="text" id="transfer-name" class="input-field" placeholder="Contoh: Andi" />
-      </div>
-      <div class="input-group">
-        <label>Nominal (Rp)</label>
-        <input type="number" id="transfer-amount" class="input-field" placeholder="0" min="1000" />
-      </div>
-      <div class="input-group">
-        <label>Catatan (Opsional)</label>
-        <input type="text" id="transfer-note" class="input-field" placeholder="Contoh: Uang makan" />
-      </div>
-
-      <button class="btn" onclick="confirmTransferModal()">Lanjutkan Transfer</button>
-    </div>
-  </div>
-
-  <!-- VIEW: TERIMA UANG -->
-  <div id="view-receive" class="view-page">
-    <div class="page-header">
-      <div class="icon-btn" onclick="navigateTo('home')"><i data-lucide="arrow-left"></i></div>
-      <div class="page-title">Terima Uang</div>
-      <div style="width: 40px;"></div>
-    </div>
-
-    <div class="glass" style="padding: 24px; text-align: center; margin-bottom: 20px;">
-      <div style="font-weight: 700; font-size: 16px;" id="receive-user-name">Muzi Adriyan</div>
-      <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;" id="receive-wallet-id">ID: MW-88492011</div>
-
-      <div style="background: #fff; padding: 16px; border-radius: 16px; display: inline-block; margin-bottom: 16px;" id="qrcode-box"></div>
-
-      <div style="display: flex; gap: 10px;">
-        <button class="btn btn-secondary" onclick="copyWalletId()"><i data-lucide="copy" style="width: 16px;"></i> Salin ID</button>
-        <button class="btn btn-secondary" onclick="showToast('Link QR disebarkan')"><i data-lucide="share-2" style="width: 16px;"></i> Bagikan</button>
-      </div>
-    </div>
-
-    <!-- Simulasi Uang Masuk Manual -->
-    <div class="glass" style="padding: 20px;">
-      <div style="font-weight: 700; font-size: 13px; margin-bottom: 12px;">Simulasi Terima Uang Masuk</div>
-      <div class="input-group">
-        <label>Nama Pengirim</label>
-        <input type="text" id="receive-sender-name" class="input-field" placeholder="Budi" />
-      </div>
-      <div class="input-group">
-        <label>Nominal (Rp)</label>
-        <input type="number" id="receive-amount" class="input-field" placeholder="50000" />
-      </div>
-      <button class="btn" onclick="processSimulatedReceive()">Terima Transfer Demo</button>
-    </div>
-  </div>
-
-  <!-- VIEW: PEMBAYARAN -->
-  <div id="view-payment" class="view-page">
-    <div class="page-header">
-      <div class="icon-btn" onclick="navigateTo('home')"><i data-lucide="arrow-left"></i></div>
-      <div class="page-title">Pembayaran / Tagihan</div>
-      <div style="width: 40px;"></div>
+    <!-- Page: TRANSFER -->
+    <div id="page-transfer" class="page-content">
+        <div class="nav-header">
+            <button class="icon-btn" onclick="navigateTo('home')">
+                <svg class="svg-icon" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </button>
+            <div class="title">Transfer Ke Bank</div>
+            <div style="width:24px;"></div>
+        </div>
+        <div style="padding:16px;">
+            <div class="card">
+                <div class="form-group">
+                    <label>Pilih Bank</label>
+                    <select id="tf-bank" class="form-control">
+                        <option>Bank Demo Mandiri</option>
+                        <option>Bank Demo BCA</option>
+                        <option>Bank Demo BRI</option>
+                        <option>Bank Demo BNI</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Nomor Rekening</label>
+                    <input type="number" id="tf-account" class="form-control" placeholder="1234567890">
+                </div>
+                <div class="form-group">
+                    <label>Nama Penerima</label>
+                    <input type="text" id="tf-name" class="form-control" placeholder="Nama Penerima Demo">
+                </div>
+                <div class="form-group">
+                    <label>Nominal (Rp)</label>
+                    <input type="number" id="tf-amount" class="form-control" placeholder="0">
+                </div>
+                <div style="font-size:12px; color:var(--secondary); margin-bottom:16px; display:flex; justify-content:space-between;">
+                    <span>Biaya Admin Demo:</span>
+                    <strong>Rp 0</strong>
+                </div>
+                <button class="btn" onclick="processTransfer()">Lanjutkan</button>
+            </div>
+        </div>
     </div>
 
-    <div class="action-grid" style="margin-bottom: 16px;">
-      <div class="action-item" onclick="openPayService('Pulsa & Data')">
-        <div class="action-icon"><i data-lucide="smartphone"></i></div>
-        <span class="action-label">Pulsa/Data</span>
-      </div>
-      <div class="action-item" onclick="openPayService('Listrik PLN')">
-        <div class="action-icon"><i data-lucide="zap"></i></div>
-        <span class="action-label">Listrik</span>
-      </div>
-      <div class="action-item" onclick="openPayService('Internet & TV')">
-        <div class="action-icon"><i data-lucide="wifi"></i></div>
-        <span class="action-label">Internet</span>
-      </div>
-      <div class="action-item" onclick="openPayService('Voucher Game')">
-        <div class="action-icon"><i data-lucide="gamepad-2"></i></div>
-        <span class="action-label">Game</span>
-      </div>
+    <!-- Page: TOP UP -->
+    <div id="page-topup" class="page-content">
+        <div class="nav-header">
+            <button class="icon-btn" onclick="navigateTo('home')">
+                <svg class="svg-icon" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </button>
+            <div class="title">Top Up Saldo Demo</div>
+            <div style="width:24px;"></div>
+        </div>
+        <div style="padding:16px;">
+            <div class="card">
+                <div class="section-title" style="margin-top:0;">Pilih Nominal Instant</div>
+                <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; margin-bottom:16px;">
+                    <button class="btn btn-outline" onclick="processTopUp(20000)">Rp 20.000</button>
+                    <button class="btn btn-outline" onclick="processTopUp(50000)">Rp 50.000</button>
+                    <button class="btn btn-outline" onclick="processTopUp(100000)">Rp 100.000</button>
+                    <button class="btn btn-outline" onclick="processTopUp(500000)">Rp 500.000</button>
+                </div>
+                <div class="form-group">
+                    <label>Nominal Custom (Rp)</label>
+                    <input type="number" id="topup-custom-amount" class="form-control" placeholder="0">
+                </div>
+                <button class="btn" onclick="processCustomTopUp()">Top Up Sekarang</button>
+            </div>
+        </div>
     </div>
 
-    <div class="glass" style="padding: 20px;" id="pay-service-box">
-      <div style="font-size: 12px; color: var(--text-secondary); text-align: center;">Pilih kategori layanan pembayaran di atas.</div>
-    </div>
-  </div>
-
-  <!-- VIEW: RIWAYAT TRANSAKSI -->
-  <div id="view-history" class="view-page">
-    <div class="page-header">
-      <div class="page-title">Riwayat Transaksi</div>
-      <div style="width: 40px;"></div>
-    </div>
-
-    <div class="input-group">
-      <input type="text" id="history-search" class="input-field" placeholder="Cari nama, kategori, catatan..." oninput="renderHistoryList()" />
-    </div>
-
-    <!-- Filter Tabs -->
-    <div style="display: flex; gap: 8px; margin-bottom: 16px;">
-      <button class="btn btn-secondary filter-btn active" style="flex:1; padding: 8px; font-size: 11px;" onclick="setHistoryFilter('ALL', this)">Semua</button>
-      <button class="btn btn-secondary filter-btn" style="flex:1; padding: 8px; font-size: 11px;" onclick="setHistoryFilter('IN', this)">Masuk</button>
-      <button class="btn btn-secondary filter-btn" style="flex:1; padding: 8px; font-size: 11px;" onclick="setHistoryFilter('OUT', this)">Keluar</button>
-    </div>
-
-    <div class="glass" id="history-tx-container">
-      <!-- Dynamic Tx List -->
-    </div>
-  </div>
-
-  <!-- VIEW: FINANCE ANALYTICS -->
-  <div id="view-finance" class="view-page">
-    <div class="page-header">
-      <div class="page-title">Analytics Keuangan</div>
-      <div style="width: 40px;"></div>
+    <!-- Page: TERIMA UANG / QR SAYA -->
+    <div id="page-receive" class="page-content">
+        <div class="nav-header">
+            <button class="icon-btn" onclick="navigateTo('home')">
+                <svg class="svg-icon" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </button>
+            <div class="title">Terima Uang</div>
+            <div style="width:24px;"></div>
+        </div>
+        <div style="padding:16px; text-align:center;">
+            <div class="card">
+                <strong style="font-size:16px;">Muzi Adriyan</strong>
+                <div style="font-size:12px; color:var(--secondary); margin-bottom:16px;" id="qr-id-text">MW-88392011</div>
+                
+                <!-- SVG Demo QR -->
+                <div style="background:white; padding:16px; border-radius:12px; display:inline-block; border:1px solid var(--border);">
+                    <svg viewBox="0 0 100 100" style="width:160px; height:160px;">
+                        <path d="M0,0 h30 v30 h-30 z M40,0 h20 v10 h-20 z M70,0 h30 v30 h-30 z M10,10 h10 v10 h-10 z M80,10 h10 v10 h-10 z M0,40 h10 v20 h-10 z M30,40 h40 v10 h-40 z M80,40 h20 v30 h-20 z M0,70 h30 v30 h-30 z M10,80 h10 v10 h-10 z M40,70 h30 v30 h-30 z" fill="#202020"/>
+                    </svg>
+                </div>
+                <p style="font-size:11px; color:var(--secondary); margin-top:12px;">QR DEMO — Tidak memproses pembayaran nyata.</p>
+                <button class="btn btn-outline" style="margin-top:16px;" onclick="copyWalletID()">Salin ID Wallet</button>
+            </div>
+        </div>
     </div>
 
-    <div class="glass" style="padding: 20px; margin-bottom: 16px;">
-      <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Visualisasi Transaksi (Demo)</div>
-      <div class="chart-box" id="analytics-chart">
-        <!-- Injected via JS -->
-      </div>
+    <!-- Page: RIWAYAT TRANSAKSI -->
+    <div id="page-history" class="page-content">
+        <div class="nav-header">
+            <button class="icon-btn" onclick="navigateTo('home')">
+                <svg class="svg-icon" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </button>
+            <div class="title">Riwayat Transaksi</div>
+            <div style="width:24px;"></div>
+        </div>
+        <div style="padding:16px;">
+            <div id="history-list-container">
+                <!-- Dynamically Rendered History -->
+            </div>
+        </div>
     </div>
 
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-      <div class="glass" style="padding: 16px;">
-        <div style="font-size: 11px; color: var(--positive); font-weight: 600;">Total Pemasukan</div>
-        <div style="font-size: 16px; font-weight: 700; margin-top: 4px;" id="finance-total-in">Rp 0</div>
-      </div>
-      <div class="glass" style="padding: 16px;">
-        <div style="font-size: 11px; color: var(--negative); font-weight: 600;">Total Pengeluaran</div>
-        <div style="font-size: 16px; font-weight: 700; margin-top: 4px;" id="finance-total-out">Rp 0</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- VIEW: PROFIL & SETTINGS -->
-  <div id="view-profile" class="view-page">
-    <div class="page-header">
-      <div class="page-title">Profil Saya</div>
-      <div class="icon-btn" onclick="toggleTheme()"><i data-lucide="moon" id="theme-icon"></i></div>
-    </div>
-
-    <div class="glass" style="padding: 20px; text-align: center; margin-bottom: 16px;">
-      <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 24px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;" id="profile-avatar">M</div>
-      <h3 style="font-size: 16px; font-weight: 700;" id="profile-name">Muzi Adriyan</h3>
-      <p style="font-size: 12px; color: var(--text-secondary);" id="profile-email">user@example.com</p>
-      <span class="badge-demo" style="margin-top: 8px;">ID: <span id="profile-wallet-id">MW-88492011</span></span>
+    <!-- Page: PROFIL & SECURITY -->
+    <div id="page-profile" class="page-content">
+        <div class="nav-header">
+            <button class="icon-btn" onclick="navigateTo('home')">
+                <svg class="svg-icon" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </button>
+            <div class="title">Profil Saya</div>
+            <div style="width:24px;"></div>
+        </div>
+        <div style="padding:16px;">
+            <div class="card" style="text-align:center;">
+                <div class="avatar" style="width:64px; height:64px; font-size:24px; margin:auto;">M</div>
+                <strong style="display:block; margin-top:10px; font-size:16px;">Muzi Adriyan</strong>
+                <span style="font-size:12px; color:var(--secondary);">@muzi4you • MW-88392011</span>
+            </div>
+            <div class="card">
+                <button class="btn btn-outline" style="margin-bottom:8px;" onclick="resetDemoPIN()">Ubah PIN Demo</button>
+                <button class="btn" style="background:var(--danger);" onclick="resetAllDemoData()">Reset Data App Demo</button>
+            </div>
+        </div>
     </div>
 
-    <div class="glass" style="padding: 8px;">
-      <div class="tx-item" onclick="openEditProfileModal()">
-        <div style="display: flex; align-items: center; gap: 12px;"><i data-lucide="user"></i> <span>Edit Profil</span></div>
-        <i data-lucide="chevron-right" style="width: 16px; color: var(--text-secondary);"></i>
-      </div>
-      <div class="tx-item" onclick="openChangePinModal()">
-        <div style="display: flex; align-items: center; gap: 12px;"><i data-lucide="key-round"></i> <span>Ubah PIN</span></div>
-        <i data-lucide="chevron-right" style="width: 16px; color: var(--text-secondary);"></i>
-      </div>
-      <div class="tx-item" onclick="showToast('Sesi aktif: Perangkat Peramban Ini')">
-        <div style="display: flex; align-items: center; gap: 12px;"><i data-lucide="shield"></i> <span>Keamanan & Sesi</span></div>
-        <i data-lucide="chevron-right" style="width: 16px; color: var(--text-secondary);"></i>
-      </div>
-      <div class="tx-item" onclick="resetWalletDemo()">
-        <div style="display: flex; align-items: center; gap: 12px; color: var(--negative);"><i data-lucide="refresh-cw"></i> <span>Reset Wallet Demo</span></div>
-        <i data-lucide="chevron-right" style="width: 16px; color: var(--text-secondary);"></i>
-      </div>
-      <div class="tx-item" onclick="logoutApp()">
-        <div style="display: flex; align-items: center; gap: 12px;"><i data-lucide="log-out"></i> <span>Kunci Aplikasi / Logout</span></div>
-        <i data-lucide="chevron-right" style="width: 16px; color: var(--text-secondary);"></i>
-      </div>
+    <!-- BOTTOM NAVIGATION BAR -->
+    <div class="bottom-nav">
+        <div class="nav-tab active" onclick="navigateTo('home')">
+            <svg class="svg-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+            <span>Beranda</span>
+        </div>
+        <div class="nav-tab" onclick="navigateTo('transfer')">
+            <svg class="svg-icon" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+            <span>Transfer</span>
+        </div>
+        <div class="nav-tab" onclick="navigateTo('receive')">
+            <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            <span>QR</span>
+        </div>
+        <div class="nav-tab" onclick="navigateTo('history')">
+            <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <span>Riwayat</span>
+        </div>
+        <div class="nav-tab" onclick="navigateTo('profile')">
+            <svg class="svg-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <span>Saya</span>
+        </div>
     </div>
-  </div>
+</div>
 
-  <!-- VIEW: NOTIFIKASI -->
-  <div id="view-notifications" class="view-page">
-    <div class="page-header">
-      <div class="icon-btn" onclick="navigateTo('home')"><i data-lucide="arrow-left"></i></div>
-      <div class="page-title">Pusat Notifikasi</div>
-      <div style="width: 40px;"></div>
-    </div>
-
-    <div class="glass" id="notif-list-container">
-      <!-- Injected via JS -->
-    </div>
-  </div>
-
-  <!-- BOTTOM NAVIGATION BAR -->
-  <div class="bottom-nav" id="main-nav" style="display: none;">
-    <a class="nav-item active" id="nav-home" onclick="navigateTo('home')">
-      <i data-lucide="home" style="width: 20px;"></i>
-      <span>Beranda</span>
-    </a>
-    <a class="nav-item" id="nav-history" onclick="navigateTo('history')">
-      <i data-lucide="receipt" style="width: 20px;"></i>
-      <span>Riwayat</span>
-    </a>
-    <a class="nav-item" id="nav-payment" onclick="navigateTo('payment')">
-      <i data-lucide="credit-card" style="width: 20px;"></i>
-      <span>Bayar</span>
-    </a>
-    <a class="nav-item" id="nav-finance" onclick="navigateTo('finance')">
-      <i data-lucide="bar-chart-3" style="width: 20px;"></i>
-      <span>Analytics</span>
-    </a>
-    <a class="nav-item" id="nav-profile" onclick="navigateTo('profile')">
-      <i data-lucide="user" style="width: 20px;"></i>
-      <span>Profil</span>
-    </a>
-  </div>
-
-  <!-- MODAL CONFIRM TRANSACTION / PIN -->
-  <div class="modal-overlay" id="modal-confirm">
-    <div class="modal-sheet">
-      <h3 style="font-size: 16px; margin-bottom: 12px;" id="modal-confirm-title">Konfirmasi Transaksi</h3>
-      <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 14px; margin-bottom: 20px; font-size: 13px;" id="modal-confirm-body">
-        <!-- Dynamic content -->
-      </div>
-      <div style="display: flex; gap: 10px;">
-        <button class="btn btn-secondary" onclick="closeModal('modal-confirm')">Batal</button>
-        <button class="btn" onclick="executePendingTransaction()">Konfirmasi & PIN</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL EDIT PROFILE -->
-  <div class="modal-overlay" id="modal-edit-profile">
-    <div class="modal-sheet">
-      <h3 style="font-size: 16px; margin-bottom: 16px;">Edit Profil</h3>
-      <div class="input-group">
-        <label>Nama Lengkap</label>
-        <input type="text" id="edit-name" class="input-field" />
-      </div>
-      <div class="input-group">
-        <label>Email</label>
-        <input type="email" id="edit-email" class="input-field" />
-      </div>
-      <div style="display: flex; gap: 10px; margin-top: 20px;">
-        <button class="btn btn-secondary" onclick="closeModal('modal-edit-profile')">Batal</button>
-        <button class="btn" onclick="saveProfile()">Simpan</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL TRANSACTION DETAIL & RECEIPT -->
-  <div class="modal-overlay" id="modal-tx-detail">
-    <div class="modal-sheet" style="text-align: center;">
-      <div style="width: 48px; height: 48px; border-radius: 50%; background: rgba(16,185,129,0.15); color: var(--positive); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
-        <i data-lucide="check-circle-2" style="width: 28px; height: 28px;"></i>
-      </div>
-      <span class="badge-demo">DEMO TRANSACTION</span>
-      <h2 style="font-size: 22px; font-weight: 700; margin: 8px 0;" id="detail-amount">Rp 0</h2>
-      <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 20px;" id="detail-title">Transaksi</div>
-
-      <div style="background: rgba(255,255,255,0.04); border: 1px solid var(--card-border); border-radius: 16px; padding: 16px; text-align: left; font-size: 12px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
-        <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-secondary);">Status</span><span style="color: var(--positive); font-weight: 600;">Berhasil</span></div>
-        <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-secondary);">ID Transaksi</span><span id="detail-txid" style="font-family: monospace;">MWTX-123456</span></div>
-        <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-secondary);">Waktu</span><span id="detail-time">18 Agu 2026</span></div>
-        <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-secondary);">Catatan</span><span id="detail-note">-</span></div>
-      </div>
-
-      <button class="btn btn-secondary" onclick="closeModal('modal-tx-detail')">Tutup Bukti</button>
-    </div>
-  </div>
-
-  <!-- JAVASCRIPT LOGIC ENGINE -->
-  <script>
+<script>
     /* ==========================================================================
-       APP STATE & PERSISTENCE ENGINE (LocalStorage / Web Crypto API)
+       APP DATABASE & STATE MANAGEMENT (LOCAL STORAGE)
        ========================================================================== */
-    const STORAGE_KEY = "MUZI_WALLET_DATA_V1";
-
-    let state = {
-      profile: {
-        name: "Muzi Adriyan",
-        email: "user@example.com",
-        phone: "081234567890",
-        walletId: "MW-88492011",
-        avatar: "M"
-      },
-      pinHash: null,
-      balance: 2500000,
-      isBalanceHidden: false,
-      theme: "dark",
-      transactions: [],
-      notifications: []
+    const DEFAULT_STATE = {
+        pin: '123456',
+        balance: 2500000,
+        favorites: ['tf_bank', 'pulsa', 'listrik', 'topup'],
+        recent: ['tf_bank', 'pulsa'],
+        transactions: [
+            { id: 'MWTX-99823', type: 'IN', title: 'Top Up Saldo Demo', amount: 500000, date: new Date().toISOString(), status: 'BERHASIL - DEMO' },
+            { id: 'MWTX-99822', type: 'OUT', title: 'Pembayaran Listrik PLN Demo', amount: 150000, date: new Date().toISOString(), status: 'BERHASIL - DEMO' }
+        ]
     };
 
-    let pinInputBuffer = "";
-    let pinSetupTemp = "";
-    let isPinSetupMode = false;
-    let pendingTxAction = null;
-    let currentHistoryFilter = "ALL";
-    let failedPinAttempts = 0;
-    let pinCooldownUntil = 0;
+    let appState = JSON.parse(localStorage.getItem('muzi_app_db')) || DEFAULT_STATE;
 
-    // Load initial data
-    function loadStorage() {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        try {
-          state = { ...state, ...JSON.parse(saved) };
-        } catch(e) { console.error("Error loading storage", e); }
-      }
-    }
-
-    function saveStorage() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    }
-
-    // SHA-256 Hash Helper for PIN
-    async function hashPin(pin) {
-      const msgUint8 = new TextEncoder().encode(pin + "MUZI_SALT");
-      const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    }
-
-    // Toast Notifier
-    function showToast(msg) {
-      const toast = document.getElementById('toast');
-      document.getElementById('toast-msg').innerText = msg;
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 3000);
+    function saveState() {
+        localStorage.setItem('muzi_app_db', JSON.stringify(appState));
+        renderAppUI();
     }
 
     /* ==========================================================================
-       NAVIGATION & ROUTING
+       SERVICES REGISTRY (DATA STRUCTURE FOR "SEMUA LAYANAN")
+       ========================================================================== */
+    const SERVICES = [
+        // TRANSFER
+        { id: 'tf_bank', category: 'TRANSFER', name: 'Transfer Bank', icon: '<path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/>', page: 'transfer', keywords: 'transfer bank bca mandiri bri bni' },
+        { id: 'tf_ewallet', category: 'TRANSFER', name: 'Kirim E-Wallet', icon: '<rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>', page: 'transfer', keywords: 'ewallet wallet kirim' },
+        { id: 'tf_friend', category: 'TRANSFER', name: 'Kirim Ke Teman', icon: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>', page: 'transfer', keywords: 'teman kontak user' },
+        { id: 'tf_cash', category: 'TRANSFER', name: 'Kode Tunai', icon: '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>', page: 'transfer', keywords: 'tarik tunai atm' },
+        
+        // TOP UP & DIGITAL
+        { id: 'topup', category: 'TOP UP & LAYANAN DIGITAL', name: 'Top Up Saldo', icon: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>', page: 'topup', keywords: 'topup isi saldo' },
+        { id: 'pulsa', category: 'TOP UP & LAYANAN DIGITAL', name: 'Pulsa & Data', icon: '<rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>', page: 'topup', keywords: 'pulsa hp kuota internet paket' },
+        { id: 'game', category: 'TOP UP & LAYANAN DIGITAL', name: 'Voucher Game', icon: '<line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><circle cx="15" cy="13" r="1"/><circle cx="18" cy="11" r="1"/>', page: 'topup', keywords: 'game voucher mobile legends ff' },
+
+        // TAGIHAN
+        { id: 'listrik', category: 'TAGIHAN', name: 'Token Listrik', icon: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>', page: 'topup', keywords: 'pln listrik token' },
+        { id: 'water', category: 'TAGIHAN', name: 'Air PDAM', icon: '<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>', page: 'topup', keywords: 'air pdam tagihan' },
+        { id: 'internet', category: 'TAGIHAN', name: 'Internet & TV', icon: '<path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><circle cx="12" cy="20" r="1"/>', page: 'topup', keywords: 'wifi indihome internet' },
+
+        // KEUANGAN
+        { id: 'financial', category: 'KEUANGAN', name: 'Deposito Demo', icon: '<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>', page: 'home', keywords: 'deposito simpanan bunga' }
+    ];
+
+    /* ==========================================================================
+       APP NAVIGATION ENGINE
        ========================================================================== */
     function navigateTo(pageId) {
-      document.querySelectorAll('.view-page').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.page-content').forEach(el => el.classList.remove('active'));
+        const targetPage = document.getElementById(`page-${pageId}`);
+        if(targetPage) targetPage.classList.add('active');
 
-      const target = document.getElementById(`view-${pageId}`);
-      if (target) target.classList.add('active');
-
-      const navItem = document.getElementById(`nav-${pageId}`);
-      if (navItem) navItem.classList.add('active');
-
-      if (pageId === 'home') renderHomeView();
-      if (pageId === 'history') renderHistoryList();
-      if (pageId === 'finance') renderAnalytics();
-      if (pageId === 'receive') renderQRCode();
-
-      window.scrollTo(0, 0);
+        // Bottom nav highlight
+        const tabs = document.querySelectorAll('.nav-tab');
+        tabs.forEach(t => t.classList.remove('active'));
+        if(pageId === 'home') tabs[0].classList.add('active');
+        if(pageId === 'transfer') tabs[1].classList.add('active');
+        if(pageId === 'receive') tabs[2].classList.add('active');
+        if(pageId === 'history') tabs[3].classList.add('active');
+        if(pageId === 'profile') tabs[4].classList.add('active');
     }
-
-    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
     /* ==========================================================================
-       KEYPAD & PIN ENGINE
+       PIN ENGINE SYSTEM
        ========================================================================== */
-    function pressKeypad(num) {
-      if (Date.now() < pinCooldownUntil) {
-        showToast("PIN Terkunci Sementara. Silakan tunggu.");
-        return;
-      }
+    let enteredPin = "";
+    let pinCallback = null;
 
-      if (pinInputBuffer.length < 6) {
-        pinInputBuffer += num;
-        updatePinDots(pinInputBuffer.length);
-      }
-
-      if (pinInputBuffer.length === 6) {
-        setTimeout(handlePinComplete, 100);
-      }
+    function requestPINVerification(onSuccess) {
+        enteredPin = "";
+        pinCallback = onSuccess;
+        updatePinDots();
+        document.getElementById('pin-overlay').style.display = 'flex';
     }
 
-    function backspaceKeypad() {
-      if (pinInputBuffer.length > 0) {
-        pinInputBuffer = pinInputBuffer.slice(0, -1);
-        updatePinDots(pinInputBuffer.length);
-      }
-    }
-
-    function clearKeypad() {
-      pinInputBuffer = "";
-      updatePinDots(0);
-    }
-
-    function updatePinDots(count) {
-      const dots = document.querySelectorAll('#view-pin .pin-dot');
-      dots.forEach((dot, idx) => {
-        if (idx < count) dot.classList.add('filled');
-        else dot.classList.remove('filled');
-      });
-    }
-
-    async function handlePinComplete() {
-      const hashed = await hashPin(pinInputBuffer);
-
-      if (isPinSetupMode) {
-        if (!pinSetupTemp) {
-          pinSetupTemp = hashed;
-          pinInputBuffer = "";
-          updatePinDots(0);
-          document.getElementById('pin-title').innerText = "Konfirmasi PIN Baru";
-          document.getElementById('pin-subtitle').innerText = "Masukkan kembali 6 digit PIN Anda.";
-        } else {
-          if (pinSetupTemp === hashed) {
-            state.pinHash = hashed;
-            saveStorage();
-            showToast("PIN Berhasil Dibuat!");
-            isPinSetupMode = false;
-            document.getElementById('main-nav').style.display = 'flex';
-            navigateTo('home');
-          } else {
-            showToast("PIN Tidak Cocok! Ulangi.");
-            pinSetupTemp = "";
-            pinInputBuffer = "";
-            updatePinDots(0);
-            document.getElementById('pin-title').innerText = "Buat PIN Baru";
-          }
+    function pressKey(val) {
+        if(enteredPin.length < 6) {
+            enteredPin += val;
+            updatePinDots();
         }
-      } else {
-        // Mode Login / Verifikasi
-        if (hashed === state.pinHash) {
-          failedPinAttempts = 0;
-          pinInputBuffer = "";
-          updatePinDots(0);
-
-          if (pendingTxAction) {
-            const action = pendingTxAction;
-            pendingTxAction = null;
-            action();
-          } else {
-            document.getElementById('main-nav').style.display = 'flex';
-            navigateTo('home');
-          }
-        } else {
-          failedPinAttempts++;
-          showToast("PIN Salah!");
-          pinInputBuffer = "";
-          updatePinDots(0);
-
-          if (failedPinAttempts >= 5) {
-            pinCooldownUntil = Date.now() + 30000; // 30s Cooldown
-            showToast("Salah 5x. Terkunci selama 30 detik.");
-          }
+        if(enteredPin.length === 6) {
+            setTimeout(checkPIN, 100);
         }
-      }
     }
 
-    function triggerBiometrics() {
-      if (window.PublicKeyCredential) {
-        showToast("Biometric authentication tidak tersedia pada perangkat ini.");
-      } else {
-        showToast("Biometric authentication tidak didukung.");
-      }
+    function clearPin() { enteredPin = ""; updatePinDots(); }
+    function backspacePin() { enteredPin = enteredPin.slice(0, -1); updatePinDots(); }
+
+    function updatePinDots() {
+        const dots = document.querySelectorAll('.pin-dot');
+        dots.forEach((dot, index) => {
+            if(index < enteredPin.length) dot.classList.add('filled');
+            else dot.classList.remove('filled');
+        });
     }
 
-    function requirePinForAction(actionCallback) {
-      pendingTxAction = actionCallback;
-      pinInputBuffer = "";
-      updatePinDots(0);
-      document.getElementById('pin-title').innerText = "Masukkan PIN Transaksi";
-      document.getElementById('pin-subtitle').innerText = "Verifikasi PIN untuk melanjutkan transaksi.";
-      navigateTo('pin');
+    function checkPIN() {
+        if(enteredPin === appState.pin) {
+            document.getElementById('pin-overlay').style.display = 'none';
+            if(pinCallback) pinCallback();
+        } else {
+            showToast("PIN Salah! Coba lagi.");
+            clearPin();
+        }
     }
 
     /* ==========================================================================
        TRANSACTION ENGINE
        ========================================================================== */
-    function recordTransaction({ type, category, title, description, amount, note = "" }) {
-      const fee = 0;
-      const total = amount + fee;
+    function processTransfer() {
+        const amount = parseInt(document.getElementById('tf-amount').value);
+        const recipient = document.getElementById('tf-name').value;
 
-      if (type === 'OUT' && state.balance < total) {
-        showToast("Saldo tidak mencukupi!");
-        return false;
-      }
+        if(!amount || amount <= 0) return showToast("Masukkan nominal valid");
+        if(!recipient) return showToast("Masukkan penerima");
+        if(amount > appState.balance) return showToast("Saldo tidak mencukupi");
 
-      if (type === 'IN') {
-        state.balance += amount;
-      } else if (type === 'OUT') {
-        state.balance -= total;
-      }
+        requestPINVerification(() => {
+            appState.balance -= amount;
+            appState.transactions.unshift({
+                id: 'MWTX-' + Math.floor(100000 + Math.random() * 900000),
+                type: 'OUT',
+                title: `Transfer ke ${recipient}`,
+                amount: amount,
+                date: new Date().toISOString(),
+                status: 'BERHASIL - DEMO'
+            });
+            saveState();
+            showToast("Transfer Berhasil!");
+            navigateTo('history');
+        });
+    }
 
-      const txId = "MWTX-" + Math.floor(100000000000 + Math.random() * 900000000000);
-      const newTx = {
-        id: txId,
-        type,
-        category,
-        title,
-        description,
-        amount,
-        fee,
-        total,
-        note,
-        status: "SUCCESS",
-        timestamp: Date.now()
-      };
+    function processTopUp(amount) {
+        requestPINVerification(() => {
+            appState.balance += amount;
+            appState.transactions.unshift({
+                id: 'MWTX-' + Math.floor(100000 + Math.random() * 900000),
+                type: 'IN',
+                title: 'Top Up Saldo Instant Demo',
+                amount: amount,
+                date: new Date().toISOString(),
+                status: 'BERHASIL - DEMO'
+            });
+            saveState();
+            showToast("Top Up Berhasil!");
+            navigateTo('home');
+        });
+    }
 
-      state.transactions.unshift(newTx);
-
-      // Add Notification
-      state.notifications.unshift({
-        id: "NOTIF-" + Date.now(),
-        title: title,
-        message: `${type === 'IN' ? 'Uang masuk' : 'Uang keluar'} sebesar Rp ${amount.toLocaleString('id-ID')}`,
-        time: Date.now(),
-        read: false
-      });
-
-      saveStorage();
-      return newTx;
+    function processCustomTopUp() {
+        const val = parseInt(document.getElementById('topup-custom-amount').value);
+        if(val && val > 0) processTopUp(val);
+        else showToast("Masukkan nominal valid");
     }
 
     /* ==========================================================================
-       VIEW RENDERERS & ACTIONS
+       UI RENDERING ENGINE
        ========================================================================== */
-    function renderHomeView() {
-      document.getElementById('home-user-name').innerText = `${state.profile.name} 👋`;
-      document.getElementById('home-wallet-id').innerText = `ID Wallet: ${state.profile.walletId}`;
-      document.getElementById('home-avatar').innerText = (state.profile.name || "M").charAt(0).toUpperCase();
-
-      renderBalance();
-      renderHomeStats();
-      renderHomeRecentTx();
-      updateNotifBadge();
+    let isBalanceHidden = false;
+    function toggleBalanceHide() {
+        isBalanceHidden = !isBalanceHidden;
+        renderAppUI();
     }
 
-    function renderBalance() {
-      const balEl = document.getElementById('home-balance-text');
-      const iconEl = document.getElementById('btn-toggle-balance');
+    function renderAppUI() {
+        // Balance Display
+        const balanceTxt = isBalanceHidden ? '••••••••' : `Rp ${appState.balance.toLocaleString('id-ID')}`;
+        document.getElementById('balance-display').innerText = balanceTxt;
 
-      if (state.isBalanceHidden) {
-        balEl.innerText = "••••••••";
-        iconEl.setAttribute('data-lucide', 'eye-off');
-      } else {
-        balEl.innerText = `Rp ${state.balance.toLocaleString('id-ID')}`;
-        iconEl.setAttribute('data-lucide', 'eye');
-      }
-      lucide.createIcons();
+        // Render Favorit
+        const favContainer = document.getElementById('favorite-services-grid');
+        favContainer.innerHTML = '';
+        appState.favorites.forEach(favId => {
+            const s = SERVICES.find(x => x.id === favId);
+            if(s) {
+                favContainer.appendChild(createServiceItemElement(s));
+            }
+        });
+
+        // Render Terakhir Digunakan
+        const recentContainer = document.getElementById('recent-services-list');
+        recentContainer.innerHTML = '';
+        appState.recent.forEach(recId => {
+            const s = SERVICES.find(x => x.id === recId);
+            if(s) {
+                const chip = document.createElement('div');
+                chip.style.cssText = "padding:6px 12px; background:var(--bg); border:1px solid var(--border); border-radius:20px; font-size:12px; white-space:nowrap; cursor:pointer;";
+                chip.innerText = s.name;
+                chip.onclick = () => navigateTo(s.page);
+                recentContainer.appendChild(chip);
+            }
+        });
+
+        // Render All Services Screen
+        renderAllServicesScreen(SERVICES);
+
+        // Render Transaction History
+        const histContainer = document.getElementById('history-list-container');
+        histContainer.innerHTML = '';
+        if(appState.transactions.length === 0) {
+            histContainer.innerHTML = '<div style="text-align:center; color:var(--secondary); padding:20px;">Belum ada transaksi.</div>';
+        } else {
+            appState.transactions.forEach(tx => {
+                const el = document.createElement('div');
+                el.className = 'card';
+                el.style.display = 'flex';
+                el.style.justifyContent = 'space-between';
+                el.style.alignItems = 'center';
+                el.innerHTML = `
+                    <div>
+                        <strong style="font-size:14px; display:block;">${tx.title}</strong>
+                        <span style="font-size:11px; color:var(--secondary);">${new Date(tx.date).toLocaleString('id-ID')}</span>
+                    </div>
+                    <div style="font-size:14px; font-weight:700; color:${tx.type === 'IN' ? 'var(--success)' : 'var(--danger)'};">
+                        ${tx.type === 'IN' ? '+' : '-'}Rp ${tx.amount.toLocaleString('id-ID')}
+                    </div>
+                `;
+                histContainer.appendChild(el);
+            });
+        }
     }
 
-    function toggleBalance() {
-      state.isBalanceHidden = !state.isBalanceHidden;
-      saveStorage();
-      renderBalance();
-    }
-
-    function renderHomeStats() {
-      let totalIn = 0;
-      let totalOut = 0;
-
-      state.transactions.forEach(tx => {
-        if (tx.type === 'IN') totalIn += tx.amount;
-        if (tx.type === 'OUT') totalOut += tx.amount;
-      });
-
-      document.getElementById('home-stat-in').innerText = `Rp ${totalIn.toLocaleString('id-ID')}`;
-      document.getElementById('home-stat-out').innerText = `Rp ${totalOut.toLocaleString('id-ID')}`;
-    }
-
-    function renderHomeRecentTx() {
-      const container = document.getElementById('home-tx-list');
-      if (state.transactions.length === 0) {
-        container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-secondary); font-size: 12px;">Belum ada transaksi</div>';
-        return;
-      }
-
-      let html = '';
-      state.transactions.slice(0, 4).forEach(tx => {
-        const isIn = tx.type === 'IN';
-        html += `
-          <div class="tx-item" onclick="openTxDetail('${tx.id}')">
-            <div class="tx-icon ${isIn ? 'in' : 'out'}">
-              <i data-lucide="${isIn ? 'arrow-down-left' : 'arrow-up-right'}" style="width:20px;"></i>
+    function createServiceItemElement(service) {
+        const item = document.createElement('div');
+        item.className = 'service-item';
+        item.onclick = () => {
+            // Track Recent Service
+            appState.recent = [service.id, ...appState.recent.filter(x => x !== service.id)].slice(0, 5);
+            saveState();
+            navigateTo(service.page);
+        };
+        item.innerHTML = `
+            <div class="icon-wrapper">
+                <svg class="svg-icon" viewBox="0 0 24 24">${service.icon}</svg>
             </div>
-            <div class="tx-details">
-              <div class="tx-title">${tx.title}</div>
-              <div class="tx-date">${formatDate(tx.timestamp)}</div>
-            </div>
-            <div class="tx-amount" style="color: ${isIn ? 'var(--positive)' : 'var(--text-primary)'}">
-              ${isIn ? '+' : '-'}Rp ${tx.amount.toLocaleString('id-ID')}
-            </div>
-          </div>
+            <span class="service-name">${service.name}</span>
         `;
-      });
-      container.innerHTML = html;
-      lucide.createIcons();
+        return item;
     }
 
-    /* TOP UP */
-    function selectTopupNominal(amt) {
-      document.getElementById('topup-amount').value = amt;
-    }
+    function renderAllServicesScreen(servicesList) {
+        const container = document.getElementById('services-render-container');
+        container.innerHTML = '';
 
-    function processTopUp() {
-      const amt = parseInt(document.getElementById('topup-amount').value);
-      if (!amt || amt < 10000) return showToast("Minimal Top Up Rp 10.000");
+        const categories = [...new Set(servicesList.map(s => s.category))];
 
-      requirePinForAction(() => {
-        const tx = recordTransaction({
-          type: 'IN',
-          category: 'TOPUP',
-          title: 'Top Up Saldo Demo',
-          description: 'Top Up Via Internal Bank Demo',
-          amount: amt
+        categories.forEach(cat => {
+            const catTitle = document.createElement('div');
+            catTitle.className = 'section-title';
+            catTitle.innerText = cat;
+            container.appendChild(catTitle);
+
+            const card = document.createElement('div');
+            card.className = 'card';
+            const grid = document.createElement('div');
+            grid.className = 'service-grid';
+
+            servicesList.filter(s => s.category === cat).forEach(s => {
+                grid.appendChild(createServiceItemElement(s));
+            });
+
+            card.appendChild(grid);
+            container.appendChild(card);
         });
-        if (tx) {
-          showToast("Top Up Berhasil!");
-          document.getElementById('topup-amount').value = "";
-          navigateTo('home');
-        }
-      });
     }
 
-    /* TRANSFER */
-    function confirmTransferModal() {
-      const target = document.getElementById('transfer-target').value.trim();
-      const name = document.getElementById('transfer-name').value.trim();
-      const amt = parseInt(document.getElementById('transfer-amount').value);
-      const note = document.getElementById('transfer-note').value.trim() || '-';
-
-      if (!target || !name) return showToast("Lengkapi data penerima");
-      if (!amt || amt < 1000) return showToast("Minimal transfer Rp 1.000");
-      if (amt > state.balance) return showToast("Saldo tidak mencukupi");
-
-      document.getElementById('modal-confirm-title').innerText = "Konfirmasi Transfer";
-      document.getElementById('modal-confirm-body').innerHTML = `
-        <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>Penerima:</span> <strong>${name} (${target})</strong></div>
-        <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>Nominal:</span> <strong>Rp ${amt.toLocaleString('id-ID')}</strong></div>
-        <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>Biaya Admin:</span> <strong>Rp 0</strong></div>
-        <div style="display:flex; justify-content:space-between; border-top: 1px solid var(--card-border); padding-top:6px; margin-top:6px;"><span>Total:</span> <strong>Rp ${amt.toLocaleString('id-ID')}</strong></div>
-      `;
-
-      pendingTxAction = () => {
-        const tx = recordTransaction({
-          type: 'OUT',
-          category: 'TRANSFER',
-          title: `Kirim Uang ke ${name}`,
-          description: `Transfer ke ${target}`,
-          amount: amt,
-          note: note
-        });
-        if (tx) {
-          showToast("Transfer Berhasil!");
-          document.getElementById('transfer-target').value = "";
-          document.getElementById('transfer-name').value = "";
-          document.getElementById('transfer-amount').value = "";
-          document.getElementById('transfer-note').value = "";
-          closeModal('modal-confirm');
-          navigateTo('home');
-        }
-      };
-
-      openModal('modal-confirm');
-    }
-
-    function executePendingTransaction() {
-      closeModal('modal-confirm');
-      if (pendingTxAction) {
-        const action = pendingTxAction;
-        requirePinForAction(action);
-      }
-    }
-
-    /* RECEIVE */
-    function renderQRCode() {
-      document.getElementById('receive-user-name').innerText = state.profile.name;
-      document.getElementById('receive-wallet-id').innerText = `ID: ${state.profile.walletId}`;
-
-      const box = document.getElementById('qrcode-box');
-      box.innerHTML = "";
-      new QRCode(box, { text: state.profile.walletId, width: 140, height: 140 });
-    }
-
-    function copyWalletId() {
-      navigator.clipboard.writeText(state.profile.walletId);
-      showToast("ID Wallet disalin!");
-    }
-
-    function processSimulatedReceive() {
-      const sender = document.getElementById('receive-sender-name').value.trim() || 'Pengirim';
-      const amt = parseInt(document.getElementById('receive-amount').value);
-
-      if (!amt || amt < 1000) return showToast("Nominal tidak valid");
-
-      const tx = recordTransaction({
-        type: 'IN',
-        category: 'TRANSFER',
-        title: `Uang Masuk dari ${sender}`,
-        description: 'Simulasi menerima transfer',
-        amount: amt
-      });
-
-      if (tx) {
-        showToast("Uang Masuk Berhasil Diterima!");
-        document.getElementById('receive-sender-name').value = "";
-        document.getElementById('receive-amount').value = "";
-        navigateTo('home');
-      }
-    }
-
-    /* PAYMENTS */
-    function openPayService(title) {
-      document.getElementById('pay-service-box').innerHTML = `
-        <h4 style="font-size: 14px; margin-bottom: 12px;">Bayar ${title} (Simulasi)</h4>
-        <div class="input-group">
-          <label>Nomor Pelanggan / Tagihan</label>
-          <input type="text" id="pay-num" class="input-field" placeholder="08xxxxxxxxxx" />
-        </div>
-        <div class="input-group">
-          <label>Pilih Nominal / Paket</label>
-          <select id="pay-amt" class="input-field" style="background: var(--bg-color);">
-            <option value="15000">Paket Hemat - Rp 15.000</option>
-            <option value="50000">Paket Standar - Rp 50.000</option>
-            <option value="100000">Paket Premium - Rp 100.000</option>
-          </select>
-        </div>
-        <button class="btn" onclick="processPayment('${title}')">Proses Pembayaran</button>
-      `;
-    }
-
-    function processPayment(serviceTitle) {
-      const num = document.getElementById('pay-num').value.trim();
-      const amt = parseInt(document.getElementById('pay-amt').value);
-
-      if (!num) return showToast("Masukkan nomor tagihan");
-
-      requirePinForAction(() => {
-        const tx = recordTransaction({
-          type: 'OUT',
-          category: 'PAYMENT',
-          title: `Pembayaran ${serviceTitle}`,
-          description: `No. ${num} (Simulasi)`,
-          amount: amt
-        });
-        if (tx) {
-          showToast("Pembayaran Berhasil!");
-          navigateTo('home');
-        }
-      });
-    }
-
-    /* HISTORY & FILTER */
-    function renderHistoryList() {
-      const container = document.getElementById('history-tx-container');
-      const query = document.getElementById('history-search').value.toLowerCase();
-
-      let filtered = state.transactions;
-
-      if (currentHistoryFilter !== 'ALL') {
-        filtered = filtered.filter(tx => tx.type === currentHistoryFilter);
-      }
-
-      if (query) {
-        filtered = filtered.filter(tx => 
-          tx.title.toLowerCase().includes(query) || 
-          tx.category.toLowerCase().includes(query) ||
-          (tx.note && tx.note.toLowerCase().includes(query))
+    function filterServices() {
+        const query = document.getElementById('service-search-input').value.toLowerCase();
+        const filtered = SERVICES.filter(s => 
+            s.name.toLowerCase().includes(query) || 
+            s.keywords.toLowerCase().includes(query)
         );
-      }
-
-      if (filtered.length === 0) {
-        container.innerHTML = '<div style="padding: 30px; text-align: center; color: var(--text-secondary);">Tidak ada transaksi ditemukan</div>';
-        return;
-      }
-
-      let html = '';
-      filtered.forEach(tx => {
-        const isIn = tx.type === 'IN';
-        html += `
-          <div class="tx-item" onclick="openTxDetail('${tx.id}')">
-            <div class="tx-icon ${isIn ? 'in' : 'out'}">
-              <i data-lucide="${isIn ? 'arrow-down-left' : 'arrow-up-right'}" style="width:20px;"></i>
-            </div>
-            <div class="tx-details">
-              <div class="tx-title">${tx.title}</div>
-              <div class="tx-date">${formatDate(tx.timestamp)}</div>
-            </div>
-            <div class="tx-amount" style="color: ${isIn ? 'var(--positive)' : 'var(--text-primary)'}">
-              ${isIn ? '+' : '-'}Rp ${tx.amount.toLocaleString('id-ID')}
-            </div>
-          </div>
-        `;
-      });
-      container.innerHTML = html;
-      lucide.createIcons();
-    }
-
-    function setHistoryFilter(type, el) {
-      currentHistoryFilter = type;
-      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-      el.classList.add('active');
-      renderHistoryList();
-    }
-
-    function openTxDetail(txId) {
-      const tx = state.transactions.find(t => t.id === txId);
-      if (!tx) return;
-
-      document.getElementById('detail-amount').innerText = `${tx.type === 'IN' ? '+' : '-'}Rp ${tx.amount.toLocaleString('id-ID')}`;
-      document.getElementById('detail-title').innerText = tx.title;
-      document.getElementById('detail-txid').innerText = tx.id;
-      document.getElementById('detail-time').innerText = formatDate(tx.timestamp);
-      document.getElementById('detail-note').innerText = tx.note || '-';
-
-      openModal('modal-tx-detail');
-    }
-
-    /* FINANCE ANALYTICS */
-    function renderAnalytics() {
-      let totalIn = 0, totalOut = 0;
-      state.transactions.forEach(tx => {
-        if (tx.type === 'IN') totalIn += tx.amount;
-        if (tx.type === 'OUT') totalOut += tx.amount;
-      });
-
-      document.getElementById('finance-total-in').innerText = `Rp ${totalIn.toLocaleString('id-ID')}`;
-      document.getElementById('finance-total-out').innerText = `Rp ${totalOut.toLocaleString('id-ID')}`;
-
-      // Build simulated visual chart
-      const chartBox = document.getElementById('analytics-chart');
-      const days = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
-      let chartHtml = '';
-
-      days.forEach((d, idx) => {
-        const height = Math.floor(Math.random() * 60) + 20;
-        chartHtml += `
-          <div class="chart-bar-wrap">
-            <div class="chart-bar ${idx === 6 ? 'active' : ''}" style="height: ${height}%;"></div>
-            <span class="chart-label">${d}</span>
-          </div>
-        `;
-      });
-      chartBox.innerHTML = chartHtml;
-    }
-
-    /* PROFILE & SETTINGS */
-    function openEditProfileModal() {
-      document.getElementById('edit-name').value = state.profile.name;
-      document.getElementById('edit-email').value = state.profile.email;
-      openModal('modal-edit-profile');
-    }
-
-    function saveProfile() {
-      const name = document.getElementById('edit-name').value.trim();
-      const email = document.getElementById('edit-email').value.trim();
-
-      if (!name || !email) return showToast("Isi semua field");
-
-      state.profile.name = name;
-      state.profile.email = email;
-      saveStorage();
-
-      document.getElementById('profile-name').innerText = name;
-      document.getElementById('profile-email').innerText = email;
-      document.getElementById('profile-avatar').innerText = name.charAt(0).toUpperCase();
-
-      closeModal('modal-edit-profile');
-      showToast("Profil Diperbarui!");
-    }
-
-    function openChangePinModal() {
-      requirePinForAction(() => {
-        isPinSetupMode = true;
-        pinSetupTemp = "";
-        pinInputBuffer = "";
-        updatePinDots(0);
-        document.getElementById('pin-title').innerText = "Buat PIN Baru";
-        document.getElementById('pin-subtitle').innerText = "Masukkan 6 digit PIN baru Anda.";
-        navigateTo('pin');
-      });
-    }
-
-    function resetWalletDemo() {
-      if (confirm("Apakah Anda yakin ingin mereset semua data demo, saldo, dan PIN?")) {
-        localStorage.removeItem(STORAGE_KEY);
-        location.reload();
-      }
-    }
-
-    function logoutApp() {
-      pinInputBuffer = "";
-      updatePinDots(0);
-      document.getElementById('main-nav').style.display = 'none';
-      document.getElementById('pin-title').innerText = "Masukkan PIN";
-      navigateTo('pin');
-      showToast("Aplikasi Terkunci");
-    }
-
-    function toggleTheme() {
-      state.theme = state.theme === 'dark' ? 'light' : 'dark';
-      document.body.setAttribute('data-theme', state.theme);
-      saveStorage();
-    }
-
-    /* NOTIFICATIONS */
-    function renderNotifications() {
-      const container = document.getElementById('notif-list-container');
-      if (state.notifications.length === 0) {
-        container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-secondary);">Tidak ada notifikasi</div>';
-        return;
-      }
-
-      let html = '';
-      state.notifications.forEach(n => {
-        html += `
-          <div class="tx-item">
-            <div class="tx-icon in"><i data-lucide="bell" style="width:20px;"></i></div>
-            <div class="tx-details">
-              <div class="tx-title">${n.title}</div>
-              <div class="tx-date">${n.message} • ${formatDate(n.time)}</div>
-            </div>
-          </div>
-        `;
-      });
-      container.innerHTML = html;
-      lucide.createIcons();
-    }
-
-    function updateNotifBadge() {
-      const hasUnread = state.notifications.some(n => !n.read);
-      document.getElementById('notif-badge').style.display = hasUnread ? 'block' : 'none';
-    }
-
-    /* UTILS */
-    function formatDate(ts) {
-      const date = new Date(ts);
-      return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+        renderAllServicesScreen(filtered);
     }
 
     /* ==========================================================================
-       INITIALIZATION
+       UTILITY FUNCTIONS
        ========================================================================== */
-    window.addEventListener('DOMContentLoaded', () => {
-      loadStorage();
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        document.getElementById('toast-msg').innerText = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2500);
+    }
 
-      if (state.theme) {
-        document.body.setAttribute('data-theme', state.theme);
-      }
+    function copyWalletID() {
+        navigator.clipboard.writeText('MW-88392011');
+        showToast("ID Wallet tersalin!");
+    }
 
-      // Hide Splash Screen after 1.5s
-      setTimeout(() => {
-        const splash = document.getElementById('splash-screen');
-        splash.style.opacity = '0';
-        splash.style.transition = 'opacity 0.4s';
+    function resetDemoPIN() {
+        appState.pin = '123456';
+        saveState();
+        showToast("PIN direset ke default: 123456");
+    }
+
+    function resetAllDemoData() {
+        if(confirm("Reset seluruh data demo ke kondisi awal?")) {
+            localStorage.removeItem('muzi_app_db');
+            appState = DEFAULT_STATE;
+            saveState();
+            showToast("Aplikasi direset!");
+            navigateTo('home');
+        }
+    }
+
+    // App Initialization
+    window.onload = () => {
         setTimeout(() => {
-          splash.style.display = 'none';
+            const splash = document.getElementById('splash');
+            splash.style.opacity = '0';
+            setTimeout(() => splash.style.display = 'none', 500);
+        }, 1200);
 
-          // Route to PIN Setup or Enter PIN
-          if (!state.pinHash) {
-            isPinSetupMode = true;
-            document.getElementById('pin-title').innerText = "Buat PIN Baru";
-            document.getElementById('pin-subtitle').innerText = "Buat 6 digit PIN untuk mengamankan wallet Anda.";
-            navigateTo('pin');
-          } else {
-            navigateTo('pin');
-          }
-        }, 400);
-      }, 1500);
-
-      lucide.createIcons();
-    });
-  </script>
+        renderAppUI();
+    };
+</script>
 </body>
 </html>
