@@ -1,1074 +1,252 @@
 <!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MUZI WALLET - Digital Wallet Demo</title>
-    <style>
-        :root {
-            --primary: #FF6A00;
-            --primary-hover: #E05D00;
-            --bg: #F5F6F8;
-            --card: #FFFFFF;
-            --text: #202020;
-            --secondary: #6F6F6F;
-            --border: #E8E8E8;
-            --success: #10B981;
-            --danger: #EF4444;
-            --accent-blue: #2563EB;
-            --accent-green: #059669;
-            --accent-purple: #7C3AED;
-            --radius-sm: 8px;
-            --radius-md: 14px;
-            --radius-lg: 20px;
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
-            --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
-            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
-        }
-
-        [data-theme="dark"] {
-            --bg: #121212;
-            --card: #1E1E1E;
-            --text: #F5F6F8;
-            --secondary: #A0A0A0;
-            --border: #2A2A2A;
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.2);
-            --shadow-md: 0 4px 16px rgba(0,0,0,0.3);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-        }
-
-        body {
-            background-color: #0d0d0d;
-            color: var(--text);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        #app-container {
-            width: 100%;
-            max-width: 480px;
-            height: 100vh;
-            max-height: 900px;
-            background: var(--bg);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 0 40px rgba(0,0,0,0.5);
-        }
-
-        @media (min-width: 481px) {
-            #app-container {
-                height: 92vh;
-                border-radius: 32px;
-                border: 8px solid #222;
-            }
-        }
-
-        /* SVG Icon Base Style */
-        .svg-icon {
-            width: 24px;
-            height: 24px;
-            stroke: currentColor;
-            fill: none;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            display: inline-block;
-            vertical-align: middle;
-        }
-
-        /* Screens & SPA Navigation */
-        .page-content {
-            flex: 1;
-            overflow-y: auto;
-            padding-bottom: 80px;
-            display: none;
-        }
-        .page-content.active {
-            display: block;
-            animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* UI Elements */
-        .card {
-            background: var(--card);
-            border-radius: var(--radius-md);
-            padding: 16px;
-            border: 1px solid var(--border);
-            margin-bottom: 14px;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            padding: 14px;
-            border-radius: var(--radius-md);
-            background: var(--primary);
-            color: white;
-            font-weight: 600;
-            font-size: 15px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            gap: 8px;
-        }
-        .btn:active { transform: scale(0.97); background: var(--primary-hover); }
-        .btn-secondary { background: var(--border); color: var(--text); }
-        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
-
-        /* Navigation Header */
-        .nav-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px;
-            background: var(--card);
-            border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-        .nav-header .title {
-            font-size: 17px;
-            font-weight: 700;
-            flex: 1;
-            text-align: center;
-        }
-        .nav-header .icon-btn {
-            background: none;
-            border: none;
-            color: var(--text);
-            cursor: pointer;
-            padding: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Header Dashboard */
-        .home-header {
-            padding: 16px 16px 10px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .profile-btn {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            cursor: pointer;
-        }
-        .avatar {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: var(--primary);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 18px;
-            box-shadow: 0 2px 8px rgba(255, 106, 0, 0.3);
-        }
-
-        /* Balance Card */
-        .balance-card {
-            background: linear-gradient(135deg, #FF6A00 0%, #FF8533 100%);
-            color: white;
-            border: none;
-            position: relative;
-            overflow: hidden;
-            box-shadow: var(--shadow-md);
-        }
-        .balance-card::after {
-            content: '';
-            position: absolute;
-            right: -20px;
-            bottom: -20px;
-            width: 120px;
-            height: 120px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 50%;
-        }
-
-        /* Grids & Services */
-        .service-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            text-align: center;
-        }
-        .service-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-            position: relative;
-        }
-        .service-item:active { transform: scale(0.94); }
-        .icon-wrapper {
-            width: 52px;
-            height: 52px;
-            border-radius: var(--radius-md);
-            background: var(--card);
-            border: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: var(--shadow-sm);
-            color: var(--primary);
-        }
-        .service-name {
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--text);
-            line-height: 1.2;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        /* Bottom Nav */
-        .bottom-nav {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            height: 68px;
-            background: var(--card);
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 20;
-        }
-        .nav-tab {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            color: var(--secondary);
-            font-size: 11px;
-            font-weight: 500;
-            cursor: pointer;
-            width: 20%;
-        }
-        .nav-tab.active { color: var(--primary); }
-
-        /* Keypad PIN Overlay */
-        .pin-overlay {
-            position: absolute;
-            inset: 0;
-            background: var(--card);
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-        }
-        .pin-dots {
-            display: flex;
-            gap: 16px;
-            margin: 32px 0;
-        }
-        .pin-dot {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            border: 2px solid var(--border);
-            transition: all 0.2s;
-        }
-        .pin-dot.filled {
-            background: var(--primary);
-            border-color: var(--primary);
-            transform: scale(1.1);
-        }
-        .keypad {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            width: 100%;
-            max-width: 280px;
-        }
-        .key-btn {
-            width: 68px;
-            height: 68px;
-            border-radius: 50%;
-            border: 1px solid var(--border);
-            background: var(--bg);
-            color: var(--text);
-            font-size: 22px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: auto;
-            cursor: pointer;
-        }
-        .key-btn:active { background: var(--border); }
-
-        /* Splash Screen */
-        .splash-screen {
-            position: absolute;
-            inset: 0;
-            background: var(--primary);
-            color: white;
-            z-index: 200;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.5s ease;
-        }
-
-        /* Search Input */
-        .search-box {
-            position: relative;
-            margin-bottom: 16px;
-        }
-        .search-box input {
-            width: 100%;
-            padding: 12px 16px 12px 42px;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border);
-            background: var(--card);
-            color: var(--text);
-            font-size: 14px;
-            outline: none;
-        }
-        .search-box .svg-icon {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--secondary);
-        }
-
-        /* Section Title */
-        .section-title {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin: 16px 0 10px 0;
-        }
-
-        /* Toast Notification */
-        .toast {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-100px);
-            background: var(--text);
-            color: var(--bg);
-            padding: 12px 20px;
-            border-radius: 30px;
-            font-size: 13px;
-            font-weight: 600;
-            box-shadow: var(--shadow-lg);
-            z-index: 300;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .toast.show { transform: translateX(-50%) translateY(0); }
-
-        /* Modal Overlay */
-        .modal-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 80;
-            display: none;
-            align-items: flex-end;
-        }
-        .modal-content {
-            background: var(--card);
-            width: 100%;
-            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-            padding: 20px;
-            animation: slideUp 0.25s ease-out;
-        }
-        @keyframes slideUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
-        }
-
-        /* Form Controls */
-        .form-group {
-            margin-bottom: 14px;
-        }
-        .form-group label {
-            display: block;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--secondary);
-            margin-bottom: 6px;
-        }
-        .form-control {
-            width: 100%;
-            padding: 12px;
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--border);
-            background: var(--bg);
-            color: var(--text);
-            font-size: 14px;
-            outline: none;
-        }
-    </style>
-</head>
-<body>
-
-<div id="app-container">
-    <!-- Toast Notification -->
-    <div id="toast" class="toast">
-        <svg class="svg-icon" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-        <span id="toast-msg">Notifikasi</span>
-    </div>
-
-    <!-- Splash Screen -->
-    <div id="splash" class="splash-screen">
-        <svg class="svg-icon" style="width:64px; height:64px;" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
-        <h2 style="margin-top: 12px; font-weight:800; letter-spacing:1px;">MUZI WALLET</h2>
-        <p style="font-size: 12px; opacity: 0.8;">Digital Wallet Demo</p>
-    </div>
-
-    <!-- PIN Overlay -->
-    <div id="pin-overlay" class="pin-overlay" style="display:none;">
-        <h3 id="pin-title" style="font-size:18px;">Masukkan PIN Anda</h3>
-        <p style="font-size:12px; color:var(--secondary); margin-top:4px;">Verifikasi keamanan 6 digit</p>
-        <div class="pin-dots">
-            <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
-            <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
-        </div>
-        <div class="keypad">
-            <button class="key-btn" onclick="pressKey('1')">1</button>
-            <button class="key-btn" onclick="pressKey('2')">2</button>
-            <button class="key-btn" onclick="pressKey('3')">3</button>
-            <button class="key-btn" onclick="pressKey('4')">4</button>
-            <button class="key-btn" onclick="pressKey('5')">5</button>
-            <button class="key-btn" onclick="pressKey('6')">6</button>
-            <button class="key-btn" onclick="pressKey('7')">7</button>
-            <button class="key-btn" onclick="pressKey('8')">8</button>
-            <button class="key-btn" onclick="pressKey('9')">9</button>
-            <button class="key-btn" style="border:none; background:transparent;" onclick="clearPin()">C</button>
-            <button class="key-btn" onclick="pressKey('0')">0</button>
-            <button class="key-btn" style="border:none; background:transparent;" onclick="backspacePin()">
-                <svg class="svg-icon" viewBox="0 0 24 24"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path><line x1="18" y1="9" x2="12" y2="15"></line><line x1="12" y1="9" x2="18" y2="15"></line></svg>
-            </button>
-        </div>
-    </div>
-
-    <!-- Modal Popup Transaksi -->
-    <div id="modal-container" class="modal-overlay">
-        <div class="modal-content" id="modal-body"></div>
-    </div>
-
-    <!-- MAIN APP PAGES -->
-
-    <!-- Page: HOME -->
-    <div id="page-home" class="page-content active">
-        <div class="home-header">
-            <div class="profile-btn" onclick="navigateTo('profile')">
-                <div class="avatar">M</div>
-                <div>
-                    <div style="font-size:11px; color:var(--secondary);">Halo,</div>
-                    <strong style="font-size:14px;" id="home-username">Muzi Adriyan</strong>
-                </div>
-            </div>
-            <div style="display:flex; gap:10px;">
-                <button class="icon-btn" onclick="navigateTo('notifications')" style="background:none; border:none; position:relative; cursor:pointer;">
-                    <svg class="svg-icon" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-                    <span id="notif-badge" style="position:absolute; top:-2px; right:-2px; width:8px; height:8px; background:var(--danger); border-radius:50%; display:none;"></span>
-                </button>
-            </div>
-        </div>
-
-        <div style="padding:0 16px;">
-            <!-- Saldo Card -->
-            <div class="card balance-card">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span style="font-size:12px; opacity:0.9;">Total Saldo</span>
-                    <button onclick="toggleBalanceHide()" style="background:none; border:none; color:white; cursor:pointer;">
-                        <svg id="eye-icon" class="svg-icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                    </button>
-                </div>
-                <div id="balance-display" style="font-size:26px; font-weight:800; margin:10px 0;">Rp 2.500.000</div>
-                <div style="font-size:11px; opacity:0.8; display:flex; justify-content:space-between;">
-                    <span>ID Wallet: <strong id="wallet-id-display">MW-88392011</strong></span>
-                    <span onclick="navigateTo('history')" style="cursor:pointer; text-decoration:underline;">Riwayat &gt;</span>
-                </div>
-            </div>
-
-            <!-- Quick Action Grid -->
-            <div class="card">
-                <div class="service-grid">
-                    <div class="service-item" onclick="navigateTo('transfer')">
-                        <div class="icon-wrapper"><svg class="svg-icon" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg></div>
-                        <span class="service-name">Transfer</span>
-                    </div>
-                    <div class="service-item" onclick="navigateTo('topup')">
-                        <div class="icon-wrapper"><svg class="svg-icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></div>
-                        <span class="service-name">Top Up</span>
-                    </div>
-                    <div class="service-item" onclick="navigateTo('receive')">
-                        <div class="icon-wrapper"><svg class="svg-icon" viewBox="0 0 24 24"><line x1="17" y1="7" x2="7" y2="17"></line><polyline points="17 17 7 17 7 7"></polyline></svg></div>
-                        <span class="service-name">Terima</span>
-                    </div>
-                    <div class="service-item" onclick="navigateTo('all-services')">
-                        <div class="icon-wrapper" style="background:rgba(255,106,0,0.1); color:var(--primary);"><svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg></div>
-                        <span class="service-name" style="color:var(--primary); font-weight:700;">Lihat Semua</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Layanan Favorit -->
-            <div class="section-title">Layanan Favorit</div>
-            <div class="card">
-                <div id="favorite-services-grid" class="service-grid"></div>
-            </div>
-
-            <!-- Terakhir Digunakan -->
-            <div class="section-title">Terakhir Digunakan</div>
-            <div class="card">
-                <div id="recent-services-list" style="display:flex; gap:10px; overflow-x:auto; padding-bottom:4px;"></div>
-            </div>
-
-            <!-- Ringkasan Keuangan -->
-            <div class="section-title">Ringkasan Keuangan</div>
-            <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
-                <div>
-                    <div style="font-size:12px; color:var(--secondary);">Tabungan Demo</div>
-                    <div style="font-size:16px; font-weight:700; color:var(--text);" id="savings-display">Rp 2.500.000</div>
-                </div>
-                <button class="btn btn-outline" style="width:auto; padding:6px 12px; font-size:12px;" onclick="navigateTo('financial')">Kelola</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Page: SEMUA LAYANAN (FULL PAGE) -->
-    <div id="page-all-services" class="page-content">
-        <div class="nav-header">
-            <button class="icon-btn" onclick="navigateTo('home')">
-                <svg class="svg-icon" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-            </button>
-            <div class="title">Semua Layanan</div>
-            <div style="width:24px;"></div>
-        </div>
-
-        <div style="padding:16px;">
-            <!-- Search System -->
-            <div class="search-box">
-                <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <input type="text" id="service-search-input" placeholder="Cari layanan (misal: pulsa, listrik, bank)..." oninput="filterServices()">
-            </div>
-
-            <div id="services-render-container">
-                <!-- Dynamically Rendered Categories -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Page: TRANSFER -->
-    <div id="page-transfer" class="page-content">
-        <div class="nav-header">
-            <button class="icon-btn" onclick="navigateTo('home')">
-                <svg class="svg-icon" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-            </button>
-            <div class="title">Transfer Ke Bank</div>
-            <div style="width:24px;"></div>
-        </div>
-        <div style="padding:16px;">
-            <div class="card">
-                <div class="form-group">
-                    <label>Pilih Bank</label>
-                    <select id="tf-bank" class="form-control">
-                        <option>Bank Demo Mandiri</option>
-                        <option>Bank Demo BCA</option>
-                        <option>Bank Demo BRI</option>
-                        <option>Bank Demo BNI</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Nomor Rekening</label>
-                    <input type="number" id="tf-account" class="form-control" placeholder="1234567890">
-                </div>
-                <div class="form-group">
-                    <label>Nama Penerima</label>
-                    <input type="text" id="tf-name" class="form-control" placeholder="Nama Penerima Demo">
-                </div>
-                <div class="form-group">
-                    <label>Nominal (Rp)</label>
-                    <input type="number" id="tf-amount" class="form-control" placeholder="0">
-                </div>
-                <div style="font-size:12px; color:var(--secondary); margin-bottom:16px; display:flex; justify-content:space-between;">
-                    <span>Biaya Admin Demo:</span>
-                    <strong>Rp 0</strong>
-                </div>
-                <button class="btn" onclick="processTransfer()">Lanjutkan</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Page: TOP UP -->
-    <div id="page-topup" class="page-content">
-        <div class="nav-header">
-            <button class="icon-btn" onclick="navigateTo('home')">
-                <svg class="svg-icon" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-            </button>
-            <div class="title">Top Up Saldo Demo</div>
-            <div style="width:24px;"></div>
-        </div>
-        <div style="padding:16px;">
-            <div class="card">
-                <div class="section-title" style="margin-top:0;">Pilih Nominal Instant</div>
-                <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; margin-bottom:16px;">
-                    <button class="btn btn-outline" onclick="processTopUp(20000)">Rp 20.000</button>
-                    <button class="btn btn-outline" onclick="processTopUp(50000)">Rp 50.000</button>
-                    <button class="btn btn-outline" onclick="processTopUp(100000)">Rp 100.000</button>
-                    <button class="btn btn-outline" onclick="processTopUp(500000)">Rp 500.000</button>
-                </div>
-                <div class="form-group">
-                    <label>Nominal Custom (Rp)</label>
-                    <input type="number" id="topup-custom-amount" class="form-control" placeholder="0">
-                </div>
-                <button class="btn" onclick="processCustomTopUp()">Top Up Sekarang</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Page: TERIMA UANG / QR SAYA -->
-    <div id="page-receive" class="page-content">
-        <div class="nav-header">
-            <button class="icon-btn" onclick="navigateTo('home')">
-                <svg class="svg-icon" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-            </button>
-            <div class="title">Terima Uang</div>
-            <div style="width:24px;"></div>
-        </div>
-        <div style="padding:16px; text-align:center;">
-            <div class="card">
-                <strong style="font-size:16px;">Muzi Adriyan</strong>
-                <div style="font-size:12px; color:var(--secondary); margin-bottom:16px;" id="qr-id-text">MW-88392011</div>
-                
-                <!-- SVG Demo QR -->
-                <div style="background:white; padding:16px; border-radius:12px; display:inline-block; border:1px solid var(--border);">
-                    <svg viewBox="0 0 100 100" style="width:160px; height:160px;">
-                        <path d="M0,0 h30 v30 h-30 z M40,0 h20 v10 h-20 z M70,0 h30 v30 h-30 z M10,10 h10 v10 h-10 z M80,10 h10 v10 h-10 z M0,40 h10 v20 h-10 z M30,40 h40 v10 h-40 z M80,40 h20 v30 h-20 z M0,70 h30 v30 h-30 z M10,80 h10 v10 h-10 z M40,70 h30 v30 h-30 z" fill="#202020"/>
-                    </svg>
-                </div>
-                <p style="font-size:11px; color:var(--secondary); margin-top:12px;">QR DEMO — Tidak memproses pembayaran nyata.</p>
-                <button class="btn btn-outline" style="margin-top:16px;" onclick="copyWalletID()">Salin ID Wallet</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Page: RIWAYAT TRANSAKSI -->
-    <div id="page-history" class="page-content">
-        <div class="nav-header">
-            <button class="icon-btn" onclick="navigateTo('home')">
-                <svg class="svg-icon" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-            </button>
-            <div class="title">Riwayat Transaksi</div>
-            <div style="width:24px;"></div>
-        </div>
-        <div style="padding:16px;">
-            <div id="history-list-container">
-                <!-- Dynamically Rendered History -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Page: PROFIL & SECURITY -->
-    <div id="page-profile" class="page-content">
-        <div class="nav-header">
-            <button class="icon-btn" onclick="navigateTo('home')">
-                <svg class="svg-icon" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-            </button>
-            <div class="title">Profil Saya</div>
-            <div style="width:24px;"></div>
-        </div>
-        <div style="padding:16px;">
-            <div class="card" style="text-align:center;">
-                <div class="avatar" style="width:64px; height:64px; font-size:24px; margin:auto;">M</div>
-                <strong style="display:block; margin-top:10px; font-size:16px;">Muzi Adriyan</strong>
-                <span style="font-size:12px; color:var(--secondary);">@muzi4you • MW-88392011</span>
-            </div>
-            <div class="card">
-                <button class="btn btn-outline" style="margin-bottom:8px;" onclick="resetDemoPIN()">Ubah PIN Demo</button>
-                <button class="btn" style="background:var(--danger);" onclick="resetAllDemoData()">Reset Data App Demo</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- BOTTOM NAVIGATION BAR -->
-    <div class="bottom-nav">
-        <div class="nav-tab active" onclick="navigateTo('home')">
-            <svg class="svg-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
-            <span>Beranda</span>
-        </div>
-        <div class="nav-tab" onclick="navigateTo('transfer')">
-            <svg class="svg-icon" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
-            <span>Transfer</span>
-        </div>
-        <div class="nav-tab" onclick="navigateTo('receive')">
-            <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-            <span>QR</span>
-        </div>
-        <div class="nav-tab" onclick="navigateTo('history')">
-            <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-            <span>Riwayat</span>
-        </div>
-        <div class="nav-tab" onclick="navigateTo('profile')">
-            <svg class="svg-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-            <span>Saya</span>
-        </div>
-    </div>
-</div>
-
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MuziPay</title>
+<style>
+:root{--b:#1565ff;--b2:#0a3fd0;--bg:#f1f5ff;--tx:#0f1e3d;--mu:#6b7a99;--ok:#12b76a;--wa:#f79009;--er:#f04438;--ln:#e0e8f8}
+*{box-sizing:border-box;margin:0;font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+body{background:var(--bg);color:var(--tx);font-size:15px}
+button{cursor:pointer;border:0;background:none;color:inherit}
+#app{display:flex;min-height:100vh}
+.side{display:none;width:236px;background:#fff;border-right:1px solid var(--ln);padding:20px 14px;position:sticky;top:0;height:100vh;flex-direction:column;gap:4px}
+.side .logo{margin:0 8px 18px}
+.nb{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;color:var(--mu);font-weight:600;width:100%;text-align:left}
+.nb.on{background:#e8f0ff;color:var(--b)}
+.main{flex:1;min-width:0;max-width:860px;margin:0 auto;width:100%;padding:14px 16px 96px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:14px}
+.logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:20px;color:var(--b2)}
+.logo i{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#4d9bff,#0a3fd0);display:grid;place-items:center;color:#fff;font-style:normal;font-size:16px}
+.sim{font-size:12px;font-weight:700;padding:5px 10px;border-radius:99px;background:#dcfae6;color:#067647}
+.sim.off{background:#fef0c7;color:#93370d}
+.ib{width:40px;height:40px;border-radius:12px;background:#fff;display:grid;place-items:center;position:relative;border:1px solid var(--ln)}
+.ib b{position:absolute;top:-4px;right:-4px;background:var(--er);color:#fff;font-size:10px;border-radius:99px;padding:1px 5px}
+.bot{position:fixed;left:0;right:0;bottom:0;display:flex;background:#fff;border-top:1px solid var(--ln);padding:6px 4px calc(6px + env(safe-area-inset-bottom));z-index:5}
+.bot .nb{flex-direction:column;gap:2px;font-size:11px;padding:6px 2px;justify-content:center;align-items:center}
+@media(min-width:900px){.side{display:flex}.bot{display:none}.main{padding-bottom:40px}}
+.ph{display:flex;align-items:center;gap:10px;margin:4px 0 14px}.ph h2{font-size:20px}
+.card{background:#fff;border-radius:20px;padding:16px;margin-bottom:14px;border:1px solid var(--ln)}
+.bal{background:linear-gradient(135deg,#2f80ff 0%,#0a3fd0 60%,#08297f 100%);color:#fff;border:0;position:relative;overflow:hidden;box-shadow:0 14px 30px -12px rgba(10,63,208,.6)}
+.bal:after{content:"";position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.1)}
+.bal .row{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}
+.av{width:44px;height:44px;border-radius:50%;background:#fff3;display:grid;place-items:center;font-weight:700;overflow:hidden;flex:none}
+.av img{width:100%;height:100%;object-fit:cover}
+.amt{font-size:30px;font-weight:800;margin:14px 0 2px;display:flex;align-items:center;gap:10px}
+.amt button{color:#fff;opacity:.85}
+.acts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px;position:relative;z-index:1}
+.acts button{background:#ffffff26;border-radius:14px;padding:10px 2px;font-size:12px;font-weight:600;color:#fff;display:flex;flex-direction:column;align-items:center;gap:4px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:420px){.grid{grid-template-columns:repeat(3,1fr)}}
+.gi{background:#fff;border:1px solid var(--ln);border-radius:16px;padding:12px 4px;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:12px;font-weight:600;text-align:center}
+.ico{width:42px;height:42px;border-radius:14px;background:#e8f0ff;color:var(--b);display:grid;place-items:center}
+.slw{overflow:hidden;border-radius:20px;margin-bottom:14px;position:relative}
+.sl{display:flex;transition:transform .6s ease}
+.slide{min-width:100%;padding:20px;color:#fff;min-height:130px;background:linear-gradient(120deg,#0a3fd0,#38a0ff);background-size:cover;background-position:center;cursor:pointer;position:relative}
+.slide:nth-child(2n){background-image:linear-gradient(120deg,#082a85,#2f80ff)}
+.slide h3{font-size:18px;margin:14px 0 4px;max-width:80%}.slide p{font-size:13px;opacity:.9;max-width:80%;margin-bottom:10px}
+.ad{position:absolute;top:10px;right:10px;background:#0006;font-size:11px;padding:2px 8px;border-radius:6px}
+.dots{display:flex;gap:5px;justify-content:center;margin:-22px 0 8px;position:relative}
+.dots i{width:6px;height:6px;border-radius:9px;background:#fff8}.dots i.on{width:18px;background:#fff}
+.btn{background:linear-gradient(135deg,#2f80ff,#0a3fd0);color:#fff;padding:13px 18px;border-radius:14px;font-weight:700;width:100%;display:block;text-align:center;font-size:15px}
+.btn.sm{width:auto;display:inline-block;padding:8px 14px;font-size:13px;border-radius:10px}
+.btn.ghost{background:#e8f0ff;color:var(--b2)}.btn.w{background:#fff;color:var(--b2)}.btn.red{background:var(--er)}
+.btns{display:flex;gap:10px;margin-top:14px}
+.f{display:block;margin-bottom:12px}.f span{display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:var(--mu)}
+input,select,textarea{width:100%;padding:12px 14px;border:1.5px solid var(--ln);border-radius:12px;font-size:15px;background:#fff;color:var(--tx)}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--b);outline-offset:1px}
+input[type=checkbox]{width:auto;margin-right:8px}input[type=range]{padding:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+.chip{border:1.5px solid var(--ln);background:#fff;border-radius:12px;padding:9px 13px;font-weight:600;font-size:13px;text-align:left}
+.chip small{display:block;color:var(--mu);font-weight:500;margin-top:2px}
+.chip.on{border-color:var(--b);background:#e8f0ff;color:var(--b2)}
+.li{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--ln);width:100%;text-align:left}
+.li:last-child{border:0}.li .t{flex:1;min-width:0}.li .t b{display:block}.li .t small{color:var(--mu)}
+.badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;display:inline-block}
+.success{background:#dcfae6;color:#067647}.pending{background:#fef0c7;color:#93370d}.failed{background:#fee4e2;color:#b42318}.none{background:#eaecf0;color:#475467}
+.plus{color:var(--ok);font-weight:700}.minus{font-weight:700}
+.note{background:#fff7e0;border:1px solid #fde4a3;color:#7a4b00;padding:12px 14px;border-radius:14px;margin-bottom:14px;font-size:13px;line-height:1.5}
+.mu{color:var(--mu);font-size:13px}
+.mb{position:fixed;inset:0;background:#0b1b4399;display:flex;align-items:flex-end;justify-content:center;z-index:20}
+.mb[hidden]{display:none}
+.sheet{background:#fff;width:100%;max-width:480px;border-radius:24px 24px 0 0;padding:20px;max-height:92vh;overflow:auto;animation:up .25s}
+@media(min-width:600px){.mb{align-items:center}.sheet{border-radius:24px}}
+@keyframes up{from{transform:translateY(30px);opacity:0}}
+.sheet h3{margin-bottom:12px}
+.rows>div{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px dashed var(--ln);font-size:14px}.rows span{color:var(--mu)}.rows b{text-align:right;word-break:break-word}
+.rc{text-align:center;margin-bottom:10px}
+.spin{width:46px;height:46px;border:5px solid #fff5;border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite;margin:auto}
+#ld{align-items:center}@keyframes sp{to{transform:rotate(360deg)}}
+#toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:40;display:flex;flex-direction:column;gap:8px;align-items:center}
+#toast div{background:#0f1e3d;color:#fff;padding:11px 18px;border-radius:12px;font-size:14px;animation:up .25s;box-shadow:0 8px 20px #0004}
+#toast .err{background:var(--er)}
+.sk{height:90px;border-radius:18px;margin-bottom:14px;background:linear-gradient(90deg,#e3eafb 25%,#f3f6ff 50%,#e3eafb 75%);background-size:200%;animation:sh 1.1s infinite}
+@keyframes sh{to{background-position:-200% 0}}
+.pv{border:2px dashed var(--ln);border-radius:14px;padding:10px;margin-bottom:12px;text-align:center}.pv img{max-width:100%;max-height:200px;border-radius:10px}
+table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:6px 4px;text-align:left;border-bottom:1px solid var(--ln)}
+.sw{display:flex;justify-content:space-between;align-items:center;padding:10px 0}
+details{padding:12px 0;border-bottom:1px solid var(--ln)}summary{font-weight:600;cursor:pointer}details p{margin-top:8px;color:var(--mu);line-height:1.5}
+p.d{line-height:1.6;margin-bottom:10px}
+@media print{body>*:not(#modal){display:none!important}#modal{position:static;background:none}.sheet{max-height:none;box-shadow:none}.btns{display:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<div id="app"><aside class="side" id="side"></aside><main class="main"><div class="top" id="top"></div><div id="view"></div></main></div>
+<nav class="bot" id="bot"></nav>
+<div id="modal" class="mb" hidden></div><div id="ld" class="mb" hidden><div class="spin"></div></div><div id="toast"></div>
+<div id="lock" class="mb" hidden style="align-items:center"><div class="sheet" style="border-radius:24px;text-align:center"><div class="logo" style="justify-content:center;margin-bottom:10px"><i>M</i>MuziPay</div><p class="mu" style="margin-bottom:12px">Anda telah keluar. Masukkan PIN untuk masuk kembali (PIN awal: 123456).</p><input id="lpin" type="password" inputmode="numeric" maxlength="6" placeholder="PIN 6 digit" style="text-align:center;margin-bottom:12px"><button class="btn" data-act="unlock">Masuk</button></div></div>
 <script>
-    /* ==========================================================================
-       APP DATABASE & STATE MANAGEMENT (LOCAL STORAGE)
-       ========================================================================== */
-    const DEFAULT_STATE = {
-        pin: '123456',
-        balance: 2500000,
-        favorites: ['tf_bank', 'pulsa', 'listrik', 'topup'],
-        recent: ['tf_bank', 'pulsa'],
-        transactions: [
-            { id: 'MWTX-99823', type: 'IN', title: 'Top Up Saldo Demo', amount: 500000, date: new Date().toISOString(), status: 'BERHASIL - DEMO' },
-            { id: 'MWTX-99822', type: 'OUT', title: 'Pembayaran Listrik PLN Demo', amount: 150000, date: new Date().toISOString(), status: 'BERHASIL - DEMO' }
-        ]
-    };
+const I={home:'<path d="M3 10l9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>',grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',tag:'<path d="M3 12V3h9l9 9-9 9z"/><circle cx="7.5" cy="7.5" r="1"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>',plus:'<path d="M12 5v14M5 12h14"/>',send:'<path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/>',down:'<path d="M12 3v14M5 12l7 7 7-7"/>',bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21h4"/>',eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',game:'<rect x="2" y="7" width="20" height="11" rx="4"/><path d="M7 10v5M5 12.5h4M16 11h.01M18 14h.01"/>',phone:'<rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/>',bill:'<path d="M6 2h12v20l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6"/>',shield:'<path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5z"/>',help:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 1-1 1.7M12 17h.01"/>',out:'<path d="M9 21H5V3h4M16 17l5-5-5-5M21 12H9"/>',file:'<path d="M14 2H6v20h12V6zM14 2v4h4M9 13h6M9 17h6"/>',cash:'<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/>',id:'<rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="8" cy="12" r="2"/><path d="M13 10h5M13 14h4"/>',lock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',chev:'<path d="M9 6l6 6-6 6"/>',back:'<path d="M15 6l-6 6 6 6"/>',cog:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/>'};
+const $=(s,e=document)=>e.querySelector(s),$$=(s,e=document)=>[...e.querySelectorAll(s)];
+const rp=n=>'Rp'+Math.round(n).toLocaleString('id-ID');
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ic=(n,s=22)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[n]||''}</svg>`;
+const fd=ts=>new Date(ts).toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+const v=id=>{const e=$('#'+id);return e?e.value.trim():''};
+const K='muzipay.v1';
+const DEF=()=>({sim:true,bal:500000,hide:false,locked:false,pin:'123456',outcome:'ok',push:true,kyc:{st:'none'},txs:[],loans:[],
+user:{name:'Pengguna MuziPay',phone:'081234567890',email:'pengguna@email.com',acc:'8800 1234 5678'},
+notifs:[{id:1,t:'Selamat datang di MuziPay',d:'Mode Simulasi aktif dengan saldo virtual Rp500.000.',ts:Date.now(),r:0}],
+banners:[{t:'Top Up Game Lebih Hemat',d:'Diskon biaya admin untuk game favoritmu.',l:'#game',img:'',ad:1},{t:'Pulsa dan Paket Data',d:'Isi ulang semua operator dalam hitungan detik.',l:'#pulsa',img:'',ad:1},{t:'Bayar Tagihan Tanpa Antre',d:'PLN, BPJS, PDAM, dan WiFi dalam satu aplikasi.',l:'#tagihan',img:'',ad:0},{t:'Hitung Cicilan Sebelum Memutuskan',d:'Coba kalkulator pinjaman simulasi.',l:'#pinjaman',img:'',ad:0}]});
+function load(){try{const d=JSON.parse(localStorage.getItem(K));if(d&&typeof d==='object')return Object.assign(DEF(),d)}catch(e){}return DEF()}
+let S=load();const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
+// Titik integrasi layanan iklan resmi: ganti AdProvider.get dengan SDK/API penyedia iklan.
+const AdProvider={get:()=>S.banners};
+let cur='home',HIST=[],SEL={},F='all',PH={id:null,selfie:null},AV=null,LN={a:2000000,n:6},bi=0;
+const SC={success:'Berhasil',pending:'Pending',failed:'Gagal'},TL={topup:'Top Up',transfer:'Transfer',tarik:'Tarik Saldo',game:'Pembelian Game',pulsa:'Pulsa & Data',tagihan:'Bayar Tagihan'},TI={topup:'plus',transfer:'send',tarik:'down',game:'game',pulsa:'phone',tagihan:'bill'};
+const NAV=[['home','home','Beranda'],['layanan','grid','Layanan'],['riwayat','clock','Riwayat'],['promo','tag','Promo'],['akun','user','Akun']];
+const AKUN=['akun','profil','settings','keamanan','notif','bantuan','faq','tnc','privasi','info','cs'];
+const toast=(m,e)=>{const d=document.createElement('div');d.textContent=m;if(e)d.className='err';$('#toast').append(d);setTimeout(()=>d.remove(),3000)};
+const loader=b=>$('#ld').hidden=!b;
+const modal=h=>{const m=$('#modal');m.innerHTML=`<div class="sheet">${h}</div>`;m.hidden=false};
+const closeM=()=>{$('#modal').hidden=true};
+$('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeM()});
+const rows=a=>`<div class="rows">${a.map(([k,x])=>`<div><span>${k}</span><b>${esc(x)}</b></div>`).join('')}</div>`;
+const fld=(id,l,ph='',t='text',x='')=>`<label class="f"><span>${l}</span><input id="${id}" type="${t}" placeholder="${ph}" ${x}></label>`;
+const sel=(id,l,o)=>`<label class="f"><span>${l}</span><select id="${id}">${o.map(x=>`<option>${x}</option>`).join('')}</select></label>`;
+const chips=(n,a,s)=>`<div class="chips" data-n="${n}">${a.map(([l,x,sm])=>`<button type="button" class="chip${String(x)===String(s)?' on':''}" data-v="${x}">${l}${sm?`<small>${sm}</small>`:''}</button>`).join('')}</div>`;
+const head=(t,b=true)=>`<div class="ph">${b?`<button class="ib" data-act="back" aria-label="Kembali">${ic('back')}</button>`:''}<h2>${t}</h2></div>`;
+const grid=a=>`<div class="grid">${a.map(([p,i,l])=>`<button class="gi" data-go="${p}"><span class="ico">${ic(i)}</span>${l}</button>`).join('')}</div>`;
+const badge=s=>`<span class="badge ${s}">${SC[s]||s}</span>`;
+const txli=t=>`<button class="li" data-act="detail" data-id="${t.id}"><span class="ico">${ic(TI[t.type])}</span><span class="t"><b>${esc(t.label)}</b><small>${fd(t.ts)}</small></span><span style="text-align:right"><div class="${t.type==='topup'?'plus':'minus'}">${t.type==='topup'?'+':'-'}${rp(t.type==='topup'?t.amt:t.tot)}</div>${badge(t.st)}</span></button>`;
+const empty=m=>`<p class="mu" style="padding:18px 0;text-align:center">${m}</p>`;
+const unread=()=>S.notifs.filter(n=>!n.r).length;
+const doc=(t,a)=>head(t)+`<div class="card">${a.map(x=>`<p class="d">${x}</p>`).join('')}</div>`;
 
-    let appState = JSON.parse(localStorage.getItem('muzi_app_db')) || DEFAULT_STATE;
+// ---------- Halaman ----------
+const P={};
+P.home=()=>`<div class="card bal"><div class="row"><div style="display:flex;gap:10px;align-items:center"><div class="av">${AV?`<img src="${AV}" alt="">`:esc(S.user.name[0])}</div><div><small style="opacity:.8">Selamat datang,</small><div style="font-weight:700">${esc(S.user.name)}</div></div></div><span class="badge ${S.kyc.st==='verified'?'success':'none'}">${S.kyc.st==='verified'?'Terverifikasi':'Belum Terverifikasi'}</span></div>
+<div class="amt"><span>${S.hide?'Rp ••••••':rp(S.bal)}</span><button data-act="toggleBal" aria-label="Tampilkan atau sembunyikan saldo">${ic('eye',20)}</button></div><div style="font-size:13px;opacity:.85">Akun ${esc(S.user.acc)}</div>
+<div class="acts"><button data-go="topup">${ic('plus')}Top Up</button><button data-go="transfer">${ic('send')}Transfer</button><button data-go="tarik">${ic('down')}Tarik</button><button data-go="riwayat">${ic('clock')}Riwayat</button></div></div>
+${slider()}${grid([['game','game','Top Up Game'],['pulsa','phone','Pulsa & Data'],['tagihan','bill','Tagihan'],['pinjaman','cash','Pinjaman'],['kyc','id','Verifikasi'],['promo','tag','Promo'],['notif','bell','Notifikasi'],['layanan','grid','Semua']])}
+<div class="card" style="margin-top:14px"><b>Notifikasi terbaru</b>${S.notifs.slice(0,2).map(n=>`<div class="li"><span class="ico">${ic('bell')}</span><span class="t"><b>${esc(n.t)}</b><small>${esc(n.d)}</small></span></div>`).join('')||empty('Belum ada notifikasi')}</div>
+<div class="card"><b>Promo dan penawaran</b><p class="mu" style="margin:6px 0 10px">Lihat semua penawaran terbaru untuk layananmu.</p><button class="btn ghost" data-go="promo">Lihat Promo</button></div>
+<div class="card"><b>Transaksi terakhir</b>${S.txs.slice(0,3).map(txli).join('')||empty('Belum ada transaksi. Coba top up saldo virtual.')}</div>`;
+const slider=()=>{const b=AdProvider.get();return `<div class="slw"><div class="sl" id="sl">${b.map(x=>`<div class="slide" data-act="blink" data-l="${esc(x.l)}" ${x.img?`style="background-image:linear-gradient(90deg,rgba(8,41,127,.85),rgba(8,41,127,.2)),url('${esc(x.img)}')"`:''}>${x.ad?'<span class="ad">Iklan</span>':''}<h3>${esc(x.t)}</h3><p>${esc(x.d)}</p><span class="btn sm w">Lihat Promo</span></div>`).join('')}</div></div><div class="dots">${b.map((_,i)=>`<i class="${i===bi?'on':''}"></i>`).join('')}</div>`};
+P.layanan=()=>head('Layanan',false)+grid([['topup','plus','Top Up'],['transfer','send','Transfer'],['tarik','down','Tarik Saldo'],['game','game','Top Up Game'],['pulsa','phone','Pulsa & Data'],['tagihan','bill','Bayar Tagihan'],['pinjaman','cash','Pinjaman'],['kyc','id','Verifikasi KYC']]);
+const METH=['Transfer Bank BCA','Transfer Bank Mandiri','Transfer Bank BNI','QRIS','Minimarket'];
+P.topup=()=>head('Top Up Saldo')+`<div class="card"><b>Pilih nominal</b><div style="height:8px"></div>${chips('amt',[10000,25000,50000,100000,250000,500000,1000000].map(x=>[rp(x),x]))}${fld('ca','Atau nominal sendiri','Minimal Rp10.000','number','min="0"')}${sel('mt','Metode pembayaran',METH)}<button class="btn" data-act="doTopup">Top Up</button></div><div class="card"><b>Riwayat top up</b>${S.txs.filter(t=>t.type==='topup').slice(0,8).map(txli).join('')||empty('Belum ada top up')}</div>`;
+const GAMES=[['Mobile Legends','Diamond',1,285,[86,172,257,514,706]],['Free Fire','Diamond',0,150,[70,140,355,720]],['PUBG Mobile','UC',0,155,[60,325,660,1800]],['Call of Duty Mobile','CP',0,150,[80,400,800,2000]],['Genshin Impact','Genesis Crystal',1,245,[60,300,980,1980]],['Honor of Kings','Token',0,200,[80,240,400,800]],['Roblox','Robux',0,160,[80,400,800,1700]],['Valorant','VP',0,150,[475,1000,2050,3650]],['Game Lainnya','Koin',0,180,[100,300,600,1200]]];
+const gp=(g,q)=>Math.ceil(q*g[3]/100)*100;
+const gitems=i=>{const g=GAMES[i];return chips('gi',g[4].map((q,k)=>[`${q} ${g[1]}`,k,rp(gp(g,q))]))};
+P.game=()=>head('Top Up Game')+`<div class="card"><b>Pilih game</b><div style="height:8px"></div>${chips('game',GAMES.map((g,i)=>[g[0],i]))}<div id="gname"></div>${fld('uid','User ID','Masukkan User ID','tel')}<div id="gz" hidden>${fld('zid','Zone ID','Contoh: 2001','tel')}</div><b>Pilih nominal</b><div style="height:8px"></div><div id="gitems"><p class="mu">Pilih game terlebih dahulu</p></div><button class="btn" data-act="doGame">Beli Sekarang</button></div><div class="card"><b>Riwayat pembelian</b>${S.txs.filter(t=>t.type==='game').slice(0,6).map(txli).join('')||empty('Belum ada pembelian')}</div>`;
+const OPS={Telkomsel:['0811','0812','0813','0821','0822','0823','0851','0852','0853'],Indosat:['0814','0815','0816','0855','0856','0857','0858'],XL:['0817','0818','0819','0859','0877','0878'],Axis:['0831','0832','0833','0838'],Tri:['0895','0896','0897','0898','0899'],Smartfren:['0881','0882','0883','0884','0885','0886','0887','0888','0889']};
+const PD=[['1,5 GB / 7 hari',15000],['5 GB / 30 hari',45000],['12 GB / 30 hari',80000],['30 GB / 30 hari',120000]];
+const pitems=t=>t==='pulsa'?chips('pi',[5,10,15,20,25,50,100].map(x=>[rp(x*1000),x*1000,'Harga '+rp(x*1000+1500)])):chips('pi',PD.map(([l,p],i)=>[l,i,rp(p)]));
+P.pulsa=()=>{SEL.op=SEL.op||'Telkomsel';SEL.pt=SEL.pt||'pulsa';return head('Pulsa dan Paket Data')+`<div class="card">${chips('pt',[['Pulsa','pulsa'],['Paket Data','data']],SEL.pt)}${fld('hp','Nomor HP','08xxxxxxxxxx','tel','maxlength="14"')}${chips('op',Object.keys(OPS).map(o=>[o,o]),SEL.op)}<div id="pitems">${pitems(SEL.pt)}</div><button class="btn" data-act="doPulsa">Beli</button></div><div class="card"><b>Riwayat pembelian</b>${S.txs.filter(t=>t.type==='pulsa').slice(0,6).map(txli).join('')||empty('Belum ada pembelian')}</div>`};
+const BILL=['PLN Prabayar','PLN Pascabayar','BPJS','PDAM','Internet & WiFi','TV Kabel','Angsuran','Tagihan Telepon','Tagihan Lainnya'];
+P.tagihan=()=>head('Bayar Tagihan')+`<div class="card">${chips('bl',BILL.map(b=>[b,b]))}${fld('cn','Nomor pelanggan','6 - 16 digit','tel','maxlength="16"')}<div id="bq">${chips('bn',[20000,50000,100000,200000].map(x=>[rp(x),x]))}</div>${fld('bm','Atau nominal sendiri','Minimal Rp10.000','number')}<button class="btn" data-act="doTagihan">Bayar Tagihan</button></div><div class="card"><b>Riwayat pembayaran</b>${S.txs.filter(t=>t.type==='tagihan').slice(0,6).map(txli).join('')||empty('Belum ada pembayaran')}</div>`;
+P.transfer=()=>head('Transfer')+`<div class="card">${fld('tn','Nomor tujuan','Nomor HP pengguna MuziPay','tel','maxlength="14"')}${fld('ta','Nominal','Minimal Rp10.000','number')}${fld('tc','Catatan (opsional)','Contoh: bayar makan','text','maxlength="60"')}<button class="btn" data-act="doTransfer">Lanjutkan</button></div><div class="card"><b>Riwayat transfer</b>${S.txs.filter(t=>t.type==='transfer').slice(0,8).map(txli).join('')||empty('Belum ada transfer')}</div>`;
+P.tarik=()=>head('Tarik Saldo')+`<div class="card">${sel('tb','Bank tujuan',['BCA','Mandiri','BNI','BRI','CIMB Niaga'])}${fld('tr','Nomor rekening','10 - 16 digit','tel','maxlength="16"')}${fld('tt','Nominal','Minimal Rp50.000','number')}<p class="mu" style="margin-bottom:12px">Biaya admin Rp6.500 per penarikan.</p><button class="btn" data-act="doTarik">Tarik Saldo</button></div><div class="card"><b>Riwayat penarikan</b>${S.txs.filter(t=>t.type==='tarik').slice(0,6).map(txli).join('')||empty('Belum ada penarikan')}</div>`;
+const FLT=[['all','Semua'],['success','Berhasil'],['pending','Pending'],['failed','Gagal'],['topup','Top Up'],['transfer','Transfer'],['game','Game'],['pulsa','Pulsa & Data'],['tagihan','Tagihan']];
+const fl=()=>S.txs.filter(t=>F==='all'||t.st===F||t.type===F||(F==='transfer'&&t.type==='tarik'));
+P.riwayat=()=>head('Riwayat Transaksi',false)+`<div class="chips" data-n="flt" style="overflow:auto;flex-wrap:nowrap">${FLT.map(([k,l])=>`<button class="chip${F===k?' on':''}" data-v="${k}" style="white-space:nowrap">${l}</button>`).join('')}</div><div class="card">${fl().map(txli).join('')||empty('Tidak ada transaksi pada filter ini')}</div>`;
+P.promo=()=>head('Iklan dan Promosi',false)+S.banners.map(b=>`<div class="slide" style="border-radius:20px;margin-bottom:12px;${b.img?`background-image:linear-gradient(90deg,rgba(8,41,127,.85),rgba(8,41,127,.2)),url('${esc(b.img)}')`:''}" data-act="blink" data-l="${esc(b.l)}">${b.ad?'<span class="ad">Iklan</span>':''}<h3>${esc(b.t)}</h3><p>${esc(b.d)}</p><span class="btn sm w">Lihat Promo</span></div>`).join('')+`<div class="card"><b>Kelola banner</b><p class="mu" style="margin:4px 0">Ubah judul, teks, gambar, dan tautan banner. Tautan bisa berupa halaman (#game, #pulsa, #tagihan, #topup, #pinjaman) atau alamat https://.</p>${S.banners.map((b,i)=>`<details><summary>${esc(b.t)}</summary><div style="margin-top:10px">${fld('bt'+i,'Judul','','text',`value="${esc(b.t)}" maxlength="60"`)}${fld('bd'+i,'Teks','','text',`value="${esc(b.d)}" maxlength="120"`)}${fld('bl'+i,'Tautan','','text',`value="${esc(b.l)}"`)}${fld('bg'+i,'URL gambar (opsional)','https://...','text',`value="${esc(b.img)}"`)}<label class="sw"><span>Tandai sebagai Iklan</span><input type="checkbox" id="ba${i}" ${b.ad?'checked':''}></label><div class="btns"><button class="btn sm" data-act="bSave" data-i="${i}">Simpan</button><button class="btn sm red" data-act="bDel" data-i="${i}">Hapus</button></div></div></details>`).join('')}<div class="btns"><button class="btn ghost" data-act="bAdd">Tambah Banner</button></div></div>`;
+P.pinjaman=()=>head('Pinjaman Simulasi')+`<div class="note">Fitur ini hanya simulasi edukasi dan tidak memberikan pinjaman uang sungguhan.</div><div class="card"><label class="f"><span>Nominal pinjaman: <b id="lamt"></b></span><input type="range" id="lr" min="500000" max="10000000" step="500000" value="${LN.a}"></label><b>Jangka waktu</b><div style="height:8px"></div>${chips('tenor',[3,6,12].map(x=>[x+' bulan',x]),LN.n)}<div id="lres"></div><button class="btn" data-act="loanSubmit">Ajukan Simulasi</button></div><div class="card"><b>Riwayat simulasi</b>${S.loans.map(l=>`<div class="li"><span class="ico">${ic('cash')}</span><span class="t"><b>${rp(l.a)} • ${l.n} bulan</b><small>${fd(l.ts)} • Cicilan ${rp(l.c)}</small></span><span class="badge ${l.st==='Menunggu'?'pending':'success'}">${l.st}</span></div>`).join('')||empty('Belum ada simulasi')}</div>`;
+const lcalc=()=>{const a=LN.a,n=LN.n,bg=a*.015*n,fee=a*.02,c=Math.ceil((a+bg+fee)/n);$('#lamt').textContent=rp(a);const d=new Date();$('#lres').innerHTML=`<div class="rows" style="margin:12px 0">${[['Bunga','1,5% per bulan (flat)'],['Total bunga',rp(bg)],['Biaya admin (2%)',rp(fee)],['Cicilan per bulan',rp(c)],['Total pembayaran',rp(c*n)]].map(([k,x])=>`<div><span>${k}</span><b>${x}</b></div>`).join('')}</div><table><tr><th>Cicilan</th><th>Jatuh tempo</th><th>Jumlah</th></tr>${Array.from({length:n},(_,i)=>{const t=new Date(d.getFullYear(),d.getMonth()+i+1,d.getDate());return `<tr><td>${i+1}</td><td>${t.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'})}</td><td>${rp(c)}</td></tr>`}).join('')}</table><div style="height:12px"></div>`;return c};
+const KS={none:['none','Belum Diverifikasi'],pending:['pending','Menunggu'],verified:['success','Terverifikasi']};
+P.kyc=()=>{const k=S.kyc,s=KS[k.st];return head('Verifikasi Identitas')+`<div class="note">Mode Simulasi: data dan foto hanya dipratinjau di perangkat ini, tidak dikirim ke pihak mana pun, dan bukan verifikasi identitas sungguhan. Foto tidak disimpan dan akan hilang saat halaman dimuat ulang.</div><div class="card"><div class="sw"><b>Status</b><span class="badge ${s[0]}">${s[1]}</span></div>${k.data?`<p class="mu">Terakhir dikirim: ${esc(k.data.name)} • NIK ${esc(k.data.nik)}</p>`:''}</div>${k.st==='pending'||k.st==='verified'?'':`<div class="card">${fld('kn','Nama lengkap','Sesuai KTP')}${fld('kk','NIK','16 digit','tel','maxlength="16"')}${fld('kt','Tempat lahir')}${fld('kd','Tanggal lahir','','date')}<label class="f"><span>Alamat lengkap</span><textarea id="ka" rows="3"></textarea></label>${fld('kp','Nomor telepon','08xxxxxxxxxx','tel')}${fld('ke','Email','nama@email.com','email')}<b>Foto identitas</b><div id="pv-id" class="pv" style="margin-top:8px"></div><input type="file" id="fi-id" accept="image/*" data-pick="id" style="margin-bottom:12px"><b>Foto selfie</b><div id="pv-selfie" class="pv" style="margin-top:8px"></div><input type="file" id="fi-selfie" accept="image/*" data-pick="selfie" style="margin-bottom:12px"><label class="sw" style="justify-content:flex-start"><input type="checkbox" id="kc"><span>Saya menyetujui pemrosesan data untuk pratinjau lokal sesuai Kebijakan Privasi.</span></label><button class="btn" data-act="kycSubmit">Kirim Verifikasi</button></div>`}`};
+P.notif=()=>head('Notifikasi')+`<div class="card">${S.notifs.map(n=>`<div class="li"><span class="ico">${ic('bell')}</span><span class="t"><b>${esc(n.t)}${n.r?'':' •'}</b><small>${esc(n.d)}<br>${fd(n.ts)}</small></span></div>`).join('')||empty('Belum ada notifikasi')}<div class="btns"><button class="btn ghost sm" data-act="readAll">Tandai dibaca</button><button class="btn ghost sm" data-act="clearNotif">Hapus semua</button></div></div>`;
+const MENU=[['profil','user','Profil pengguna'],['settings','cog','Pengaturan akun'],['keamanan','lock','Keamanan akun'],['notif','bell','Notifikasi'],['bantuan','help','Pusat bantuan'],['faq','help','FAQ'],['tnc','file','Syarat dan ketentuan'],['privasi','shield','Kebijakan privasi'],['info','info','Informasi aplikasi'],['cs','help','Hubungi customer service']];
+P.akun=()=>head('Akun',false)+`<div class="card" style="display:flex;gap:12px;align-items:center"><div class="av" style="background:#e8f0ff;color:var(--b)">${AV?`<img src="${AV}" alt="">`:esc(S.user.name[0])}</div><div><b>${esc(S.user.name)}</b><div class="mu">${esc(S.user.phone)}</div></div></div><div class="card"><label class="sw"><b>Mode Simulasi</b><input type="checkbox" ${S.sim?'checked':''} data-act="toggleSim"></label>${MENU.map(([p,i,l])=>`<button class="li" data-go="${p}"><span class="ico">${ic(i)}</span><span class="t"><b>${l}</b></span>${ic('chev',18)}</button>`).join('')}<button class="li" data-act="logout"><span class="ico">${ic('out')}</span><span class="t"><b>Keluar akun</b></span></button></div>`;
+P.profil=()=>head('Profil')+`<div class="card"><div class="pv"><div class="av" style="margin:auto;background:#e8f0ff;color:var(--b);width:80px;height:80px;font-size:28px">${AV?`<img src="${AV}" alt="">`:esc(S.user.name[0])}</div></div><label class="f"><span>Foto profil (hanya pratinjau)</span><input type="file" accept="image/*" data-pick="avatar"></label>${fld('pn','Nama','','text',`value="${esc(S.user.name)}" maxlength="40"`)}${fld('pp','Nomor telepon','','tel',`value="${esc(S.user.phone)}"`)}${fld('pe','Email','','email',`value="${esc(S.user.email)}"`)}<button class="btn" data-act="saveProfile">Simpan Profil</button></div>`;
+P.settings=()=>head('Pengaturan Akun')+`<div class="card"><label class="sw"><span>Mode Simulasi</span><input type="checkbox" ${S.sim?'checked':''} data-act="toggleSim"></label><label class="sw"><span>Notifikasi transaksi</span><input type="checkbox" ${S.push?'checked':''} data-act="togglePush"></label><label class="f"><span>Hasil transaksi simulasi</span><select data-act="setOutcome"><option value="ok" ${S.outcome==='ok'?'selected':''}>Selalu berhasil</option><option value="rand" ${S.outcome==='rand'?'selected':''}>Acak (berhasil, pending, gagal)</option></select></label><p class="mu" style="margin-bottom:12px">Saldo virtual awal Rp500.000. Data tersimpan di localStorage perangkat ini.</p><button class="btn red" data-act="resetAll">Reset Seluruh Data Simulasi</button></div>`;
+P.keamanan=()=>head('Keamanan Akun')+`<div class="note">Penyimpanan lokal (localStorage) bukan sistem keamanan untuk layanan finansial sungguhan. Password tidak disimpan oleh aplikasi ini.</div><div class="card"><b>Ubah PIN</b><div style="height:8px"></div>${fld('po','PIN lama','','password','inputmode="numeric" maxlength="6"')}${fld('pb','PIN baru (6 digit)','','password','inputmode="numeric" maxlength="6"')}${fld('pu','Ulangi PIN baru','','password','inputmode="numeric" maxlength="6"')}<button class="btn" data-act="savePin">Ubah PIN</button></div><div class="card"><b>Ganti password</b><div style="height:8px"></div>${fld('wo','Password lama','','password')}${fld('wn','Password baru (min. 8 karakter, huruf dan angka)','','password')}${fld('wu','Ulangi password baru','','password')}<button class="btn" data-act="savePass">Ganti Password</button></div>`;
+P.bantuan=()=>head('Pusat Bantuan')+grid([['faq','help','FAQ'],['cs','help','Hubungi CS'],['tnc','file','Syarat'],['privasi','shield','Privasi']])+`<div class="card" style="margin-top:14px"><b>Topik populer</b><p class="mu" style="margin-top:6px">Cara top up, transfer antar pengguna, status transaksi pending, ubah PIN, dan reset data simulasi tersedia di FAQ.</p></div>`;
+const FAQ=[['Apakah uang di MuziPay asli?','Tidak. Mode Simulasi memakai saldo virtual, jadi tidak ada uang sungguhan yang berpindah.'],['Mengapa transaksi berstatus pending?','Pada pengaturan hasil acak, sebagian transaksi menjadi pending lalu otomatis berhasil beberapa detik kemudian.'],['Bagaimana mengatur ulang saldo?','Buka Akun, Pengaturan, lalu pilih Reset Seluruh Data Simulasi.'],['Apa PIN awal?','PIN awal adalah 123456. Ubah di Akun, Keamanan Akun.'],['Apakah foto KTP disimpan?','Tidak. Foto hanya dipratinjau di memori dan hilang saat halaman dimuat ulang.']];
+P.faq=()=>head('FAQ')+`<div class="card">${FAQ.map(([q,a])=>`<details><summary>${q}</summary><p>${a}</p></details>`).join('')}</div>`;
+P.tnc=()=>doc('Syarat dan Ketentuan',['MuziPay pada versi ini adalah aplikasi simulasi dompet digital. Seluruh saldo, transaksi, dan pinjaman bersifat virtual dan tidak memiliki nilai uang.','Pengguna bertanggung jawab menjaga kerahasiaan PIN. Fitur pembayaran sungguhan membutuhkan izin dan integrasi dengan penyelenggara resmi.','Banner bertanda Iklan adalah konten bersponsor.']);
+P.privasi=()=>doc('Kebijakan Privasi',['Data profil dan transaksi simulasi disimpan di localStorage perangkat Anda dan tidak dikirim ke server.','Foto identitas dan selfie hanya dipratinjau di memori, tidak disimpan, dan tidak dikirim ke pihak lain. Password tidak disimpan.','Penyimpanan lokal bukan sistem keamanan untuk layanan finansial sungguhan.']);
+P.info=()=>doc('Informasi Aplikasi',['MuziPay versi 1.0.0','E-wallet simulasi dalam satu file HTML. Seluruh data tersimpan di perangkat ini.','Struktur banner siap dihubungkan ke layanan iklan resmi melalui objek AdProvider.']);
+P.cs=()=>head('Hubungi Customer Service')+`<div class="card">${sel('cc','Topik',['Transaksi','Akun dan PIN','Verifikasi KYC','Lainnya'])}<label class="f"><span>Pesan</span><textarea id="cm" rows="4" maxlength="300" placeholder="Jelaskan kendala Anda"></textarea></label><button class="btn" data-act="csSend">Kirim Pesan</button><p class="mu" style="margin-top:10px">Layanan CS: setiap hari 08.00 - 21.00 WIB.</p></div>`;
 
-    function saveState() {
-        localStorage.setItem('muzi_app_db', JSON.stringify(appState));
-        renderAppUI();
-    }
+// ---------- Router ----------
+function render(){const f=P[cur];$('#view').innerHTML=f?f():'';(({game:()=>{},pinjaman:lcalc,kyc:()=>{prev('id');prev('selfie')}})[cur]||(()=>{}))();renderTop()}
+function go(p,back){if(!P[p])return;if(!back&&cur!==p)HIST.push(cur);cur=p;SEL={};closeM();window.scrollTo(0,0);$('#view').innerHTML='<div class="sk"></div><div class="sk"></div><div class="sk" style="height:140px"></div>';renderTop();setTimeout(()=>{if(cur===p)render()},280)}
+function renderTop(){const act=NAV.some(n=>n[0]===cur)?cur:AKUN.includes(cur)?'akun':'layanan';$('#top').innerHTML=`<div class="logo"><i>M</i>MuziPay</div><span class="sim ${S.sim?'':'off'}">${S.sim?'Mode Simulasi Aktif':'Mode Simulasi Nonaktif'}</span><button class="ib" data-go="notif" aria-label="Notifikasi">${ic('bell',20)}${unread()?`<b>${unread()}</b>`:''}</button>`;
+const nb=NAV.map(([p,i,l])=>`<button class="nb${act===p?' on':''}" data-go="${p}">${ic(i,20)}${l}</button>`).join('');$('#bot').innerHTML=nb;$('#side').innerHTML=`<div class="logo"><i>M</i>MuziPay</div>${nb}`}
+setInterval(()=>{const s=$('#sl');const b=AdProvider.get();if(!s||b.length<2)return;bi=(bi+1)%b.length;s.style.transform=`translateX(-${bi*100}%)`;$$('.dots i').forEach((d,i)=>d.classList.toggle('on',i===bi))},4200);
 
-    /* ==========================================================================
-       SERVICES REGISTRY (DATA STRUCTURE FOR "SEMUA LAYANAN")
-       ========================================================================== */
-    const SERVICES = [
-        // TRANSFER
-        { id: 'tf_bank', category: 'TRANSFER', name: 'Transfer Bank', icon: '<path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/>', page: 'transfer', keywords: 'transfer bank bca mandiri bri bni' },
-        { id: 'tf_ewallet', category: 'TRANSFER', name: 'Kirim E-Wallet', icon: '<rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>', page: 'transfer', keywords: 'ewallet wallet kirim' },
-        { id: 'tf_friend', category: 'TRANSFER', name: 'Kirim Ke Teman', icon: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>', page: 'transfer', keywords: 'teman kontak user' },
-        { id: 'tf_cash', category: 'TRANSFER', name: 'Kode Tunai', icon: '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>', page: 'transfer', keywords: 'tarik tunai atm' },
-        
-        // TOP UP & DIGITAL
-        { id: 'topup', category: 'TOP UP & LAYANAN DIGITAL', name: 'Top Up Saldo', icon: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>', page: 'topup', keywords: 'topup isi saldo' },
-        { id: 'pulsa', category: 'TOP UP & LAYANAN DIGITAL', name: 'Pulsa & Data', icon: '<rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>', page: 'topup', keywords: 'pulsa hp kuota internet paket' },
-        { id: 'game', category: 'TOP UP & LAYANAN DIGITAL', name: 'Voucher Game', icon: '<line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><circle cx="15" cy="13" r="1"/><circle cx="18" cy="11" r="1"/>', page: 'topup', keywords: 'game voucher mobile legends ff' },
+// ---------- Transaksi ----------
+const CH={game(i){SEL.gi=null;const g=GAMES[i];$('#gz').hidden=!g[2];$('#gitems').innerHTML=gitems(i)},pt(t){SEL.pi=null;$('#pitems').innerHTML=pitems(t)},flt(k){F=k;render()},tenor(n){LN.n=+n;lcalc()}};
+function review(o){if(!S.sim)return toast('Aktifkan Mode Simulasi untuk mencoba transaksi','err');
+if(!o.credit&&S.bal<o.amt+o.fee)return toast('Saldo tidak mencukupi. Top up terlebih dahulu.','err');
+modal(`<h3>Konfirmasi Transaksi</h3>${rows([['Jenis',o.label],['Tujuan',o.detail],['Nominal',rp(o.amt)],['Biaya admin',rp(o.fee)],['Total',rp(o.amt+o.fee)],['Metode',o.method]])}<div class="btns"><button class="btn ghost" data-act="closeM">Batal</button><button class="btn" id="goPin">Lanjut</button></div>`);$('#goPin').onclick=()=>askPin(()=>exec(o))}
+function askPin(cb){modal(`<h3>Masukkan PIN</h3><input id="pin" type="password" inputmode="numeric" maxlength="6" placeholder="PIN 6 digit" style="text-align:center;font-size:20px;letter-spacing:6px"><div class="btns"><button class="btn ghost" data-act="closeM">Batal</button><button class="btn" id="okPin">Konfirmasi</button></div>`);$('#pin').focus();$('#okPin').onclick=()=>{if($('#pin').value===S.pin)cb();else toast('PIN salah','err')}}
+let seq=0;
+function exec(o){closeM();loader(true);setTimeout(()=>{loader(false);const tot=o.amt+o.fee;
+if(!o.credit&&S.bal<tot)return toast('Saldo tidak mencukupi','err');
+const r=Math.random(),st=S.outcome==='rand'?(r<.75?'success':r<.9?'pending':'failed'):'success';
+if(st!=='failed')S.bal+=o.credit?o.amt:-tot;
+const t={id:'MZP'+Date.now().toString(36).toUpperCase()+(++seq).toString(36).toUpperCase()+Math.random().toString(36).slice(2,5).toUpperCase(),ts:Date.now(),type:o.type,label:o.label,detail:o.detail,amt:o.amt,fee:o.fee,tot,st,method:o.method};
+S.txs.unshift(t);if(S.push)S.notifs.unshift({id:Date.now(),t:`${o.label} ${SC[st].toLowerCase()}`,d:`${rp(tot)} • ${t.id}`,ts:Date.now(),r:0});
+save();render();rc(t.id,1)},900)}
+const tx=id=>S.txs.find(t=>t.id===id);
+function rc(id,proof){const t=tx(id);if(!t)return;modal(`${proof?`<div class="rc"><div class="logo" style="justify-content:center"><i>M</i>MuziPay</div><b>Bukti Transaksi</b><div style="margin-top:6px">${badge(t.st)}</div></div>`:'<h3>Detail Transaksi</h3>'}${rows([['ID transaksi',t.id],['Waktu',fd(t.ts)],['Jenis',TL[t.type]],['Keterangan',t.label],['Tujuan',t.detail],['Nominal',rp(t.amt)],['Biaya admin',rp(t.fee)],['Total pembayaran',rp(t.tot)],['Metode',t.method],['Status',SC[t.st]]])}<p class="mu" style="margin-top:10px;text-align:center">Transaksi simulasi dengan saldo virtual.</p><div class="btns">${proof?'':`<button class="btn ghost sm" data-act="proof" data-id="${id}">Lihat Bukti</button>`}<button class="btn ghost sm" data-act="print">Cetak</button><button class="btn ghost sm" data-act="saveTxt" data-id="${id}">Simpan</button><button class="btn sm" data-act="closeM">Tutup</button></div>`)}
+function settle(){let ch=0;const n=Date.now();S.txs.forEach(t=>{if(t.st==='pending'&&n-t.ts>6000){t.st='success';ch=1}});S.loans.forEach(l=>{if(l.st==='Menunggu'&&n-l.ts>5000){l.st='Disetujui (simulasi)';ch=1}});if(S.kyc.st==='pending'&&n-S.kyc.ts>6000){S.kyc.st='verified';ch=1}
+if(ch){save();const a=document.activeElement;if(!(a&&a.matches('input,select,textarea')))render()}}
+setInterval(settle,2000);
+const num=(s,a,b)=>/^\d+$/.test(s)&&+s>=a&&+s<=b;
+const amtOf=(sk,ck)=>v(ck)?+v(ck):+(SEL[sk]||0);
+const bad=m=>{toast(m,'err');return 0};
+const detectOp=n=>Object.keys(OPS).find(o=>OPS[o].includes(n.slice(0,4)));
 
-        // TAGIHAN
-        { id: 'listrik', category: 'TAGIHAN', name: 'Token Listrik', icon: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>', page: 'topup', keywords: 'pln listrik token' },
-        { id: 'water', category: 'TAGIHAN', name: 'Air PDAM', icon: '<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>', page: 'topup', keywords: 'air pdam tagihan' },
-        { id: 'internet', category: 'TAGIHAN', name: 'Internet & TV', icon: '<path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><circle cx="12" cy="20" r="1"/>', page: 'topup', keywords: 'wifi indihome internet' },
+// ---------- Aksi ----------
+const ACT={
+back(){const p=HIST.pop()||'home';go(p,1)},closeM,print(){window.print()},
+toggleBal(){S.hide=!S.hide;save();render()},
+toggleSim(e){S.sim=e.checked;save();render();toast(S.sim?'Mode Simulasi diaktifkan':'Mode Simulasi dinonaktifkan')},
+togglePush(e){S.push=e.checked;save()},setOutcome(e){S.outcome=e.value;save()},
+blink(e){const l=e.dataset.l||'';if(l[0]==='#')go(l.slice(1));else if(/^https?:\/\//i.test(l))window.open(l,'_blank','noopener');else toast('Tautan promo belum diatur','err')},
+detail(e){rc(e.dataset.id)},proof(e){rc(e.dataset.id,1)},
+saveTxt(e){const t=tx(e.dataset.id);if(!t)return;const s=`MuziPay - Bukti Transaksi\nID: ${t.id}\nWaktu: ${fd(t.ts)}\nJenis: ${TL[t.type]}\nKeterangan: ${t.label}\nTujuan: ${t.detail}\nNominal: ${rp(t.amt)}\nBiaya admin: ${rp(t.fee)}\nTotal: ${rp(t.tot)}\nMetode: ${t.method}\nStatus: ${SC[t.st]}\n`;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([s],{type:'text/plain'}));a.download=t.id+'.txt';a.click();URL.revokeObjectURL(a.href)},
+doTopup(){const a=amtOf('amt','ca');if(!(a>=10000&&a<=10000000))return bad('Nominal top up Rp10.000 - Rp10.000.000');review({type:'topup',label:'Top Up Saldo',detail:'Saldo MuziPay',amt:a,fee:1000,method:v('mt'),credit:1})},
+doGame(){const gi=SEL.game;if(gi==null)return bad('Pilih game terlebih dahulu');const g=GAMES[gi],u=v('uid'),z=v('zid');if(!num(u,5,15))return bad('User ID harus 5 - 15 digit');if(g[2]&&!num(z,2,6))return bad('Zone ID harus 2 - 6 digit');if(SEL.gi==null)return bad('Pilih nominal');const q=g[4][SEL.gi];review({type:'game',label:'Top Up '+g[0],detail:`ID ${u}${g[2]?' ('+z+')':''} • ${q} ${g[1]}`,amt:gp(g,q),fee:1000,method:'Saldo MuziPay'})},
+doPulsa(){const n=v('hp');if(!/^08\d{8,12}$/.test(n))return bad('Nomor HP tidak valid (08xxxxxxxxxx)');if(SEL.pi==null)return bad('Pilih nominal atau paket');const d=SEL.pt==='data',p=d?PD[SEL.pi]:null,a=d?p[1]:+SEL.pi+1500;review({type:'pulsa',label:`${d?'Paket Data':'Pulsa'} ${SEL.op}`,detail:`${n} • ${d?p[0]:rp(+SEL.pi)}`,amt:a,fee:500,method:'Saldo MuziPay'})},
+doTagihan(){if(!SEL.bl)return bad('Pilih jenis tagihan');const c=v('cn');if(!num(c,100000,9999999999999999))return bad('Nomor pelanggan 6 - 16 digit');const a=amtOf('bn','bm');if(!(a>=10000&&a<=5000000))return bad('Nominal Rp10.000 - Rp5.000.000');review({type:'tagihan',label:SEL.bl,detail:'No. '+c,amt:a,fee:2500,method:'Saldo MuziPay'})},
+doTransfer(){const n=v('tn'),a=+v('ta');if(!/^08\d{8,12}$/.test(n))return bad('Nomor tujuan tidak valid');if(n===S.user.phone)return bad('Tidak bisa transfer ke nomor sendiri');if(!(a>=10000&&a<=20000000))return bad('Nominal Rp10.000 - Rp20.000.000');review({type:'transfer',label:'Transfer ke '+n,detail:n+(v('tc')?' • '+v('tc'):''),amt:a,fee:500,method:'Saldo MuziPay'})},
+doTarik(){const r=v('tr'),a=+v('tt');if(!num(r,1000000000,9999999999999999))return bad('Nomor rekening 10 - 16 digit');if(!(a>=50000&&a<=10000000))return bad('Nominal Rp50.000 - Rp10.000.000');review({type:'tarik',label:'Tarik Saldo ke '+v('tb'),detail:`${v('tb')} ${r}`,amt:a,fee:6500,method:'Saldo MuziPay'})},
+loanSubmit(){if(!S.sim)return bad('Aktifkan Mode Simulasi untuk mengajukan');const c=lcalc();S.loans.unshift({a:LN.a,n:LN.n,c,ts:Date.now(),st:'Menunggu'});save();render();toast('Pengajuan simulasi terkirim')},
+kycSubmit(){const n=v('kn'),k=v('kk');if(n.length<3)return bad('Nama lengkap wajib diisi');if(!/^\d{16}$/.test(k))return bad('NIK harus 16 digit');if(!v('kt')||!v('kd')||v('ka').length<8)return bad('Lengkapi tempat, tanggal lahir, dan alamat');if(!/^08\d{8,12}$/.test(v('kp')))return bad('Nomor telepon tidak valid');if(!/^\S+@\S+\.\S+$/.test(v('ke')))return bad('Email tidak valid');if(!PH.id||!PH.selfie)return bad('Unggah foto identitas dan selfie');if(!$('#kc').checked)return bad('Setujui formulir privasi');S.kyc={st:'pending',ts:Date.now(),data:{name:n,nik:'************'+k.slice(-4)}};save();render();toast('Data dikirim untuk simulasi verifikasi')},
+chg(e){$('#fi-'+e.dataset.k).click()},
+delph(e){confirmBox('Hapus foto ini?',()=>{PH[e.dataset.k]=null;const i=$('#fi-'+e.dataset.k);if(i)i.value='';prev(e.dataset.k)})},
+readAll(){S.notifs.forEach(n=>n.r=1);save();render()},
+clearNotif(){confirmBox('Hapus semua notifikasi?',()=>{S.notifs=[];save();render()})},
+saveProfile(){const n=v('pn'),p=v('pp'),e=v('pe');if(n.length<3)return bad('Nama minimal 3 karakter');if(!/^08\d{8,12}$/.test(p))return bad('Nomor telepon tidak valid');if(!/^\S+@\S+\.\S+$/.test(e))return bad('Email tidak valid');Object.assign(S.user,{name:n,phone:p,email:e});save();render();toast('Profil disimpan')},
+savePin(){if(v('po')!==S.pin)return bad('PIN lama salah');if(!/^\d{6}$/.test(v('pb')))return bad('PIN baru harus 6 digit angka');if(v('pb')!==v('pu'))return bad('Konfirmasi PIN tidak sama');S.pin=v('pb');save();render();toast('PIN berhasil diubah')},
+savePass(){const n=v('wn');if(!v('wo'))return bad('Isi password lama');if(!/^(?=.*[A-Za-z])(?=.*\d).{8,}$/.test(n))return bad('Password minimal 8 karakter dengan huruf dan angka');if(n!==v('wu'))return bad('Konfirmasi password tidak sama');render();toast('Password diperbarui (tidak disimpan oleh aplikasi)')},
+csSend(){if(v('cm').length<10)return bad('Pesan minimal 10 karakter');const id='CS'+Date.now().toString(36).toUpperCase();S.notifs.unshift({id:Date.now(),t:'Pesan ke customer service terkirim',d:'Nomor tiket '+id,ts:Date.now(),r:0});save();render();toast('Terkirim. Tiket '+id)},
+resetAll(){confirmBox('Reset seluruh data simulasi? Saldo, transaksi, dan pengaturan akan kembali ke awal.',()=>{S=DEF();save();AV=null;PH={id:null,selfie:null};render();toast('Data simulasi direset')})},
+logout(){confirmBox('Keluar dari akun?',()=>{S.locked=true;save();$('#lock').hidden=false})},
+unlock(){if($('#lpin').value===S.pin){S.locked=false;save();$('#lock').hidden=true;$('#lpin').value=''}else toast('PIN salah','err')},
+bSave(e){const i=+e.dataset.i,l=v('bl'+i);if(!v('bt'+i))return bad('Judul wajib diisi');if(l&&!/^(#[a-z]+|https?:\/\/\S+)$/i.test(l))return bad('Tautan harus #halaman atau https://');const g=v('bg'+i);if(g&&!/^https?:\/\//i.test(g))return bad('URL gambar harus diawali https://');S.banners[i]={t:v('bt'+i),d:v('bd'+i),l,img:g,ad:$('#ba'+i).checked?1:0};save();render();toast('Banner disimpan')},
+bDel(e){confirmBox('Hapus banner ini?',()=>{S.banners.splice(+e.dataset.i,1);bi=0;save();render()})},
+bAdd(){S.banners.push({t:'Banner Baru',d:'Ubah teks promo di sini.',l:'#promo',img:'',ad:1});save();render()}};
+function confirmBox(m,yes){modal(`<h3>Konfirmasi</h3><p class="d">${m}</p><div class="btns"><button class="btn ghost" data-act="closeM">Batal</button><button class="btn red" id="yes">Ya, lanjutkan</button></div>`);$('#yes').onclick=()=>{closeM();yes()}}
+function prev(k){const b=$('#pv-'+k);if(!b)return;b.innerHTML=PH[k]?`<img src="${PH[k]}" alt="Pratinjau"><div class="btns" style="justify-content:center"><button class="btn sm" data-act="chg" data-k="${k}">Ganti</button><button class="btn sm ghost" data-act="delph" data-k="${k}">Hapus</button></div>`:'<p class="mu">Belum ada foto</p>'}
+function pick(i,k){const f=i.files[0];if(!f)return;if(!/^image\/(jpe?g|png|webp)$/.test(f.type)||f.size>5e6){i.value='';return toast('Gunakan JPG, PNG, atau WebP maksimal 5 MB','err')}const r=new FileReader();r.onload=()=>{if(k==='avatar'){AV=r.result;render()}else{PH[k]=r.result;prev(k)}};r.readAsDataURL(f)}
 
-        // KEUANGAN
-        { id: 'financial', category: 'KEUANGAN', name: 'Deposito Demo', icon: '<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>', page: 'home', keywords: 'deposito simpanan bunga' }
-    ];
-
-    /* ==========================================================================
-       APP NAVIGATION ENGINE
-       ========================================================================== */
-    function navigateTo(pageId) {
-        document.querySelectorAll('.page-content').forEach(el => el.classList.remove('active'));
-        const targetPage = document.getElementById(`page-${pageId}`);
-        if(targetPage) targetPage.classList.add('active');
-
-        // Bottom nav highlight
-        const tabs = document.querySelectorAll('.nav-tab');
-        tabs.forEach(t => t.classList.remove('active'));
-        if(pageId === 'home') tabs[0].classList.add('active');
-        if(pageId === 'transfer') tabs[1].classList.add('active');
-        if(pageId === 'receive') tabs[2].classList.add('active');
-        if(pageId === 'history') tabs[3].classList.add('active');
-        if(pageId === 'profile') tabs[4].classList.add('active');
-    }
-
-    /* ==========================================================================
-       PIN ENGINE SYSTEM
-       ========================================================================== */
-    let enteredPin = "";
-    let pinCallback = null;
-
-    function requestPINVerification(onSuccess) {
-        enteredPin = "";
-        pinCallback = onSuccess;
-        updatePinDots();
-        document.getElementById('pin-overlay').style.display = 'flex';
-    }
-
-    function pressKey(val) {
-        if(enteredPin.length < 6) {
-            enteredPin += val;
-            updatePinDots();
-        }
-        if(enteredPin.length === 6) {
-            setTimeout(checkPIN, 100);
-        }
-    }
-
-    function clearPin() { enteredPin = ""; updatePinDots(); }
-    function backspacePin() { enteredPin = enteredPin.slice(0, -1); updatePinDots(); }
-
-    function updatePinDots() {
-        const dots = document.querySelectorAll('.pin-dot');
-        dots.forEach((dot, index) => {
-            if(index < enteredPin.length) dot.classList.add('filled');
-            else dot.classList.remove('filled');
-        });
-    }
-
-    function checkPIN() {
-        if(enteredPin === appState.pin) {
-            document.getElementById('pin-overlay').style.display = 'none';
-            if(pinCallback) pinCallback();
-        } else {
-            showToast("PIN Salah! Coba lagi.");
-            clearPin();
-        }
-    }
-
-    /* ==========================================================================
-       TRANSACTION ENGINE
-       ========================================================================== */
-    function processTransfer() {
-        const amount = parseInt(document.getElementById('tf-amount').value);
-        const recipient = document.getElementById('tf-name').value;
-
-        if(!amount || amount <= 0) return showToast("Masukkan nominal valid");
-        if(!recipient) return showToast("Masukkan penerima");
-        if(amount > appState.balance) return showToast("Saldo tidak mencukupi");
-
-        requestPINVerification(() => {
-            appState.balance -= amount;
-            appState.transactions.unshift({
-                id: 'MWTX-' + Math.floor(100000 + Math.random() * 900000),
-                type: 'OUT',
-                title: `Transfer ke ${recipient}`,
-                amount: amount,
-                date: new Date().toISOString(),
-                status: 'BERHASIL - DEMO'
-            });
-            saveState();
-            showToast("Transfer Berhasil!");
-            navigateTo('history');
-        });
-    }
-
-    function processTopUp(amount) {
-        requestPINVerification(() => {
-            appState.balance += amount;
-            appState.transactions.unshift({
-                id: 'MWTX-' + Math.floor(100000 + Math.random() * 900000),
-                type: 'IN',
-                title: 'Top Up Saldo Instant Demo',
-                amount: amount,
-                date: new Date().toISOString(),
-                status: 'BERHASIL - DEMO'
-            });
-            saveState();
-            showToast("Top Up Berhasil!");
-            navigateTo('home');
-        });
-    }
-
-    function processCustomTopUp() {
-        const val = parseInt(document.getElementById('topup-custom-amount').value);
-        if(val && val > 0) processTopUp(val);
-        else showToast("Masukkan nominal valid");
-    }
-
-    /* ==========================================================================
-       UI RENDERING ENGINE
-       ========================================================================== */
-    let isBalanceHidden = false;
-    function toggleBalanceHide() {
-        isBalanceHidden = !isBalanceHidden;
-        renderAppUI();
-    }
-
-    function renderAppUI() {
-        // Balance Display
-        const balanceTxt = isBalanceHidden ? '••••••••' : `Rp ${appState.balance.toLocaleString('id-ID')}`;
-        document.getElementById('balance-display').innerText = balanceTxt;
-
-        // Render Favorit
-        const favContainer = document.getElementById('favorite-services-grid');
-        favContainer.innerHTML = '';
-        appState.favorites.forEach(favId => {
-            const s = SERVICES.find(x => x.id === favId);
-            if(s) {
-                favContainer.appendChild(createServiceItemElement(s));
-            }
-        });
-
-        // Render Terakhir Digunakan
-        const recentContainer = document.getElementById('recent-services-list');
-        recentContainer.innerHTML = '';
-        appState.recent.forEach(recId => {
-            const s = SERVICES.find(x => x.id === recId);
-            if(s) {
-                const chip = document.createElement('div');
-                chip.style.cssText = "padding:6px 12px; background:var(--bg); border:1px solid var(--border); border-radius:20px; font-size:12px; white-space:nowrap; cursor:pointer;";
-                chip.innerText = s.name;
-                chip.onclick = () => navigateTo(s.page);
-                recentContainer.appendChild(chip);
-            }
-        });
-
-        // Render All Services Screen
-        renderAllServicesScreen(SERVICES);
-
-        // Render Transaction History
-        const histContainer = document.getElementById('history-list-container');
-        histContainer.innerHTML = '';
-        if(appState.transactions.length === 0) {
-            histContainer.innerHTML = '<div style="text-align:center; color:var(--secondary); padding:20px;">Belum ada transaksi.</div>';
-        } else {
-            appState.transactions.forEach(tx => {
-                const el = document.createElement('div');
-                el.className = 'card';
-                el.style.display = 'flex';
-                el.style.justifyContent = 'space-between';
-                el.style.alignItems = 'center';
-                el.innerHTML = `
-                    <div>
-                        <strong style="font-size:14px; display:block;">${tx.title}</strong>
-                        <span style="font-size:11px; color:var(--secondary);">${new Date(tx.date).toLocaleString('id-ID')}</span>
-                    </div>
-                    <div style="font-size:14px; font-weight:700; color:${tx.type === 'IN' ? 'var(--success)' : 'var(--danger)'};">
-                        ${tx.type === 'IN' ? '+' : '-'}Rp ${tx.amount.toLocaleString('id-ID')}
-                    </div>
-                `;
-                histContainer.appendChild(el);
-            });
-        }
-    }
-
-    function createServiceItemElement(service) {
-        const item = document.createElement('div');
-        item.className = 'service-item';
-        item.onclick = () => {
-            // Track Recent Service
-            appState.recent = [service.id, ...appState.recent.filter(x => x !== service.id)].slice(0, 5);
-            saveState();
-            navigateTo(service.page);
-        };
-        item.innerHTML = `
-            <div class="icon-wrapper">
-                <svg class="svg-icon" viewBox="0 0 24 24">${service.icon}</svg>
-            </div>
-            <span class="service-name">${service.name}</span>
-        `;
-        return item;
-    }
-
-    function renderAllServicesScreen(servicesList) {
-        const container = document.getElementById('services-render-container');
-        container.innerHTML = '';
-
-        const categories = [...new Set(servicesList.map(s => s.category))];
-
-        categories.forEach(cat => {
-            const catTitle = document.createElement('div');
-            catTitle.className = 'section-title';
-            catTitle.innerText = cat;
-            container.appendChild(catTitle);
-
-            const card = document.createElement('div');
-            card.className = 'card';
-            const grid = document.createElement('div');
-            grid.className = 'service-grid';
-
-            servicesList.filter(s => s.category === cat).forEach(s => {
-                grid.appendChild(createServiceItemElement(s));
-            });
-
-            card.appendChild(grid);
-            container.appendChild(card);
-        });
-    }
-
-    function filterServices() {
-        const query = document.getElementById('service-search-input').value.toLowerCase();
-        const filtered = SERVICES.filter(s => 
-            s.name.toLowerCase().includes(query) || 
-            s.keywords.toLowerCase().includes(query)
-        );
-        renderAllServicesScreen(filtered);
-    }
-
-    /* ==========================================================================
-       UTILITY FUNCTIONS
-       ========================================================================== */
-    function showToast(msg) {
-        const toast = document.getElementById('toast');
-        document.getElementById('toast-msg').innerText = msg;
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 2500);
-    }
-
-    function copyWalletID() {
-        navigator.clipboard.writeText('MW-88392011');
-        showToast("ID Wallet tersalin!");
-    }
-
-    function resetDemoPIN() {
-        appState.pin = '123456';
-        saveState();
-        showToast("PIN direset ke default: 123456");
-    }
-
-    function resetAllDemoData() {
-        if(confirm("Reset seluruh data demo ke kondisi awal?")) {
-            localStorage.removeItem('muzi_app_db');
-            appState = DEFAULT_STATE;
-            saveState();
-            showToast("Aplikasi direset!");
-            navigateTo('home');
-        }
-    }
-
-    // App Initialization
-    window.onload = () => {
-        setTimeout(() => {
-            const splash = document.getElementById('splash');
-            splash.style.opacity = '0';
-            setTimeout(() => splash.style.display = 'none', 500);
-        }, 1200);
-
-        renderAppUI();
-    };
-</script>
-</body>
-</html>
+// ---------- Event ----------
+document.addEventListener('click',e=>{const c=e.target.closest('.chip');if(c){const w=c.closest('.chips');$$('.chip',w).forEach(x=>x.classList.remove('on'));c.classList.add('on');const n=w.dataset.n;SEL[n]=n==='game'||n==='gi'||n==='pi'||n==='op'||n==='pt'||n==='bl'||n==='bn'||n==='amt'?(isNaN(c.dataset.v)||n==='op'||n==='pt'||n==='bl'?c.dataset.v:+c.dataset.v):c.dataset.v;if(CH[n])CH[n](n==='tenor'||n==='game'?+c.dataset.v:c.dataset.v);return}
+const a=e.target.closest('[data-act],[data-go]');if(!a)return;if(a.dataset.go){go(a.dataset.go);return}if(a.tagName==='INPUT'||a.tagName==='SELECT')return;const f=ACT[a.dataset.act];if(f)f(a,e)});
+document.addEventListener('change',e=>{const t=e.target;if(t.dataset.pick)pick(t,t.dataset.pick);else if(t.tagName==='INPUT'&&t.dataset.act==='toggleSim'||t.tagName==='INPUT'&&t.dataset.act==='togglePush'||t.tagName==='SELECT'&&t.dataset.act)ACT[t.dataset.act](t)});
+document.addEventListener('input',e=>{const t=e.target;if(t.id==='lr'){LN.a=+t.value;lcalc()}else if(t.id==='hp'){const o=detectOp(t.value);if(o){SEL.op=o;$$('[data-n=op] .chip').forEach(c=>c.classList.toggle('on',c.dataset.v===o))}}else if(t.id==='ca'||t.id==='bm'){$$('.chips[data-n=amt] .chip,.chips[data-n=bn] .chip').forEach(c=>c.classList.remove('on'))}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM();if(e.key==='Enter'&&e.target.id==='lpin')ACT.unlock()});
+if(S.locked)$('#lock').hidden=false;
+go('home');
+</script></body></html>
