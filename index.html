@@ -1,210 +1,252 @@
 <!DOCTYPE html>
-<html lang="id"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0B1F4B"><title>Muzipay</title>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MuziPay</title>
 <style>
-:root{--n:#0B1F4B;--b:#2563FF;--bg:#F2F5FC;--t:#0F1B3D;--m:#6B7794;--ok:#12A150;--er:#D93636;--wr:#C77700;--ln:#E2E8F5}
-*{box-sizing:border-box;margin:0;padding:0}button{font:inherit}
-body{font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:linear-gradient(160deg,#0B1F4B,#2148C0);color:var(--t);display:flex;justify-content:center;min-height:100vh}
-#app{width:100%;max-width:520px;min-height:100vh;background:var(--bg);position:relative;padding-bottom:calc(84px + env(safe-area-inset-bottom))}
-@media(min-width:700px){#app{margin:16px 0;min-height:calc(100vh - 32px);border-radius:28px;overflow:hidden;box-shadow:0 20px 60px #0006}}
-.pg{padding:16px;animation:in .25s}@keyframes in{from{opacity:0;transform:translateY(8px)}}
-h2{font-size:18px}h3{font-size:15px;margin:14px 0 8px}p{margin-bottom:8px}
-.hd{display:flex;align-items:center;gap:10px;margin-bottom:14px}.hd h2{flex:1}
-.ib{background:#fff;border:0;border-radius:12px;width:40px;height:40px;display:grid;place-items:center;color:var(--n);cursor:pointer;box-shadow:0 1px 4px #0b1f4b14;position:relative}
-.card{background:#fff;border-radius:18px;padding:14px;margin-bottom:12px;box-shadow:0 2px 10px #0b1f4b0d}
-.bal{background:linear-gradient(135deg,var(--n),var(--b));color:#fff;border-radius:22px;padding:18px;margin-bottom:14px}
-.bal b{display:block;font-size:30px;margin:2px 0 14px;letter-spacing:-.5px}.row{display:flex;justify-content:space-between;align-items:center}
-.eye{background:#fff2;border:0;color:#fff;border-radius:10px;width:34px;height:34px;display:grid;place-items:center;cursor:pointer}
-.qa4,.sv{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.sv{margin-bottom:12px}
-.qa{background:#ffffff1f;border:0;border-radius:14px;color:#fff;padding:10px 2px;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;cursor:pointer}
-.sv button{background:#fff;border:0;border-radius:16px;padding:12px 2px;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;color:var(--n);cursor:pointer;box-shadow:0 2px 10px #0b1f4b0d}
-label{display:block;font-size:13px;color:var(--m);margin-bottom:10px}
-input,select{display:block;width:100%;margin-top:5px;padding:12px;border:1.5px solid var(--ln);border-radius:12px;font:inherit;color:var(--t);background:#fff}
-input:focus,select:focus,button:focus-visible{outline:2px solid var(--b);outline-offset:1px}
-.btn{display:block;width:100%;padding:13px;border:0;border-radius:14px;background:var(--b);color:#fff;font-weight:600;cursor:pointer;text-align:center;margin-top:6px}
-.btn.ghost{background:#EAF0FF;color:var(--b)}.btn.red{background:#FDECEC;color:var(--er)}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.sum{background:#F2F5FC;border-radius:12px;padding:4px 12px;margin:8px 0}.sum:empty{display:none}
-.rw{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px dashed var(--ln);font-size:14px}.rw:last-child{border:0}.rw span{color:var(--m)}.rw b{text-align:right;word-break:break-all}
-.err{color:var(--er);font-size:13px;margin:4px 0}.mu{color:var(--m)}.ok{color:var(--ok)}
-.tabs{display:flex;background:#E6ECFA;border-radius:14px;padding:4px;margin-bottom:12px;gap:4px}.tabs button{flex:1;border:0;background:0;padding:9px 4px;border-radius:10px;color:var(--m);font-weight:600;cursor:pointer}.tabs .on{background:#fff;color:var(--b);box-shadow:0 1px 4px #0b1f4b1a}
-.stg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}.stg .card{margin:0}.stg small{color:var(--m)}.stg b{display:block;font-size:16px}
-.tx{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--ln);cursor:pointer}.tx:last-child{border:0}.tx>div:nth-child(2){flex:1;min-width:0}
-.ti{width:38px;height:38px;border-radius:12px;background:#EAF0FF;color:var(--b);display:grid;place-items:center;flex:none}.ti.in{background:#E4F6EC;color:var(--ok)}.ta{text-align:right}.ta small{display:block}
-.bn{overflow:hidden;border-radius:20px}.bt{display:flex;transition:transform .5s ease}.bs{flex:0 0 100%;padding:18px;color:#fff;min-height:128px;cursor:pointer}.bs p{font-size:13px;opacity:.92;margin:4px 0 10px}
-.sm{border:0;border-radius:10px;padding:6px 12px;background:#fff;color:var(--b);font-weight:600;cursor:pointer}
-.dots{display:flex;justify-content:center;gap:5px;margin:8px 0 12px}.dots i{width:6px;height:6px;border-radius:9px;background:#C5D0EA;transition:.3s}.dots .on{width:18px;background:var(--b)}
-#nv{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;background:#fff;display:none;justify-content:space-around;padding:8px 4px calc(8px + env(safe-area-inset-bottom));box-shadow:0 -4px 20px #0b1f4b14;z-index:5}
-#nv button{background:0;border:0;color:var(--m);display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;padding:4px 10px;cursor:pointer}#nv .on{color:var(--b);font-weight:600}
-#md{position:fixed;inset:0;background:#0B1F4B99;display:none;align-items:flex-end;justify-content:center;z-index:20}#md.on{display:flex}
-.sheet{background:#fff;width:100%;max-width:520px;max-height:90vh;overflow:auto;border-radius:24px 24px 0 0;padding:20px;animation:up .25s}@keyframes up{from{transform:translateY(40px);opacity:0}}
-#toasts{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:30;display:grid;gap:8px;width:calc(100% - 24px);max-width:420px}
-.toast{background:var(--n);color:#fff;padding:12px 14px;border-radius:12px;font-size:14px;animation:in .2s}.toast.er{background:var(--er)}
-.av{width:42px;height:42px;border-radius:14px;background:var(--b);color:#fff;display:grid;place-items:center;font-weight:700}
-.dot{position:absolute;top:9px;right:10px;width:8px;height:8px;border-radius:9px;background:var(--er)}
-.auth{padding-top:36px}.lg{text-align:center;color:var(--n);margin-bottom:18px}.lg h1{margin-top:8px}
-.skl{border-radius:16px;margin-bottom:12px;background:linear-gradient(90deg,#e6ebf7 25%,#f3f6fc 50%,#e6ebf7 75%);background-size:200% 100%;animation:sh 1s infinite}@keyframes sh{to{background-position:-200% 0}}
-.ch{width:100%;height:auto}.leg{display:flex;gap:12px;font-size:12px;color:var(--m)}.leg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px}
-.mn{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--ln);cursor:pointer}.mn span{flex:1}
-.up{border:1.5px dashed var(--ln);border-radius:14px;padding:10px;margin-bottom:10px}.up img{width:100%;max-height:160px;object-fit:contain;border-radius:10px;margin:8px 0;display:block}
-.ck{display:flex;gap:8px;align-items:flex-start}.ck input{width:auto;margin:3px 0 0}
-.bd{font-size:12px;padding:3px 10px;border-radius:20px;background:#FFF3DC;color:var(--wr);font-weight:600}
-.ok-ic{width:56px;height:56px;border-radius:50%;background:#E4F6EC;color:var(--ok);display:grid;place-items:center;margin:0 auto 8px}
-table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:6px;text-align:left;border-bottom:1px solid var(--ln)}
-details{border-bottom:1px solid var(--ln);padding:10px 0}summary{font-weight:600;cursor:pointer}
-#pr{display:none}@media print{body>*:not(#pr){display:none!important}#pr{display:block;padding:24px;font-family:sans-serif}}
+:root{--b:#1565ff;--b2:#0a3fd0;--bg:#f1f5ff;--tx:#0f1e3d;--mu:#6b7a99;--ok:#12b76a;--wa:#f79009;--er:#f04438;--ln:#e0e8f8}
+*{box-sizing:border-box;margin:0;font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+body{background:var(--bg);color:var(--tx);font-size:15px}
+button{cursor:pointer;border:0;background:none;color:inherit}
+#app{display:flex;min-height:100vh}
+.side{display:none;width:236px;background:#fff;border-right:1px solid var(--ln);padding:20px 14px;position:sticky;top:0;height:100vh;flex-direction:column;gap:4px}
+.side .logo{margin:0 8px 18px}
+.nb{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;color:var(--mu);font-weight:600;width:100%;text-align:left}
+.nb.on{background:#e8f0ff;color:var(--b)}
+.main{flex:1;min-width:0;max-width:860px;margin:0 auto;width:100%;padding:14px 16px 96px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:14px}
+.logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:20px;color:var(--b2)}
+.logo i{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#4d9bff,#0a3fd0);display:grid;place-items:center;color:#fff;font-style:normal;font-size:16px}
+.sim{font-size:12px;font-weight:700;padding:5px 10px;border-radius:99px;background:#dcfae6;color:#067647}
+.sim.off{background:#fef0c7;color:#93370d}
+.ib{width:40px;height:40px;border-radius:12px;background:#fff;display:grid;place-items:center;position:relative;border:1px solid var(--ln)}
+.ib b{position:absolute;top:-4px;right:-4px;background:var(--er);color:#fff;font-size:10px;border-radius:99px;padding:1px 5px}
+.bot{position:fixed;left:0;right:0;bottom:0;display:flex;background:#fff;border-top:1px solid var(--ln);padding:6px 4px calc(6px + env(safe-area-inset-bottom));z-index:5}
+.bot .nb{flex-direction:column;gap:2px;font-size:11px;padding:6px 2px;justify-content:center;align-items:center}
+@media(min-width:900px){.side{display:flex}.bot{display:none}.main{padding-bottom:40px}}
+.ph{display:flex;align-items:center;gap:10px;margin:4px 0 14px}.ph h2{font-size:20px}
+.card{background:#fff;border-radius:20px;padding:16px;margin-bottom:14px;border:1px solid var(--ln)}
+.bal{background:linear-gradient(135deg,#2f80ff 0%,#0a3fd0 60%,#08297f 100%);color:#fff;border:0;position:relative;overflow:hidden;box-shadow:0 14px 30px -12px rgba(10,63,208,.6)}
+.bal:after{content:"";position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.1)}
+.bal .row{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}
+.av{width:44px;height:44px;border-radius:50%;background:#fff3;display:grid;place-items:center;font-weight:700;overflow:hidden;flex:none}
+.av img{width:100%;height:100%;object-fit:cover}
+.amt{font-size:30px;font-weight:800;margin:14px 0 2px;display:flex;align-items:center;gap:10px}
+.amt button{color:#fff;opacity:.85}
+.acts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px;position:relative;z-index:1}
+.acts button{background:#ffffff26;border-radius:14px;padding:10px 2px;font-size:12px;font-weight:600;color:#fff;display:flex;flex-direction:column;align-items:center;gap:4px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:420px){.grid{grid-template-columns:repeat(3,1fr)}}
+.gi{background:#fff;border:1px solid var(--ln);border-radius:16px;padding:12px 4px;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:12px;font-weight:600;text-align:center}
+.ico{width:42px;height:42px;border-radius:14px;background:#e8f0ff;color:var(--b);display:grid;place-items:center}
+.slw{overflow:hidden;border-radius:20px;margin-bottom:14px;position:relative}
+.sl{display:flex;transition:transform .6s ease}
+.slide{min-width:100%;padding:20px;color:#fff;min-height:130px;background:linear-gradient(120deg,#0a3fd0,#38a0ff);background-size:cover;background-position:center;cursor:pointer;position:relative}
+.slide:nth-child(2n){background-image:linear-gradient(120deg,#082a85,#2f80ff)}
+.slide h3{font-size:18px;margin:14px 0 4px;max-width:80%}.slide p{font-size:13px;opacity:.9;max-width:80%;margin-bottom:10px}
+.ad{position:absolute;top:10px;right:10px;background:#0006;font-size:11px;padding:2px 8px;border-radius:6px}
+.dots{display:flex;gap:5px;justify-content:center;margin:-22px 0 8px;position:relative}
+.dots i{width:6px;height:6px;border-radius:9px;background:#fff8}.dots i.on{width:18px;background:#fff}
+.btn{background:linear-gradient(135deg,#2f80ff,#0a3fd0);color:#fff;padding:13px 18px;border-radius:14px;font-weight:700;width:100%;display:block;text-align:center;font-size:15px}
+.btn.sm{width:auto;display:inline-block;padding:8px 14px;font-size:13px;border-radius:10px}
+.btn.ghost{background:#e8f0ff;color:var(--b2)}.btn.w{background:#fff;color:var(--b2)}.btn.red{background:var(--er)}
+.btns{display:flex;gap:10px;margin-top:14px}
+.f{display:block;margin-bottom:12px}.f span{display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:var(--mu)}
+input,select,textarea{width:100%;padding:12px 14px;border:1.5px solid var(--ln);border-radius:12px;font-size:15px;background:#fff;color:var(--tx)}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--b);outline-offset:1px}
+input[type=checkbox]{width:auto;margin-right:8px}input[type=range]{padding:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+.chip{border:1.5px solid var(--ln);background:#fff;border-radius:12px;padding:9px 13px;font-weight:600;font-size:13px;text-align:left}
+.chip small{display:block;color:var(--mu);font-weight:500;margin-top:2px}
+.chip.on{border-color:var(--b);background:#e8f0ff;color:var(--b2)}
+.li{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--ln);width:100%;text-align:left}
+.li:last-child{border:0}.li .t{flex:1;min-width:0}.li .t b{display:block}.li .t small{color:var(--mu)}
+.badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;display:inline-block}
+.success{background:#dcfae6;color:#067647}.pending{background:#fef0c7;color:#93370d}.failed{background:#fee4e2;color:#b42318}.none{background:#eaecf0;color:#475467}
+.plus{color:var(--ok);font-weight:700}.minus{font-weight:700}
+.note{background:#fff7e0;border:1px solid #fde4a3;color:#7a4b00;padding:12px 14px;border-radius:14px;margin-bottom:14px;font-size:13px;line-height:1.5}
+.mu{color:var(--mu);font-size:13px}
+.mb{position:fixed;inset:0;background:#0b1b4399;display:flex;align-items:flex-end;justify-content:center;z-index:20}
+.mb[hidden]{display:none}
+.sheet{background:#fff;width:100%;max-width:480px;border-radius:24px 24px 0 0;padding:20px;max-height:92vh;overflow:auto;animation:up .25s}
+@media(min-width:600px){.mb{align-items:center}.sheet{border-radius:24px}}
+@keyframes up{from{transform:translateY(30px);opacity:0}}
+.sheet h3{margin-bottom:12px}
+.rows>div{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px dashed var(--ln);font-size:14px}.rows span{color:var(--mu)}.rows b{text-align:right;word-break:break-word}
+.rc{text-align:center;margin-bottom:10px}
+.spin{width:46px;height:46px;border:5px solid #fff5;border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite;margin:auto}
+#ld{align-items:center}@keyframes sp{to{transform:rotate(360deg)}}
+#toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:40;display:flex;flex-direction:column;gap:8px;align-items:center}
+#toast div{background:#0f1e3d;color:#fff;padding:11px 18px;border-radius:12px;font-size:14px;animation:up .25s;box-shadow:0 8px 20px #0004}
+#toast .err{background:var(--er)}
+.sk{height:90px;border-radius:18px;margin-bottom:14px;background:linear-gradient(90deg,#e3eafb 25%,#f3f6ff 50%,#e3eafb 75%);background-size:200%;animation:sh 1.1s infinite}
+@keyframes sh{to{background-position:-200% 0}}
+.pv{border:2px dashed var(--ln);border-radius:14px;padding:10px;margin-bottom:12px;text-align:center}.pv img{max-width:100%;max-height:200px;border-radius:10px}
+table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:6px 4px;text-align:left;border-bottom:1px solid var(--ln)}
+.sw{display:flex;justify-content:space-between;align-items:center;padding:10px 0}
+details{padding:12px 0;border-bottom:1px solid var(--ln)}summary{font-weight:600;cursor:pointer}details p{margin-top:8px;color:var(--mu);line-height:1.5}
+p.d{line-height:1.6;margin-bottom:10px}
+@media print{body>*:not(#modal){display:none!important}#modal{position:static;background:none}.sheet{max-height:none;box-shadow:none}.btns{display:none}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style></head><body>
-<div id="app"><div id="v"></div></div>
-<nav id="nv" aria-label="Navigasi utama"></nav><div id="md"></div><div id="toasts" aria-live="polite"></div><div id="pr"></div>
+<div id="app"><aside class="side" id="side"></aside><main class="main"><div class="top" id="top"></div><div id="view"></div></main></div>
+<nav class="bot" id="bot"></nav>
+<div id="modal" class="mb" hidden></div><div id="ld" class="mb" hidden><div class="spin"></div></div><div id="toast"></div>
+<div id="lock" class="mb" hidden style="align-items:center"><div class="sheet" style="border-radius:24px;text-align:center"><div class="logo" style="justify-content:center;margin-bottom:10px"><i>M</i>MuziPay</div><p class="mu" style="margin-bottom:12px">Anda telah keluar. Masukkan PIN untuk masuk kembali (PIN awal: 123456).</p><input id="lpin" type="password" inputmode="numeric" maxlength="6" placeholder="PIN 6 digit" style="text-align:center;margin-bottom:12px"><button class="btn" data-act="unlock">Masuk</button></div></div>
 <script>
-const $=s=>document.querySelector(s),R=n=>new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(n||0);
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const TZ={timeZone:'Asia/Jakarta'},fd=t=>new Date(t).toLocaleDateString('id-ID',{...TZ,day:'2-digit',month:'long',year:'numeric'}),
-ft=t=>new Date(t).toLocaleTimeString('id-ID',{...TZ,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).replace(/\./g,':')+' WIB',
-dk=t=>new Date(t).toLocaleDateString('en-CA',TZ),MN=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-const K='muzipay_v1';let DB;try{DB=JSON.parse(localStorage.getItem(K))}catch(e){}
-DB=DB&&DB.accounts?DB:{accounts:{},session:null};
-const save=()=>{try{localStorage.setItem(K,JSON.stringify(DB))}catch(e){toast('Penyimpanan perangkat penuh','er')}};
-const me=()=>DB.accounts[DB.session],bal=()=>{const a=me();return a.base+a.tx.reduce((s,t)=>s+t.eff,0)};
-const hs=(p,s)=>{let x=5381;for(const c of p+s)x=(x*33^c.charCodeAt(0))>>>0;return x.toString(36)};
-const ph=v=>{let d=String(v).replace(/[\s-]/g,'');if(d.startsWith('+62'))d='0'+d.slice(3);else if(d.startsWith('62'))d='0'+d.slice(2);return/^08[1-9]\d{7,10}$/.test(d)?d:null};
-const NM=/^[A-Za-z .'-]{3,40}$/,E=(o,l)=>{const x=l.find(a=>a[0]);o.err=x?x[1]:0;return o};
-const I={home:'M3 11l9-8 9 8v10h-6v-6H9v6H3z',plus:'M12 5v14M5 12h14',send:'M22 2L11 13M22 2l-7 20-4-9-9-4z',cash:'M3 7h18v10H3zM12 9.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5z',hist:'M3 12a9 9 0 109-9 9 9 0 00-6.4 2.6L3 8M3 3v5h5M12 7v5l3 2',user:'M12 12a4 4 0 100-8 4 4 0 000 8zM4 21a8 8 0 0116 0',game:'M6 8h12a4 4 0 014 4v2a3 3 0 01-5 2l-1-2H8l-1 2a3 3 0 01-5-2v-2a4 4 0 014-4zM8 10v4M6 12h4',phone:'M7 2h10v20H7zM11 18h2',bill:'M6 2h12v20l-3-2-3 2-3-2-3 2zM9 7h6M9 11h6',loan:'M12 2v20M17 6H9.5a3 3 0 000 6h5a3 3 0 010 6H7',bell:'M6 16v-5a6 6 0 0112 0v5l2 2H4zM10 21h4',eye:'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 9a3 3 0 100 6 3 3 0 000-6z',back:'M15 5l-7 7 7 7',check:'M5 13l4 4L19 7',lock:'M5 11h14v10H5zM8 11V7a4 4 0 018 0v4',info:'M12 3a9 9 0 100 18 9 9 0 000-18zM12 11v5M12 8v.01',out:'M9 21H5V3h4M16 17l5-5-5-5M21 12H9'};
-const ic=(n,s=22)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${I[n]}"/></svg>`;
-const LOGO='<svg width="64" height="64" viewBox="0 0 64 64" aria-label="Muzipay"><rect width="64" height="64" rx="18" fill="#2563FF"/><path d="M16 44V22l16 14 16-14v22" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-const TI={'Top Up':'plus',Transfer:'send','Tarik tunai':'cash',Pulsa:'phone','Paket data':'phone','Top Up game':'game','Pembayaran tagihan':'bill',Pinjaman:'loan',Pemasukan:'plus',Pengeluaran:'cash'};
-const TYPES=Object.keys(TI),STS=['Tercatat','Menunggu pemeriksaan','Dalam proses','Memerlukan dokumen tambahan','Disetujui','Ditolak'];
-function toast(m,k='ok'){const d=document.createElement('div');d.className='toast '+k;d.textContent=m;$('#toasts').append(d);setTimeout(()=>d.remove(),2800)}
-const modal=h=>{$('#md').innerHTML=`<div class="sheet" role="dialog" aria-modal="true">${h}</div>`;$('#md').className='on'},closeM=()=>{$('#md').className='';$('#md').innerHTML=''};
-$('#md').addEventListener('click',e=>{if(e.target.id=='md')closeM()});
-let cur='home',bt,bi=0,FL,CB,LF={};const P={};
-const sk=()=>'<div class="pg"><div class="skl" style="height:56px"></div><div class="skl" style="height:150px"></div><div class="skl" style="height:90px"></div></div>';
-function nav(){const n=$('#nv'),M={info:'account',manual:'history'},c=M[cur]||cur;n.style.display=DB.session?'flex':'none';if(DB.session)n.innerHTML=[['home','Beranda','home'],['topup','Top Up','game'],['transfer','Transfer','send'],['history','Riwayat','hist'],['account','Akun','user']].map(x=>`<button class="${c==x[0]?'on':''}" onclick="go('${x[0]}')">${ic(x[2])}<span>${x[1]}</span></button>`).join('')}
-function go(p,a){clearInterval(bt);closeM();if(!me())DB.session=null;if(!DB.session)p='auth';cur=p;$('#v').innerHTML=sk();nav();scrollTo(0,0);setTimeout(()=>P[p](a),180)}
-const shell=(t,h,b='home')=>`<div class="pg"><div class="hd"><button class="ib" onclick="go('${b}')" aria-label="Kembali">${ic('back')}</button><h2>${t}</h2></div>${h}</div>`;
-const tabs=(a,c,f)=>`<div class="tabs">${a.map(x=>`<button class="${x[0]==c?'on':''}" onclick="${f}('${x[0]}')">${x[1]}</button>`).join('')}</div>`;
-const rows=a=>a.map(x=>`<div class="rw"><span>${x[0]}</span><b>${esc(x[1])}</b></div>`).join('');
-/* AUTH */
-P.auth=(m='in')=>{$('#v').innerHTML=`<div class="pg auth"><div class="lg">${LOGO}<h1>Muzipay</h1><p class="mu">Dompet digital untuk kebutuhan harianmu</p></div><div class="card">${tabs([['in','Masuk'],['up','Daftar']],m,'P.auth')}<form onsubmit="return auth(event,'${m}')"><label>Nama lengkap<input id="an" autocomplete="name" maxlength="40" required></label><label>Nomor HP<input id="ap" inputmode="tel" placeholder="08xxxxxxxxxx" maxlength="16" required></label>${m=='up'?'<label>Buat PIN transaksi (6 angka)<input id="apin" type="password" inputmode="numeric" maxlength="6" required></label>':''}<div class="err" id="ae"></div><button class="btn">${m=='in'?'Masuk':'Daftar sekarang'}</button></form></div></div>`;nav()};
-function auth(e,m){e.preventDefault();const n=$('#an').value.trim().replace(/\s+/g,' '),p=ph($('#ap').value),er=s=>{$('#ae').textContent=s;return false};
-if(!NM.test(n))return er('Nama 3–40 huruf, tanpa angka.');if(!p)return er('Nomor HP tidak valid. Contoh: 081234567890');
-if(m=='up'){const pin=$('#apin').value;if(!/^\d{6}$/.test(pin))return er('PIN harus 6 angka.');if(DB.accounts[p])return er('Nomor sudah terdaftar. Silakan masuk.');
-const id='MP'+Date.now().toString().slice(-8);DB.accounts[p]={id,name:n,phone:p,pin:hs(pin,id),joined:new Date().toISOString(),base:0,tx:[],loans:[],set:{hide:false,notif:true}};toast('Akun berhasil dibuat')}
-else{const a=DB.accounts[p];if(!a||a.name.toLowerCase()!=n.toLowerCase())return er('Nama atau nomor HP tidak cocok dengan akun.')}
-DB.session=p;save();go('home');return false}
-function logout(){modal('<h2>Keluar dari akun?</h2><p class="mu">Data dan saldo tetap tersimpan di perangkat ini.</p><div class="two"><button class="btn ghost" onclick="closeM()">Batal</button><button class="btn red" onclick="DB.session=null;save();go(\'auth\')">Keluar</button></div>')}
-/* HOME */
-const greet=()=>{const h=+new Date().toLocaleString('en-GB',{...TZ,hour:'2-digit',hour12:false});return h<11?'Selamat pagi':h<15?'Selamat siang':h<18?'Selamat sore':'Selamat malam'};
-function stats(){const mk=dk(new Date()).slice(0,7);let i=0,o=0,ci=0,co=0,ti=0,to=0;me().tx.forEach(x=>{const v=Math.abs(x.eff),mm=dk(x.ts).slice(0,7)==mk;if(x.eff>0){ti+=v;if(mm){i+=v;ci++}}if(x.eff<0){to+=v;if(mm){o+=v;co++}}});return{i,o,ci,co,ti,to,n:me().tx.length}}
-const BN=[{t:'Top Up Game',d:'Pilih game favorit, isi User ID, dan catat pembelian dalam hitungan detik.',c:'linear-gradient(120deg,#2563FF,#5B8CFF)',to:'topup',l:'Buka Top Up'},{t:'Bayar Tagihan',d:'PLN, PDAM, BPJS, internet, dan tagihan lain dalam satu tempat.',c:'linear-gradient(120deg,#0B1F4B,#2563FF)',to:'bills',l:'Bayar Tagihan'},{t:'Pinjaman',d:'Hitung estimasi cicilan dan jadwal pembayaran sebelum mengajukan.',c:'linear-gradient(120deg,#1B3FA8,#4C7DFF)',to:'loan',l:'Hitung Cicilan'}];
-const bnGo=i=>go(BN[i].to),bnMore=i=>modal(`<h2>${BN[i].t}</h2><p class="mu">${BN[i].d}</p><button class="btn" onclick="bnGo(${i})">${BN[i].l}</button>`);
-function bnShow(i){bi=i;const t=$('#bt');if(!t)return;t.style.transform=`translateX(-${i*100}%)`;BN.forEach((_,k)=>$('#d'+k)&&$('#d'+k).classList.toggle('on',k==i))}
-const txi=t=>`<div class="tx" onclick="det('${t.id}')"><div class="ti ${t.eff>0?'in':''}">${ic(TI[t.type]||'hist',18)}</div><div><b>${esc(t.name||t.type)}</b><small class="mu">${fd(t.ts)}, ${ft(t.ts).slice(0,5)}</small></div><div class="ta"><b class="${t.eff>0?'ok':''}">${t.eff?(t.eff>0?'+':'−')+R(Math.abs(t.eff)):R(t.amt)}</b><small class="mu">${esc(t.status)}</small></div></div>`;
-P.home=()=>{const a=me(),s=stats(),h=a.set.hide;$('#v').innerHTML=`<div class="pg"><div class="hd"><div class="av">${a.name[0].toUpperCase()}</div><div style="flex:1"><small class="mu">Muzipay · ${greet()}</small><h2>${esc(a.name.split(' ')[0])}</h2></div><button class="ib" onclick="go('notif')" aria-label="Notifikasi">${ic('bell')}${a.tx.length?'<i class="dot"></i>':''}</button></div>
-<div class="bal"><div class="row"><small>Total saldo</small><button class="eye" onclick="tog()" aria-label="Tampilkan atau sembunyikan saldo">${ic('eye',18)}</button></div><b>${h?'Rp ••••••':R(bal())}</b><div class="qa4">${[['plus','Tambah saldo','addbal'],['send','Transfer','transfer'],['cash','Tarik tunai','withdraw'],['hist','Riwayat','history']].map(x=>`<button class="qa" onclick="go('${x[2]}')">${ic(x[0])}${x[1]}</button>`).join('')}</div></div>
-<div class="sv">${[['game','Top Up Game','topup'],['phone','Pulsa & Data','pulsa'],['bill','Tagihan','bills'],['loan','Pinjaman','loan']].map(x=>`<button onclick="go('${x[2]}')">${ic(x[0])}${x[1]}</button>`).join('')}</div>
-<div class="bn"><div class="bt" id="bt">${BN.map((b,i)=>`<div class="bs" style="background:${b.c}" onclick="bnGo(${i})"><h3>${b.t}</h3><p>${b.d}</p><button class="sm" onclick="event.stopPropagation();bnMore(${i})">Selengkapnya</button></div>`).join('')}</div></div><div class="dots">${BN.map((_,i)=>`<i id="d${i}"></i>`).join('')}</div><div id="ad-slot"></div>
-<div class="stg"><div class="card"><small>Total pemasukan</small><b class="ok">${R(s.ti)}</b></div><div class="card"><small>Total pengeluaran</small><b>${R(s.to)}</b></div><div class="card"><small>Jumlah transaksi</small><b>${s.n}</b></div><div class="card"><small>Saldo pencatatan</small><b>${h?'••••':R(bal())}</b></div></div>
-<div class="row"><h3>Transaksi terakhir</h3><button class="sm" style="background:#EAF0FF" onclick="go('history')">Lihat semua</button></div><div class="card">${a.tx.length?a.tx.slice(0,5).map(txi).join(''):'<p class="mu" style="text-align:center;padding:12px">Belum ada transaksi. Mulai dengan menambah saldo.</p>'}</div></div>`;
-bnShow(0);bt=setInterval(()=>bnShow((bi+1)%BN.length),4500);/* Integrasi jaringan iklan resmi: window.MuziPayAds.mount(el) */if(window.MuziPayAds&&window.MuziPayAds.mount)window.MuziPayAds.mount($('#ad-slot'))};
-const tog=()=>{me().set.hide=!me().set.hide;save();P.home()};
-/* FLOW ENGINE */
-function flow(c,el='fl'){FL=c;$('#'+el).innerHTML=`<form class="card" onsubmit="return fsub(event)">${c.fields.map(x=>{const id='f_'+x.k;return`<label id="w_${x.k}">${x.l}${x.o?`<select id="${id}">${x.o.map(o=>{const[l,v]=String(o).split('|');return`<option value="${esc(v??l)}">${esc(l)}</option>`}).join('')}</select>`:`<input id="${id}" type="${x.t=='tel'?'tel':'text'}" ${x.t=='n'?'inputmode="numeric"':''} placeholder="${esc(x.p||'')}" maxlength="${x.m||60}">`}</label>`}).join('')}<div id="sm" class="sum"></div><div class="err" id="fe"></div><button class="btn">Lanjutkan</button></form>`;
-c.fields.forEach(x=>['input','change'].forEach(ev=>$('#f_'+x.k).addEventListener(ev,fu)));fu()}
-function fv(){const v={};FL.fields.forEach(x=>{const e=$('#f_'+x.k);v[x.k]=x.t=='n'?e.value.replace(/\D/g,''):e.value.trim()});return v}
-function fu(){const v=fv();FL.fields.forEach(x=>{const e=$('#f_'+x.k);if(x.t=='n'&&e.value!=v[x.k])e.value=v[x.k];$('#w_'+x.k).style.display=!x.if||x.if(v)?'':'none'});const r=FL.calc(v);$('#sm').innerHTML=r.rows?rows(r.rows):''}
-function fsub(e){e.preventDefault();const r=FL.calc(fv()),er=m=>{$('#fe').textContent=m;return false};if(r.err)return er(r.err);
-const tot=r.amt+(r.fee||0);if(r.dir=='out'&&tot>bal())return er('Saldo tidak cukup. Dibutuhkan '+R(tot)+', saldo Anda '+R(bal())+'.');$('#fe').textContent='';
-cp(`<div class="sum">${rows(r.rows)}</div>`,()=>{const t=rec(FL.calc(fv()));toast('Transaksi tercatat');receipt(t,1)});return false}
-function cp(h,cb){CB=cb;modal(`<h2>Konfirmasi transaksi</h2>${h}<label>Masukkan PIN<input id="pin" type="password" inputmode="numeric" maxlength="6"></label><div class="err" id="pe"></div><div class="two"><button class="btn ghost" onclick="closeM()">Batal</button><button class="btn" onclick="cok()">Konfirmasi</button></div>`);setTimeout(()=>$('#pin')&&$('#pin').focus(),50)}
-function cok(){const a=me();if(hs($('#pin').value,a.id)!=a.pin){$('#pe').textContent='PIN salah.';return}closeM();CB()}
-function rec(r){const a=me();let id;do{id='MP'+Date.now().toString(36).toUpperCase()+Math.random().toString(36).slice(2,5).toUpperCase()}while(a.tx.some(x=>x.id==id));const fee=r.fee||0,
-t={id,ts:new Date().toISOString(),type:r.type,name:r.name,dest:r.dest||'-',amt:r.amt,fee,eff:r.dir=='in'?r.amt:r.dir=='out'?-(r.amt+fee):0,status:r.status||'Tercatat',desc:r.desc||'',ref:r.refgen?'TRK-'+Math.random().toString(36).slice(2,8).toUpperCase():''};a.tx.unshift(t);save();return t}
-const rc=t=>[['ID transaksi',t.id],['Tanggal',fd(t.ts)],['Jam',ft(t.ts)],['Jenis',t.type],['Penerima',t.name],['Nomor tujuan',t.dest],['Nominal',R(t.amt)],['Biaya administrasi',R(t.fee)],['Total',R(t.amt+t.fee)],['Status',t.status],...(t.ref?[['Kode referensi',t.ref]]:[]),...(t.desc?[['Catatan',t.desc]]:[])];
-function receipt(t,f){modal(`<div class="ok-ic">${ic('check',30)}</div><h2 style="text-align:center">${f?'Transaksi tercatat':'Detail transaksi'}</h2><div class="sum">${rows(rc(t))}</div><p class="mu" style="font-size:12px">Transaksi dicatat di perangkat ini dan belum diteruskan ke penyedia eksternal.</p><div class="two"><button class="btn ghost" onclick="prt('${t.id}')">Cetak bukti</button><button class="btn ghost" onclick="dl('${t.id}')">Unduh bukti</button></div><button class="btn" onclick="closeM();${f?"go('history')":''}">Selesai</button>`)}
-const tbl=t=>`<h2>Muzipay · Bukti Transaksi</h2><table>${rc(t).map(x=>`<tr><td>${x[0]}</td><td><b>${esc(x[1])}</b></td></tr>`).join('')}</table><p style="font-size:12px;color:#666">Dicatat di perangkat; belum diteruskan ke penyedia eksternal.</p>`,
-fnd=id=>me().tx.find(x=>x.id==id),det=id=>receipt(fnd(id)),prt=id=>{$('#pr').innerHTML=tbl(fnd(id));print()},
-dl=id=>{const b=new Blob([`<!doctype html><meta charset="utf-8"><title>Bukti ${id}</title><body style="font-family:sans-serif;max-width:420px;margin:24px auto">${tbl(fnd(id))}</body>`],{type:'text/html'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='bukti-'+id+'.html';a.click();setTimeout(()=>URL.revokeObjectURL(u),1e3)};
-/* ADD BALANCE */
-P.addbal=()=>{$('#v').innerHTML=shell('Tambah Saldo','<p class="mu">Saldo bertambah sesuai pencatatan di aplikasi ini.</p><div id="fl"></div>');
-flow({fields:[{k:'s',l:'Sumber dana',o:['Transfer bank','Setoran tunai','Lainnya']},{k:'a',l:'Nominal (Rp)',t:'n',m:10,p:'Minimal 10.000'}],calc:v=>{const a=+v.a;return E({type:'Top Up',dir:'in',amt:a,fee:0,name:'Tambah saldo',dest:v.s,rows:[['Sumber',v.s],['Nominal',R(a)]]},[[a<10000,'Minimal Rp 10.000.'],[a>20000000,'Maksimal Rp 20.000.000.']])}})};
-/* TOP UP */
-const GM=[['Mobile Legends',1],['Free Fire',0],['PUBG Mobile',0],['Roblox',0],['Genshin Impact',1],['Valorant',0],['Honor of Kings',0],['Call of Duty Mobile',0],['Game lainnya',1]],GP=[15000,30000,60000,120000,300000];
-const OP=[['Telkomsel',/^08(11|12|13|21|22|23|51|52|53)/],['Indosat',/^08(14|15|16|55|56|57|58)/],['XL',/^08(17|18|19|59|77|78)/],['AXIS',/^08(31|32|33|38)/],['Tri',/^089[5-9]/],['Smartfren',/^088[1-9]/]],PU=[5000,10000,20000,25000,50000,100000],PD=[['Data 3 GB / 7 hari',20000],['Data 8 GB / 30 hari',45000],['Data 15 GB / 30 hari',75000],['Data 30 GB / 30 hari',110000]];
-P.pulsa=()=>P.topup('pulsa');
-P.topup=(m='game')=>{cur='topup';nav();$('#v').innerHTML=shell('Top Up',tabs([['game','Game'],['pulsa','Pulsa & Data']],m,'P.topup')+'<div id="fl"></div>');
-if(m=='game')flow({fields:[{k:'g',l:'Pilih game',o:GM.map(g=>g[0])},{k:'u',l:'User ID',p:'Contoh: 123456789',m:20},{k:'s',l:'Server ID',p:'Contoh: 2001',m:10,if:v=>GM.find(g=>g[0]==v.g)[1]},{k:'p',l:'Nominal',o:GP.map((p,i)=>`Paket ${i+1} — ${R(p)}|${p}`)}],
-calc:v=>{const sv=GM.find(g=>g[0]==v.g)[1],d=v.u+(sv&&v.s?' ('+v.s+')':'');return E({type:'Top Up game',dir:'out',amt:+v.p,fee:0,name:v.g,dest:d,rows:[['Game',v.g],['User ID',d],['Harga',R(+v.p)],['Total',R(+v.p)]]},[[!/^\d{5,20}$/.test(v.u),'User ID harus 5–20 angka.'],[sv&&!/^\d{2,10}$/.test(v.s),'Server ID wajib diisi (angka).']])}});
-else flow({fields:[{k:'n',l:'Nomor HP',p:'08xxxxxxxxxx',t:'tel',m:16},{k:'j',l:'Jenis',o:['Pulsa','Paket data']},{k:'a',l:'Nominal pulsa',if:v=>v.j=='Pulsa',o:PU.map(x=>R(x)+'|'+x)},{k:'d',l:'Paket internet',if:v=>v.j!='Pulsa',o:PD.map((x,i)=>`${x[0]} — ${R(x[1])}|${i}`)}],
-calc:v=>{const p=ph(v.n),op=p&&OP.find(o=>o[1].test(p)),pk=v.j=='Pulsa',amt=pk?+v.a:PD[+v.d][1],nm=pk?'Pulsa '+R(amt):PD[+v.d][0];
-return E({type:v.j,dir:'out',amt,fee:1000,name:(op?op[0]:'Operator')+' · '+nm,dest:p||v.n,rows:[['Nomor',p||v.n],['Operator',op?op[0]:'Belum terdeteksi'],['Produk',nm],['Harga',R(amt)],['Biaya admin',R(1000)],['Total',R(amt+1000)]]},[[!p,'Nomor HP tidak valid.'],[!op,'Operator tidak dikenali dari nomor ini.']])}})};
-/* TRANSFER */
-const BK=['BCA','BRI','BNI','Mandiri','BTN','CIMB Niaga','Danamon','Bank lainnya'],EW=['DANA','OVO','GoPay','ShopeePay','LinkAja','E-Wallet lainnya'];
-P.transfer=(m='bank')=>{cur='transfer';nav();const L={bank:['Nomor rekening',2500],user:['Nomor HP pengguna Muzipay',0],ew:['Nomor akun E-Wallet',1000],hp:['Nomor HP tujuan',0]}[m];
-$('#v').innerHTML=shell('Transfer',tabs([['bank','Bank'],['user','Sesama'],['ew','E-Wallet'],['hp','Nomor HP']],m,'P.transfer')+'<div id="fl"></div>');
-flow({fields:[...(m=='bank'?[{k:'p',l:'Pilih bank',o:BK}]:m=='ew'?[{k:'p',l:'Pilih E-Wallet',o:EW}]:[]),{k:'d',l:L[0],t:'tel',m:20},{k:'r',l:'Nama penerima',m:40},{k:'a',l:'Nominal transfer (Rp)',t:'n',m:10,p:'Minimal 10.000'},{k:'c',l:'Catatan (opsional)',m:60}],
-calc:v=>{const a=+v.a,d=m=='bank'?v.d:(ph(v.d)||v.d),pv=v.p?v.p+' ':'';return E({type:'Transfer',dir:'out',amt:a,fee:L[1],name:v.r||'Penerima',dest:pv+d,desc:v.c,rows:[['Tujuan',pv+d],['Penerima',v.r||'-'],['Nominal',R(a)],['Biaya admin',R(L[1])],['Total pembayaran',R(a+L[1])]]},
-[[m=='bank'&&!/^\d{6,18}$/.test(v.d),'Nomor rekening harus 6–18 angka.'],[m!='bank'&&!ph(v.d),'Nomor HP tujuan tidak valid.'],[m=='user'&&ph(v.d)==me().phone,'Tidak bisa transfer ke akun sendiri.'],[!NM.test(v.r),'Nama penerima 3–40 huruf.'],[a<10000,'Minimal transfer Rp 10.000.'],[a>50000000,'Maksimal transfer Rp 50.000.000.']])}})};
-/* WITHDRAW */
-const WM=[['Tarik tunai Alfamart',2500],['Tarik tunai Indomaret',2500],['Tarik tunai melalui ATM',5000],['Tarik tunai melalui agen',3000],['Penarikan ke rekening bank',2500]];
-P.withdraw=()=>{$('#v').innerHTML=shell('Tarik Tunai','<div id="fl"></div>');
-flow({fields:[{k:'m',l:'Metode penarikan',o:WM.map((x,i)=>`${x[0]} — admin ${R(x[1])}|${i}`)},{k:'b',l:'Bank tujuan',o:BK,if:v=>v.m==4},{k:'r',l:'Nomor rekening',t:'tel',m:18,if:v=>v.m==4},{k:'a',l:'Nominal (Rp)',t:'n',m:10,p:'Minimal 50.000'}],
-calc:v=>{const w=WM[+v.m],a=+v.a,bk=v.m==4;return E({type:'Tarik tunai',dir:'out',amt:a,fee:w[1],refgen:1,name:w[0],dest:bk?v.b+' '+v.r:w[0],rows:[['Metode',w[0]],...(bk?[['Rekening',v.b+' '+v.r]]:[]),['Nominal',R(a)],['Biaya admin',R(w[1])],['Total penarikan',R(a+w[1])]]},[[bk&&!/^\d{6,18}$/.test(v.r),'Nomor rekening harus 6–18 angka.'],[a<50000,'Minimal penarikan Rp 50.000.'],[a>5000000,'Maksimal penarikan Rp 5.000.000.']])}})};
-/* BILLS */
-const BL=['PLN prabayar','PLN pascabayar','PDAM','BPJS Kesehatan','Internet dan WiFi','TV kabel','Pajak','Multifinance','Voucher digital','Tagihan telepon','Tagihan lainnya'];
-P.bills=()=>{$('#v').innerHTML=shell('Bayar Tagihan','<p class="mu">Masukkan nominal sesuai tagihan Anda.</p><div id="fl"></div>');
-flow({fields:[{k:'j',l:'Jenis tagihan',o:BL},{k:'n',l:'Nomor pelanggan',t:'tel',m:20},{k:'a',l:'Nominal tagihan (Rp)',t:'n',m:10,p:'Minimal 10.000'}],
-calc:v=>{const a=+v.a;return E({type:'Pembayaran tagihan',dir:'out',amt:a,fee:2500,name:v.j,dest:v.n,rows:[['Jenis',v.j],['No. pelanggan',v.n],['Tagihan',R(a)],['Biaya admin',R(2500)],['Total pembayaran',R(a+2500)]]},[[!/^\d{5,20}$/.test(v.n),'Nomor pelanggan harus 5–20 angka.'],[a<10000,'Minimal Rp 10.000.'],[a>20000000,'Maksimal Rp 20.000.000.']])}})};
-/* MANUAL ENTRY */
-P.manual=()=>{$('#v').innerHTML=shell('Catat Manual','<div id="fl"></div>','history');
-flow({fields:[{k:'j',l:'Jenis',o:['Pemasukan','Pengeluaran']},{k:'a',l:'Nominal (Rp)',t:'n',m:10},{k:'c',l:'Keterangan',m:60}],calc:v=>{const a=+v.a;return E({type:v.j,dir:v.j=='Pemasukan'?'in':'out',amt:a,fee:0,name:v.c||v.j,dest:'-',desc:v.c,rows:[['Jenis',v.j],['Nominal',R(a)],['Keterangan',v.c||'-']]},[[a<1000,'Minimal Rp 1.000.']])}})};
-/* HISTORY */
-P.history=()=>{$('#v').innerHTML=shell('Riwayat Transaksi',`<div class="card"><input id="hq" placeholder="Cari nama, nomor, atau ID" oninput="hl()"><div class="two" style="margin-top:8px"><select id="hc" onchange="hl()"><option value="">Semua kategori</option>${TYPES.map(x=>`<option>${x}</option>`).join('')}</select><select id="hs" onchange="hl()"><option value="">Semua status</option>${STS.map(x=>`<option>${x}</option>`).join('')}</select></div><div class="two" style="margin-top:8px"><label>Dari<input type="date" id="ha" onchange="hl()"></label><label>Sampai<input type="date" id="hb" onchange="hl()"></label></div><div class="two"><button class="btn ghost" onclick="go('manual')">Catat manual</button><button class="btn red" onclick="clr()">Hapus riwayat</button></div></div><div class="card" id="hlst"></div>`);hl()};
-function hl(){const q=$('#hq').value.toLowerCase(),c=$('#hc').value,s=$('#hs').value,a=$('#ha').value,b=$('#hb').value,l=me().tx.filter(t=>(!q||[t.name,t.dest,t.id,t.type].join(' ').toLowerCase().includes(q))&&(!c||t.type==c)&&(!s||t.status==s)&&(!a||dk(t.ts)>=a)&&(!b||dk(t.ts)<=b));
-$('#hlst').innerHTML=l.length?l.map(txi).join(''):'<p class="mu" style="text-align:center;padding:12px">Tidak ada transaksi yang cocok.</p>'}
-function clr(){cp('<p class="mu">Semua riwayat akan dihapus permanen dari perangkat ini. Saldo tetap tersimpan.</p>',()=>{const a=me();a.base+=a.tx.reduce((s,t)=>s+t.eff,0);a.tx=[];save();toast('Riwayat dihapus');go('history')})}
-/* LOAN */
-const lcalc=()=>{const a=+($('#l_m').value.replace(/\D/g,''))||0,n=+$('#l_t').value,bg=Math.round(a*.015*n),ad=Math.round(a*.01),tot=a+bg+ad,c=Math.ceil(tot/n);return{a,n,bg,ad,tot,c}};
-function lsum(){const x=lcalc(),d=new Date();$('#ls').innerHTML=x.a?rows([['Bunga (1,5%/bulan flat)',R(x.bg)],['Biaya admin (1%)',R(x.ad)],['Total pembayaran',R(x.tot)],['Estimasi cicilan/bulan',R(x.c)]])+`<details><summary>Jadwal pembayaran</summary><table><tr><th>Ke</th><th>Jatuh tempo</th><th>Cicilan</th></tr>${Array.from({length:x.n},(_,i)=>{const e=new Date(d.getFullYear(),d.getMonth()+i+1,d.getDate());return`<tr><td>${i+1}</td><td>${fd(e)}</td><td>${R(x.c)}</td></tr>`}).join('')}</table></details>`:''}
-const BD={'Menunggu pemeriksaan':1};
-P.loan=()=>{const a=me();$('#v').innerHTML=shell('Pinjaman',`<div class="card"><form onsubmit="return lsub(event)"><label>Nama lengkap<input id="l_n" value="${esc(a.name)}" maxlength="40"></label><label>Tanggal lahir<input id="l_b" type="date"></label><label>Alamat lengkap<input id="l_a" maxlength="120"></label><label>Pekerjaan<input id="l_j" maxlength="40"></label><label>Penghasilan bulanan (Rp)<input id="l_i" inputmode="numeric" maxlength="12"></label><label>Nominal pengajuan (Rp)<input id="l_m" inputmode="numeric" maxlength="10" placeholder="500.000 – 20.000.000"></label><label>Tenor<select id="l_t">${[3,6,12,18,24].map(x=>`<option value="${x}">${x} bulan</option>`).join('')}</select></label><div id="ls" class="sum"></div>
-${[['ktp','Foto KTP'],['self','Foto diri'],['doc','Dokumen pendukung (opsional)']].map(x=>`<div class="up"><b>${x[1]}</b><div id="u_${x[0]}"></div><label class="btn ghost" style="margin:6px 0 0;color:var(--b)">Pilih / ganti gambar<input type="file" accept="image/*" hidden onchange="lup('${x[0]}',this)"></label></div>`).join('')}
-<label class="ck"><input type="checkbox" id="l_c"><span>Saya menyetujui dokumen diproses sementara di browser ini. Dokumen tidak disimpan di perangkat dan hilang saat halaman ditutup.</span></label><div class="err" id="le"></div><button class="btn">Ajukan pinjaman</button></form></div><p class="mu" style="font-size:12px">Pengajuan dicatat di perangkat ini. Persetujuan pinjaman sungguhan membutuhkan backend aman dan pemeriksaan resmi.</p><h3>Riwayat pengajuan</h3><div class="card">${a.loans.length?a.loans.map(l=>`<div class="tx" style="cursor:default"><div class="ti">${ic('loan',18)}</div><div><b>${R(l.amt)}</b><small class="mu">${l.n} bulan · ${R(l.c)}/bln · ${fd(l.ts)}</small></div><span class="bd">${esc(l.status)}</span></div>`).join(''):'<p class="mu" style="text-align:center">Belum ada pengajuan.</p>'}</div>`);
-['l_i','l_m'].forEach(i=>$('#'+i).addEventListener('input',e=>{e.target.value=e.target.value.replace(/\D/g,'');lsum()}));$('#l_t').addEventListener('change',lsum);LF={}};
-function lup(k,inp){const f=inp.files[0];inp.value='';if(!f)return;if(!/^image\//.test(f.type))return toast('File harus berupa gambar','er');if(f.size>5e6)return toast('Ukuran maksimal 5 MB','er');if(LF[k])URL.revokeObjectURL(LF[k]);LF[k]=URL.createObjectURL(f);$('#u_'+k).innerHTML=`<img src="${LF[k]}" alt="Pratinjau"><button type="button" class="sm" style="background:#FDECEC;color:var(--er)" onclick="ldel('${k}')">Hapus</button>`}
-function ldel(k){URL.revokeObjectURL(LF[k]);delete LF[k];$('#u_'+k).innerHTML=''}
-function lsub(e){e.preventDefault();const x=lcalc(),er=m=>{$('#le').textContent=m;return false},b=new Date($('#l_b').value),age=(Date.now()-b)/31557600000;
-if(!NM.test($('#l_n').value.trim()))return er('Nama lengkap tidak valid.');if(!$('#l_b').value||isNaN(age)||age<18||age>80)return er('Usia harus 18–80 tahun.');
-if($('#l_a').value.trim().length<10)return er('Alamat minimal 10 karakter.');if($('#l_j').value.trim().length<3)return er('Pekerjaan wajib diisi.');
-if((+$('#l_i').value||0)<1000000)return er('Penghasilan minimal Rp 1.000.000.');if(x.a<500000||x.a>20000000)return er('Nominal pengajuan Rp 500.000 – Rp 20.000.000.');
-if(!LF.ktp||!LF.self)return er('Unggah foto KTP dan foto diri.');if(!$('#l_c').checked)return er('Setujui pemberitahuan privasi terlebih dahulu.');
-cp(`<div class="sum">${rows([['Nominal',R(x.a)],['Tenor',x.n+' bulan'],['Cicilan/bulan',R(x.c)]])}</div>`,()=>{const a=me();a.loans.unshift({id:'LN'+Date.now().toString(36).toUpperCase(),ts:new Date().toISOString(),amt:x.a,n:x.n,c:x.c,status:'Menunggu pemeriksaan'});
-Object.values(LF).forEach(u=>URL.revokeObjectURL(u));LF={};rec({type:'Pinjaman',dir:'none',amt:x.a,fee:0,name:'Pengajuan pinjaman',dest:x.n+' bulan',status:'Menunggu pemeriksaan'});toast('Pengajuan dicatat');go('loan')});return false}
-/* NOTIF & INFO */
-P.notif=()=>{const a=me();$('#v').innerHTML=shell('Notifikasi',`<div class="card">${!a.set.notif?'<p class="mu" style="text-align:center">Notifikasi dimatikan di pengaturan.</p>':a.tx.length?a.tx.slice(0,15).map(t=>`<div class="tx" onclick="det('${t.id}')"><div class="ti">${ic('bell',18)}</div><div><b>${esc(t.type)} tercatat</b><small class="mu">${esc(t.name)} · ${fd(t.ts)}</small></div></div>`).join(''):'<p class="mu" style="text-align:center">Belum ada notifikasi.</p>'}</div>`)};
-const TG=(k,l)=>`<label class="ck" style="color:var(--t);padding:8px 0"><input type="checkbox" ${me().set[k]?'checked':''} onchange="me().set.${k}=this.checked;save()"><span>${l}</span></label>`;
-const INFO={sec:['Keamanan akun',()=>`<div class="card">${TG('hide','Sembunyikan saldo saat membuka beranda')}<p class="mu">Data akun, saldo, dan riwayat tersimpan di perangkat ini. Jangan bagikan PIN Anda. Ubah PIN secara berkala dari menu Akun.</p></div>`],not:['Notifikasi',()=>`<div class="card">${TG('notif','Tampilkan notifikasi dan pemberitahuan transaksi')}</div>`],
-help:['Pusat bantuan',()=>`<div class="card">${[['Apakah transaksi diteruskan ke bank atau penyedia?','Belum. Muzipay mencatat transaksi di perangkat ini dan menandainya Tercatat. Tidak ada dana yang dikirim ke pihak luar.'],['Bagaimana saldo dihitung?','Saldo = saldo awal ditambah pemasukan dikurangi pengeluaran dan biaya admin dari riwayat.'],['Saya lupa PIN.','PIN tidak bisa dipulihkan tanpa server. Buat akun baru dengan nomor HP berbeda.'],['Data saya hilang?','Data tersimpan di browser perangkat ini. Menghapus data situs akan menghapus akun.']].map(x=>`<details><summary>${x[0]}</summary><p class="mu" style="margin-top:6px">${x[1]}</p></details>`).join('')}</div>`],
-tnc:['Syarat dan ketentuan',()=>'<div class="card"><p>1. Muzipay mencatat transaksi secara lokal di perangkat Anda.</p><p>2. Anda bertanggung jawab menjaga kerahasiaan PIN.</p><p>3. Pengajuan pinjaman hanya dicatat; persetujuan memerlukan pemeriksaan resmi oleh penyedia berizin.</p><p>4. Biaya administrasi yang tampil sebelum konfirmasi ikut dicatat pada total transaksi.</p></div>'],
-prv:['Kebijakan privasi',()=>'<div class="card"><p>Data akun dan riwayat disimpan di localStorage browser Anda dan tidak dikirim ke server.</p><p>Foto KTP, foto diri, dan dokumen pinjaman hanya diproses sementara di browser dan tidak pernah disimpan ke localStorage.</p><p>Anda dapat menghapus riwayat kapan saja dari halaman Riwayat.</p></div>']};
-P.info=k=>{$('#v').innerHTML=shell(INFO[k][0],INFO[k][1](),'account')};
-/* ACCOUNT */
-function mon(){const n=new Date(),r=[];for(let i=11;i>=0;i--){const d=new Date(n.getFullYear(),n.getMonth()-i,1);r.push({k:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'),l:MN[d.getMonth()],i:0,o:0,n:0})}me().tx.forEach(t=>{const m=r.find(x=>x.k==dk(t.ts).slice(0,7));if(m){m.n++;if(t.eff>0)m.i+=t.eff;if(t.eff<0)m.o-=t.eff}});return r}
-function chart(r,ks,cs,ln){const W=340,H=120,g=W/12,mx=Math.max(1,...r.flatMap(x=>ks.map(k=>x[k]))),w=ks.length>1?9:14;let s=`<svg viewBox="0 0 ${W} ${H+16}" class="ch" role="img" aria-label="Grafik 12 bulan">`;
-if(ln)s+=`<polyline fill="none" stroke="${cs[0]}" stroke-width="2.5" points="${r.map((x,i)=>`${i*g+g/2},${H-x.n/mx*H}`).join(' ')}"/>`+r.map((x,i)=>`<circle cx="${i*g+g/2}" cy="${H-x.n/mx*H}" r="3" fill="${cs[0]}"/>`).join('');
-r.forEach((x,i)=>{if(!ln)ks.forEach((k,j)=>{const h=x[k]/mx*H;s+=`<rect x="${i*g+(g-w*ks.length)/2+j*w}" y="${H-h}" width="${w-1}" height="${x[k]?Math.max(h,2):0}" rx="2" fill="${cs[j]}"/>`});s+=`<text x="${i*g+g/2}" y="${H+12}" font-size="8" text-anchor="middle" fill="#6B7794">${x.l}</text>`});return s+'</svg>'}
-P.account=()=>{const a=me(),s=stats(),r=mon();$('#v').innerHTML=`<div class="pg"><div class="card" style="text-align:center"><div class="av" style="width:64px;height:64px;font-size:26px;margin:0 auto 8px">${a.name[0].toUpperCase()}</div><h2>${esc(a.name)}</h2><small class="mu">${a.phone}</small><div class="sum" style="text-align:left">${rows([['ID pengguna',a.id],['Terdaftar',fd(a.joined)],['Status akun','Aktif']])}</div></div>
-<h3>Ringkasan Keuangan Bulanan</h3><div class="stg">${[['Uang masuk bulan ini',R(s.i)],['Uang keluar bulan ini',R(s.o)],['Saldo akhir bulan',R(bal())],['Transaksi masuk',s.ci],['Transaksi keluar',s.co]].map(x=>`<div class="card"><small>${x[0]}</small><b>${x[1]}</b></div>`).join('')}</div>
-<div class="card"><b>Grafik pemasukan</b>${chart(r,['i'],['#12A150'])}</div><div class="card"><b>Grafik pengeluaran</b>${chart(r,['o'],['#D93636'])}</div>
-<div class="card"><b>Perbandingan masuk dan keluar</b>${chart(r,['i','o'],['#12A150','#D93636'])}<div class="leg"><span><i style="background:#12A150"></i>Masuk</span><span><i style="background:#D93636"></i>Keluar</span></div></div><div class="card"><b>Statistik transaksi 12 bulan</b>${chart(r,['n'],['#2563FF'],1)}</div>
-<div class="card">${[['Edit profil','user','edP()'],['Ubah PIN','lock','cpn()'],['Keamanan akun','lock',"go('info','sec')"],['Notifikasi','bell',"go('info','not')"],['Pusat bantuan','info',"go('info','help')"],['Syarat dan ketentuan','bill',"go('info','tnc')"],['Kebijakan privasi','lock',"go('info','prv')"],['Logout','out','logout()']].map(x=>`<div class="mn" onclick="${x[2]}"><div class="ti">${ic(x[1],18)}</div><span>${x[0]}</span></div>`).join('')}</div></div>`};
-function edP(){const a=me();modal(`<h2>Edit profil</h2><label>Nama lengkap<input id="en" value="${esc(a.name)}" maxlength="40"></label><label>Nomor HP<input id="ep" value="${a.phone}" inputmode="tel" maxlength="16"></label><label>PIN<input id="pin" type="password" inputmode="numeric" maxlength="6"></label><div class="err" id="pe"></div><div class="two"><button class="btn ghost" onclick="closeM()">Batal</button><button class="btn" onclick="svP()">Simpan</button></div>`)}
-function svP(){const a=me(),n=$('#en').value.trim().replace(/\s+/g,' '),p=ph($('#ep').value),e=m=>{$('#pe').textContent=m};
-if(!NM.test(n))return e('Nama 3–40 huruf, tanpa angka.');if(!p)return e('Nomor HP tidak valid.');if(p!=a.phone&&DB.accounts[p])return e('Nomor sudah dipakai akun lain.');if(hs($('#pin').value,a.id)!=a.pin)return e('PIN salah.');
-a.name=n;if(p!=a.phone){delete DB.accounts[a.phone];a.phone=p;DB.accounts[p]=a;DB.session=p}save();closeM();toast('Profil diperbarui');go('account')}
-function cpn(){modal(`<h2>Ubah PIN</h2><label>PIN lama<input id="o1" type="password" inputmode="numeric" maxlength="6"></label><label>PIN baru (6 angka)<input id="o2" type="password" inputmode="numeric" maxlength="6"></label><label>Ulangi PIN baru<input id="o3" type="password" inputmode="numeric" maxlength="6"></label><div class="err" id="pe"></div><div class="two"><button class="btn ghost" onclick="closeM()">Batal</button><button class="btn" onclick="svN()">Simpan</button></div>`)}
-function svN(){const a=me(),e=m=>{$('#pe').textContent=m},n=$('#o2').value;if(hs($('#o1').value,a.id)!=a.pin)return e('PIN lama salah.');if(!/^\d{6}$/.test(n))return e('PIN baru harus 6 angka.');if(n!=$('#o3').value)return e('Konfirmasi PIN tidak sama.');a.pin=hs(n,a.id);save();closeM();toast('PIN diperbarui')}
-go(DB.session&&me()?'home':'auth');
+const I={home:'<path d="M3 10l9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>',grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',tag:'<path d="M3 12V3h9l9 9-9 9z"/><circle cx="7.5" cy="7.5" r="1"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>',plus:'<path d="M12 5v14M5 12h14"/>',send:'<path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/>',down:'<path d="M12 3v14M5 12l7 7 7-7"/>',bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21h4"/>',eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',game:'<rect x="2" y="7" width="20" height="11" rx="4"/><path d="M7 10v5M5 12.5h4M16 11h.01M18 14h.01"/>',phone:'<rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/>',bill:'<path d="M6 2h12v20l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6"/>',shield:'<path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5z"/>',help:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 1-1 1.7M12 17h.01"/>',out:'<path d="M9 21H5V3h4M16 17l5-5-5-5M21 12H9"/>',file:'<path d="M14 2H6v20h12V6zM14 2v4h4M9 13h6M9 17h6"/>',cash:'<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/>',id:'<rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="8" cy="12" r="2"/><path d="M13 10h5M13 14h4"/>',lock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',chev:'<path d="M9 6l6 6-6 6"/>',back:'<path d="M15 6l-6 6 6 6"/>',cog:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/>'};
+const $=(s,e=document)=>e.querySelector(s),$$=(s,e=document)=>[...e.querySelectorAll(s)];
+const rp=n=>'Rp'+Math.round(n).toLocaleString('id-ID');
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ic=(n,s=22)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[n]||''}</svg>`;
+const fd=ts=>new Date(ts).toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+const v=id=>{const e=$('#'+id);return e?e.value.trim():''};
+const K='muzipay.v1';
+const DEF=()=>({sim:true,bal:500000,hide:false,locked:false,pin:'123456',outcome:'ok',push:true,kyc:{st:'none'},txs:[],loans:[],
+user:{name:'Pengguna MuziPay',phone:'081234567890',email:'pengguna@email.com',acc:'8800 1234 5678'},
+notifs:[{id:1,t:'Selamat datang di MuziPay',d:'Mode Simulasi aktif dengan saldo virtual Rp500.000.',ts:Date.now(),r:0}],
+banners:[{t:'Top Up Game Lebih Hemat',d:'Diskon biaya admin untuk game favoritmu.',l:'#game',img:'',ad:1},{t:'Pulsa dan Paket Data',d:'Isi ulang semua operator dalam hitungan detik.',l:'#pulsa',img:'',ad:1},{t:'Bayar Tagihan Tanpa Antre',d:'PLN, BPJS, PDAM, dan WiFi dalam satu aplikasi.',l:'#tagihan',img:'',ad:0},{t:'Hitung Cicilan Sebelum Memutuskan',d:'Coba kalkulator pinjaman simulasi.',l:'#pinjaman',img:'',ad:0}]});
+function load(){try{const d=JSON.parse(localStorage.getItem(K));if(d&&typeof d==='object')return Object.assign(DEF(),d)}catch(e){}return DEF()}
+let S=load();const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
+// Titik integrasi layanan iklan resmi: ganti AdProvider.get dengan SDK/API penyedia iklan.
+const AdProvider={get:()=>S.banners};
+let cur='home',HIST=[],SEL={},F='all',PH={id:null,selfie:null},AV=null,LN={a:2000000,n:6},bi=0;
+const SC={success:'Berhasil',pending:'Pending',failed:'Gagal'},TL={topup:'Top Up',transfer:'Transfer',tarik:'Tarik Saldo',game:'Pembelian Game',pulsa:'Pulsa & Data',tagihan:'Bayar Tagihan'},TI={topup:'plus',transfer:'send',tarik:'down',game:'game',pulsa:'phone',tagihan:'bill'};
+const NAV=[['home','home','Beranda'],['layanan','grid','Layanan'],['riwayat','clock','Riwayat'],['promo','tag','Promo'],['akun','user','Akun']];
+const AKUN=['akun','profil','settings','keamanan','notif','bantuan','faq','tnc','privasi','info','cs'];
+const toast=(m,e)=>{const d=document.createElement('div');d.textContent=m;if(e)d.className='err';$('#toast').append(d);setTimeout(()=>d.remove(),3000)};
+const loader=b=>$('#ld').hidden=!b;
+const modal=h=>{const m=$('#modal');m.innerHTML=`<div class="sheet">${h}</div>`;m.hidden=false};
+const closeM=()=>{$('#modal').hidden=true};
+$('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeM()});
+const rows=a=>`<div class="rows">${a.map(([k,x])=>`<div><span>${k}</span><b>${esc(x)}</b></div>`).join('')}</div>`;
+const fld=(id,l,ph='',t='text',x='')=>`<label class="f"><span>${l}</span><input id="${id}" type="${t}" placeholder="${ph}" ${x}></label>`;
+const sel=(id,l,o)=>`<label class="f"><span>${l}</span><select id="${id}">${o.map(x=>`<option>${x}</option>`).join('')}</select></label>`;
+const chips=(n,a,s)=>`<div class="chips" data-n="${n}">${a.map(([l,x,sm])=>`<button type="button" class="chip${String(x)===String(s)?' on':''}" data-v="${x}">${l}${sm?`<small>${sm}</small>`:''}</button>`).join('')}</div>`;
+const head=(t,b=true)=>`<div class="ph">${b?`<button class="ib" data-act="back" aria-label="Kembali">${ic('back')}</button>`:''}<h2>${t}</h2></div>`;
+const grid=a=>`<div class="grid">${a.map(([p,i,l])=>`<button class="gi" data-go="${p}"><span class="ico">${ic(i)}</span>${l}</button>`).join('')}</div>`;
+const badge=s=>`<span class="badge ${s}">${SC[s]||s}</span>`;
+const txli=t=>`<button class="li" data-act="detail" data-id="${t.id}"><span class="ico">${ic(TI[t.type])}</span><span class="t"><b>${esc(t.label)}</b><small>${fd(t.ts)}</small></span><span style="text-align:right"><div class="${t.type==='topup'?'plus':'minus'}">${t.type==='topup'?'+':'-'}${rp(t.type==='topup'?t.amt:t.tot)}</div>${badge(t.st)}</span></button>`;
+const empty=m=>`<p class="mu" style="padding:18px 0;text-align:center">${m}</p>`;
+const unread=()=>S.notifs.filter(n=>!n.r).length;
+const doc=(t,a)=>head(t)+`<div class="card">${a.map(x=>`<p class="d">${x}</p>`).join('')}</div>`;
+
+// ---------- Halaman ----------
+const P={};
+P.home=()=>`<div class="card bal"><div class="row"><div style="display:flex;gap:10px;align-items:center"><div class="av">${AV?`<img src="${AV}" alt="">`:esc(S.user.name[0])}</div><div><small style="opacity:.8">Selamat datang,</small><div style="font-weight:700">${esc(S.user.name)}</div></div></div><span class="badge ${S.kyc.st==='verified'?'success':'none'}">${S.kyc.st==='verified'?'Terverifikasi':'Belum Terverifikasi'}</span></div>
+<div class="amt"><span>${S.hide?'Rp ••••••':rp(S.bal)}</span><button data-act="toggleBal" aria-label="Tampilkan atau sembunyikan saldo">${ic('eye',20)}</button></div><div style="font-size:13px;opacity:.85">Akun ${esc(S.user.acc)}</div>
+<div class="acts"><button data-go="topup">${ic('plus')}Top Up</button><button data-go="transfer">${ic('send')}Transfer</button><button data-go="tarik">${ic('down')}Tarik</button><button data-go="riwayat">${ic('clock')}Riwayat</button></div></div>
+${slider()}${grid([['game','game','Top Up Game'],['pulsa','phone','Pulsa & Data'],['tagihan','bill','Tagihan'],['pinjaman','cash','Pinjaman'],['kyc','id','Verifikasi'],['promo','tag','Promo'],['notif','bell','Notifikasi'],['layanan','grid','Semua']])}
+<div class="card" style="margin-top:14px"><b>Notifikasi terbaru</b>${S.notifs.slice(0,2).map(n=>`<div class="li"><span class="ico">${ic('bell')}</span><span class="t"><b>${esc(n.t)}</b><small>${esc(n.d)}</small></span></div>`).join('')||empty('Belum ada notifikasi')}</div>
+<div class="card"><b>Promo dan penawaran</b><p class="mu" style="margin:6px 0 10px">Lihat semua penawaran terbaru untuk layananmu.</p><button class="btn ghost" data-go="promo">Lihat Promo</button></div>
+<div class="card"><b>Transaksi terakhir</b>${S.txs.slice(0,3).map(txli).join('')||empty('Belum ada transaksi. Coba top up saldo virtual.')}</div>`;
+const slider=()=>{const b=AdProvider.get();return `<div class="slw"><div class="sl" id="sl">${b.map(x=>`<div class="slide" data-act="blink" data-l="${esc(x.l)}" ${x.img?`style="background-image:linear-gradient(90deg,rgba(8,41,127,.85),rgba(8,41,127,.2)),url('${esc(x.img)}')"`:''}>${x.ad?'<span class="ad">Iklan</span>':''}<h3>${esc(x.t)}</h3><p>${esc(x.d)}</p><span class="btn sm w">Lihat Promo</span></div>`).join('')}</div></div><div class="dots">${b.map((_,i)=>`<i class="${i===bi?'on':''}"></i>`).join('')}</div>`};
+P.layanan=()=>head('Layanan',false)+grid([['topup','plus','Top Up'],['transfer','send','Transfer'],['tarik','down','Tarik Saldo'],['game','game','Top Up Game'],['pulsa','phone','Pulsa & Data'],['tagihan','bill','Bayar Tagihan'],['pinjaman','cash','Pinjaman'],['kyc','id','Verifikasi KYC']]);
+const METH=['Transfer Bank BCA','Transfer Bank Mandiri','Transfer Bank BNI','QRIS','Minimarket'];
+P.topup=()=>head('Top Up Saldo')+`<div class="card"><b>Pilih nominal</b><div style="height:8px"></div>${chips('amt',[10000,25000,50000,100000,250000,500000,1000000].map(x=>[rp(x),x]))}${fld('ca','Atau nominal sendiri','Minimal Rp10.000','number','min="0"')}${sel('mt','Metode pembayaran',METH)}<button class="btn" data-act="doTopup">Top Up</button></div><div class="card"><b>Riwayat top up</b>${S.txs.filter(t=>t.type==='topup').slice(0,8).map(txli).join('')||empty('Belum ada top up')}</div>`;
+const GAMES=[['Mobile Legends','Diamond',1,285,[86,172,257,514,706]],['Free Fire','Diamond',0,150,[70,140,355,720]],['PUBG Mobile','UC',0,155,[60,325,660,1800]],['Call of Duty Mobile','CP',0,150,[80,400,800,2000]],['Genshin Impact','Genesis Crystal',1,245,[60,300,980,1980]],['Honor of Kings','Token',0,200,[80,240,400,800]],['Roblox','Robux',0,160,[80,400,800,1700]],['Valorant','VP',0,150,[475,1000,2050,3650]],['Game Lainnya','Koin',0,180,[100,300,600,1200]]];
+const gp=(g,q)=>Math.ceil(q*g[3]/100)*100;
+const gitems=i=>{const g=GAMES[i];return chips('gi',g[4].map((q,k)=>[`${q} ${g[1]}`,k,rp(gp(g,q))]))};
+P.game=()=>head('Top Up Game')+`<div class="card"><b>Pilih game</b><div style="height:8px"></div>${chips('game',GAMES.map((g,i)=>[g[0],i]))}<div id="gname"></div>${fld('uid','User ID','Masukkan User ID','tel')}<div id="gz" hidden>${fld('zid','Zone ID','Contoh: 2001','tel')}</div><b>Pilih nominal</b><div style="height:8px"></div><div id="gitems"><p class="mu">Pilih game terlebih dahulu</p></div><button class="btn" data-act="doGame">Beli Sekarang</button></div><div class="card"><b>Riwayat pembelian</b>${S.txs.filter(t=>t.type==='game').slice(0,6).map(txli).join('')||empty('Belum ada pembelian')}</div>`;
+const OPS={Telkomsel:['0811','0812','0813','0821','0822','0823','0851','0852','0853'],Indosat:['0814','0815','0816','0855','0856','0857','0858'],XL:['0817','0818','0819','0859','0877','0878'],Axis:['0831','0832','0833','0838'],Tri:['0895','0896','0897','0898','0899'],Smartfren:['0881','0882','0883','0884','0885','0886','0887','0888','0889']};
+const PD=[['1,5 GB / 7 hari',15000],['5 GB / 30 hari',45000],['12 GB / 30 hari',80000],['30 GB / 30 hari',120000]];
+const pitems=t=>t==='pulsa'?chips('pi',[5,10,15,20,25,50,100].map(x=>[rp(x*1000),x*1000,'Harga '+rp(x*1000+1500)])):chips('pi',PD.map(([l,p],i)=>[l,i,rp(p)]));
+P.pulsa=()=>{SEL.op=SEL.op||'Telkomsel';SEL.pt=SEL.pt||'pulsa';return head('Pulsa dan Paket Data')+`<div class="card">${chips('pt',[['Pulsa','pulsa'],['Paket Data','data']],SEL.pt)}${fld('hp','Nomor HP','08xxxxxxxxxx','tel','maxlength="14"')}${chips('op',Object.keys(OPS).map(o=>[o,o]),SEL.op)}<div id="pitems">${pitems(SEL.pt)}</div><button class="btn" data-act="doPulsa">Beli</button></div><div class="card"><b>Riwayat pembelian</b>${S.txs.filter(t=>t.type==='pulsa').slice(0,6).map(txli).join('')||empty('Belum ada pembelian')}</div>`};
+const BILL=['PLN Prabayar','PLN Pascabayar','BPJS','PDAM','Internet & WiFi','TV Kabel','Angsuran','Tagihan Telepon','Tagihan Lainnya'];
+P.tagihan=()=>head('Bayar Tagihan')+`<div class="card">${chips('bl',BILL.map(b=>[b,b]))}${fld('cn','Nomor pelanggan','6 - 16 digit','tel','maxlength="16"')}<div id="bq">${chips('bn',[20000,50000,100000,200000].map(x=>[rp(x),x]))}</div>${fld('bm','Atau nominal sendiri','Minimal Rp10.000','number')}<button class="btn" data-act="doTagihan">Bayar Tagihan</button></div><div class="card"><b>Riwayat pembayaran</b>${S.txs.filter(t=>t.type==='tagihan').slice(0,6).map(txli).join('')||empty('Belum ada pembayaran')}</div>`;
+P.transfer=()=>head('Transfer')+`<div class="card">${fld('tn','Nomor tujuan','Nomor HP pengguna MuziPay','tel','maxlength="14"')}${fld('ta','Nominal','Minimal Rp10.000','number')}${fld('tc','Catatan (opsional)','Contoh: bayar makan','text','maxlength="60"')}<button class="btn" data-act="doTransfer">Lanjutkan</button></div><div class="card"><b>Riwayat transfer</b>${S.txs.filter(t=>t.type==='transfer').slice(0,8).map(txli).join('')||empty('Belum ada transfer')}</div>`;
+P.tarik=()=>head('Tarik Saldo')+`<div class="card">${sel('tb','Bank tujuan',['BCA','Mandiri','BNI','BRI','CIMB Niaga'])}${fld('tr','Nomor rekening','10 - 16 digit','tel','maxlength="16"')}${fld('tt','Nominal','Minimal Rp50.000','number')}<p class="mu" style="margin-bottom:12px">Biaya admin Rp6.500 per penarikan.</p><button class="btn" data-act="doTarik">Tarik Saldo</button></div><div class="card"><b>Riwayat penarikan</b>${S.txs.filter(t=>t.type==='tarik').slice(0,6).map(txli).join('')||empty('Belum ada penarikan')}</div>`;
+const FLT=[['all','Semua'],['success','Berhasil'],['pending','Pending'],['failed','Gagal'],['topup','Top Up'],['transfer','Transfer'],['game','Game'],['pulsa','Pulsa & Data'],['tagihan','Tagihan']];
+const fl=()=>S.txs.filter(t=>F==='all'||t.st===F||t.type===F||(F==='transfer'&&t.type==='tarik'));
+P.riwayat=()=>head('Riwayat Transaksi',false)+`<div class="chips" data-n="flt" style="overflow:auto;flex-wrap:nowrap">${FLT.map(([k,l])=>`<button class="chip${F===k?' on':''}" data-v="${k}" style="white-space:nowrap">${l}</button>`).join('')}</div><div class="card">${fl().map(txli).join('')||empty('Tidak ada transaksi pada filter ini')}</div>`;
+P.promo=()=>head('Iklan dan Promosi',false)+S.banners.map(b=>`<div class="slide" style="border-radius:20px;margin-bottom:12px;${b.img?`background-image:linear-gradient(90deg,rgba(8,41,127,.85),rgba(8,41,127,.2)),url('${esc(b.img)}')`:''}" data-act="blink" data-l="${esc(b.l)}">${b.ad?'<span class="ad">Iklan</span>':''}<h3>${esc(b.t)}</h3><p>${esc(b.d)}</p><span class="btn sm w">Lihat Promo</span></div>`).join('')+`<div class="card"><b>Kelola banner</b><p class="mu" style="margin:4px 0">Ubah judul, teks, gambar, dan tautan banner. Tautan bisa berupa halaman (#game, #pulsa, #tagihan, #topup, #pinjaman) atau alamat https://.</p>${S.banners.map((b,i)=>`<details><summary>${esc(b.t)}</summary><div style="margin-top:10px">${fld('bt'+i,'Judul','','text',`value="${esc(b.t)}" maxlength="60"`)}${fld('bd'+i,'Teks','','text',`value="${esc(b.d)}" maxlength="120"`)}${fld('bl'+i,'Tautan','','text',`value="${esc(b.l)}"`)}${fld('bg'+i,'URL gambar (opsional)','https://...','text',`value="${esc(b.img)}"`)}<label class="sw"><span>Tandai sebagai Iklan</span><input type="checkbox" id="ba${i}" ${b.ad?'checked':''}></label><div class="btns"><button class="btn sm" data-act="bSave" data-i="${i}">Simpan</button><button class="btn sm red" data-act="bDel" data-i="${i}">Hapus</button></div></div></details>`).join('')}<div class="btns"><button class="btn ghost" data-act="bAdd">Tambah Banner</button></div></div>`;
+P.pinjaman=()=>head('Pinjaman Simulasi')+`<div class="note">Fitur ini hanya simulasi edukasi dan tidak memberikan pinjaman uang sungguhan.</div><div class="card"><label class="f"><span>Nominal pinjaman: <b id="lamt"></b></span><input type="range" id="lr" min="500000" max="10000000" step="500000" value="${LN.a}"></label><b>Jangka waktu</b><div style="height:8px"></div>${chips('tenor',[3,6,12].map(x=>[x+' bulan',x]),LN.n)}<div id="lres"></div><button class="btn" data-act="loanSubmit">Ajukan Simulasi</button></div><div class="card"><b>Riwayat simulasi</b>${S.loans.map(l=>`<div class="li"><span class="ico">${ic('cash')}</span><span class="t"><b>${rp(l.a)} • ${l.n} bulan</b><small>${fd(l.ts)} • Cicilan ${rp(l.c)}</small></span><span class="badge ${l.st==='Menunggu'?'pending':'success'}">${l.st}</span></div>`).join('')||empty('Belum ada simulasi')}</div>`;
+const lcalc=()=>{const a=LN.a,n=LN.n,bg=a*.015*n,fee=a*.02,c=Math.ceil((a+bg+fee)/n);$('#lamt').textContent=rp(a);const d=new Date();$('#lres').innerHTML=`<div class="rows" style="margin:12px 0">${[['Bunga','1,5% per bulan (flat)'],['Total bunga',rp(bg)],['Biaya admin (2%)',rp(fee)],['Cicilan per bulan',rp(c)],['Total pembayaran',rp(c*n)]].map(([k,x])=>`<div><span>${k}</span><b>${x}</b></div>`).join('')}</div><table><tr><th>Cicilan</th><th>Jatuh tempo</th><th>Jumlah</th></tr>${Array.from({length:n},(_,i)=>{const t=new Date(d.getFullYear(),d.getMonth()+i+1,d.getDate());return `<tr><td>${i+1}</td><td>${t.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'})}</td><td>${rp(c)}</td></tr>`}).join('')}</table><div style="height:12px"></div>`;return c};
+const KS={none:['none','Belum Diverifikasi'],pending:['pending','Menunggu'],verified:['success','Terverifikasi']};
+P.kyc=()=>{const k=S.kyc,s=KS[k.st];return head('Verifikasi Identitas')+`<div class="note">Mode Simulasi: data dan foto hanya dipratinjau di perangkat ini, tidak dikirim ke pihak mana pun, dan bukan verifikasi identitas sungguhan. Foto tidak disimpan dan akan hilang saat halaman dimuat ulang.</div><div class="card"><div class="sw"><b>Status</b><span class="badge ${s[0]}">${s[1]}</span></div>${k.data?`<p class="mu">Terakhir dikirim: ${esc(k.data.name)} • NIK ${esc(k.data.nik)}</p>`:''}</div>${k.st==='pending'||k.st==='verified'?'':`<div class="card">${fld('kn','Nama lengkap','Sesuai KTP')}${fld('kk','NIK','16 digit','tel','maxlength="16"')}${fld('kt','Tempat lahir')}${fld('kd','Tanggal lahir','','date')}<label class="f"><span>Alamat lengkap</span><textarea id="ka" rows="3"></textarea></label>${fld('kp','Nomor telepon','08xxxxxxxxxx','tel')}${fld('ke','Email','nama@email.com','email')}<b>Foto identitas</b><div id="pv-id" class="pv" style="margin-top:8px"></div><input type="file" id="fi-id" accept="image/*" data-pick="id" style="margin-bottom:12px"><b>Foto selfie</b><div id="pv-selfie" class="pv" style="margin-top:8px"></div><input type="file" id="fi-selfie" accept="image/*" data-pick="selfie" style="margin-bottom:12px"><label class="sw" style="justify-content:flex-start"><input type="checkbox" id="kc"><span>Saya menyetujui pemrosesan data untuk pratinjau lokal sesuai Kebijakan Privasi.</span></label><button class="btn" data-act="kycSubmit">Kirim Verifikasi</button></div>`}`};
+P.notif=()=>head('Notifikasi')+`<div class="card">${S.notifs.map(n=>`<div class="li"><span class="ico">${ic('bell')}</span><span class="t"><b>${esc(n.t)}${n.r?'':' •'}</b><small>${esc(n.d)}<br>${fd(n.ts)}</small></span></div>`).join('')||empty('Belum ada notifikasi')}<div class="btns"><button class="btn ghost sm" data-act="readAll">Tandai dibaca</button><button class="btn ghost sm" data-act="clearNotif">Hapus semua</button></div></div>`;
+const MENU=[['profil','user','Profil pengguna'],['settings','cog','Pengaturan akun'],['keamanan','lock','Keamanan akun'],['notif','bell','Notifikasi'],['bantuan','help','Pusat bantuan'],['faq','help','FAQ'],['tnc','file','Syarat dan ketentuan'],['privasi','shield','Kebijakan privasi'],['info','info','Informasi aplikasi'],['cs','help','Hubungi customer service']];
+P.akun=()=>head('Akun',false)+`<div class="card" style="display:flex;gap:12px;align-items:center"><div class="av" style="background:#e8f0ff;color:var(--b)">${AV?`<img src="${AV}" alt="">`:esc(S.user.name[0])}</div><div><b>${esc(S.user.name)}</b><div class="mu">${esc(S.user.phone)}</div></div></div><div class="card"><label class="sw"><b>Mode Simulasi</b><input type="checkbox" ${S.sim?'checked':''} data-act="toggleSim"></label>${MENU.map(([p,i,l])=>`<button class="li" data-go="${p}"><span class="ico">${ic(i)}</span><span class="t"><b>${l}</b></span>${ic('chev',18)}</button>`).join('')}<button class="li" data-act="logout"><span class="ico">${ic('out')}</span><span class="t"><b>Keluar akun</b></span></button></div>`;
+P.profil=()=>head('Profil')+`<div class="card"><div class="pv"><div class="av" style="margin:auto;background:#e8f0ff;color:var(--b);width:80px;height:80px;font-size:28px">${AV?`<img src="${AV}" alt="">`:esc(S.user.name[0])}</div></div><label class="f"><span>Foto profil (hanya pratinjau)</span><input type="file" accept="image/*" data-pick="avatar"></label>${fld('pn','Nama','','text',`value="${esc(S.user.name)}" maxlength="40"`)}${fld('pp','Nomor telepon','','tel',`value="${esc(S.user.phone)}"`)}${fld('pe','Email','','email',`value="${esc(S.user.email)}"`)}<button class="btn" data-act="saveProfile">Simpan Profil</button></div>`;
+P.settings=()=>head('Pengaturan Akun')+`<div class="card"><label class="sw"><span>Mode Simulasi</span><input type="checkbox" ${S.sim?'checked':''} data-act="toggleSim"></label><label class="sw"><span>Notifikasi transaksi</span><input type="checkbox" ${S.push?'checked':''} data-act="togglePush"></label><label class="f"><span>Hasil transaksi simulasi</span><select data-act="setOutcome"><option value="ok" ${S.outcome==='ok'?'selected':''}>Selalu berhasil</option><option value="rand" ${S.outcome==='rand'?'selected':''}>Acak (berhasil, pending, gagal)</option></select></label><p class="mu" style="margin-bottom:12px">Saldo virtual awal Rp500.000. Data tersimpan di localStorage perangkat ini.</p><button class="btn red" data-act="resetAll">Reset Seluruh Data Simulasi</button></div>`;
+P.keamanan=()=>head('Keamanan Akun')+`<div class="note">Penyimpanan lokal (localStorage) bukan sistem keamanan untuk layanan finansial sungguhan. Password tidak disimpan oleh aplikasi ini.</div><div class="card"><b>Ubah PIN</b><div style="height:8px"></div>${fld('po','PIN lama','','password','inputmode="numeric" maxlength="6"')}${fld('pb','PIN baru (6 digit)','','password','inputmode="numeric" maxlength="6"')}${fld('pu','Ulangi PIN baru','','password','inputmode="numeric" maxlength="6"')}<button class="btn" data-act="savePin">Ubah PIN</button></div><div class="card"><b>Ganti password</b><div style="height:8px"></div>${fld('wo','Password lama','','password')}${fld('wn','Password baru (min. 8 karakter, huruf dan angka)','','password')}${fld('wu','Ulangi password baru','','password')}<button class="btn" data-act="savePass">Ganti Password</button></div>`;
+P.bantuan=()=>head('Pusat Bantuan')+grid([['faq','help','FAQ'],['cs','help','Hubungi CS'],['tnc','file','Syarat'],['privasi','shield','Privasi']])+`<div class="card" style="margin-top:14px"><b>Topik populer</b><p class="mu" style="margin-top:6px">Cara top up, transfer antar pengguna, status transaksi pending, ubah PIN, dan reset data simulasi tersedia di FAQ.</p></div>`;
+const FAQ=[['Apakah uang di MuziPay asli?','Tidak. Mode Simulasi memakai saldo virtual, jadi tidak ada uang sungguhan yang berpindah.'],['Mengapa transaksi berstatus pending?','Pada pengaturan hasil acak, sebagian transaksi menjadi pending lalu otomatis berhasil beberapa detik kemudian.'],['Bagaimana mengatur ulang saldo?','Buka Akun, Pengaturan, lalu pilih Reset Seluruh Data Simulasi.'],['Apa PIN awal?','PIN awal adalah 123456. Ubah di Akun, Keamanan Akun.'],['Apakah foto KTP disimpan?','Tidak. Foto hanya dipratinjau di memori dan hilang saat halaman dimuat ulang.']];
+P.faq=()=>head('FAQ')+`<div class="card">${FAQ.map(([q,a])=>`<details><summary>${q}</summary><p>${a}</p></details>`).join('')}</div>`;
+P.tnc=()=>doc('Syarat dan Ketentuan',['MuziPay pada versi ini adalah aplikasi simulasi dompet digital. Seluruh saldo, transaksi, dan pinjaman bersifat virtual dan tidak memiliki nilai uang.','Pengguna bertanggung jawab menjaga kerahasiaan PIN. Fitur pembayaran sungguhan membutuhkan izin dan integrasi dengan penyelenggara resmi.','Banner bertanda Iklan adalah konten bersponsor.']);
+P.privasi=()=>doc('Kebijakan Privasi',['Data profil dan transaksi simulasi disimpan di localStorage perangkat Anda dan tidak dikirim ke server.','Foto identitas dan selfie hanya dipratinjau di memori, tidak disimpan, dan tidak dikirim ke pihak lain. Password tidak disimpan.','Penyimpanan lokal bukan sistem keamanan untuk layanan finansial sungguhan.']);
+P.info=()=>doc('Informasi Aplikasi',['MuziPay versi 1.0.0','E-wallet simulasi dalam satu file HTML. Seluruh data tersimpan di perangkat ini.','Struktur banner siap dihubungkan ke layanan iklan resmi melalui objek AdProvider.']);
+P.cs=()=>head('Hubungi Customer Service')+`<div class="card">${sel('cc','Topik',['Transaksi','Akun dan PIN','Verifikasi KYC','Lainnya'])}<label class="f"><span>Pesan</span><textarea id="cm" rows="4" maxlength="300" placeholder="Jelaskan kendala Anda"></textarea></label><button class="btn" data-act="csSend">Kirim Pesan</button><p class="mu" style="margin-top:10px">Layanan CS: setiap hari 08.00 - 21.00 WIB.</p></div>`;
+
+// ---------- Router ----------
+function render(){const f=P[cur];$('#view').innerHTML=f?f():'';(({game:()=>{},pinjaman:lcalc,kyc:()=>{prev('id');prev('selfie')}})[cur]||(()=>{}))();renderTop()}
+function go(p,back){if(!P[p])return;if(!back&&cur!==p)HIST.push(cur);cur=p;SEL={};closeM();window.scrollTo(0,0);$('#view').innerHTML='<div class="sk"></div><div class="sk"></div><div class="sk" style="height:140px"></div>';renderTop();setTimeout(()=>{if(cur===p)render()},280)}
+function renderTop(){const act=NAV.some(n=>n[0]===cur)?cur:AKUN.includes(cur)?'akun':'layanan';$('#top').innerHTML=`<div class="logo"><i>M</i>MuziPay</div><span class="sim ${S.sim?'':'off'}">${S.sim?'Mode Simulasi Aktif':'Mode Simulasi Nonaktif'}</span><button class="ib" data-go="notif" aria-label="Notifikasi">${ic('bell',20)}${unread()?`<b>${unread()}</b>`:''}</button>`;
+const nb=NAV.map(([p,i,l])=>`<button class="nb${act===p?' on':''}" data-go="${p}">${ic(i,20)}${l}</button>`).join('');$('#bot').innerHTML=nb;$('#side').innerHTML=`<div class="logo"><i>M</i>MuziPay</div>${nb}`}
+setInterval(()=>{const s=$('#sl');const b=AdProvider.get();if(!s||b.length<2)return;bi=(bi+1)%b.length;s.style.transform=`translateX(-${bi*100}%)`;$$('.dots i').forEach((d,i)=>d.classList.toggle('on',i===bi))},4200);
+
+// ---------- Transaksi ----------
+const CH={game(i){SEL.gi=null;const g=GAMES[i];$('#gz').hidden=!g[2];$('#gitems').innerHTML=gitems(i)},pt(t){SEL.pi=null;$('#pitems').innerHTML=pitems(t)},flt(k){F=k;render()},tenor(n){LN.n=+n;lcalc()}};
+function review(o){if(!S.sim)return toast('Aktifkan Mode Simulasi untuk mencoba transaksi','err');
+if(!o.credit&&S.bal<o.amt+o.fee)return toast('Saldo tidak mencukupi. Top up terlebih dahulu.','err');
+modal(`<h3>Konfirmasi Transaksi</h3>${rows([['Jenis',o.label],['Tujuan',o.detail],['Nominal',rp(o.amt)],['Biaya admin',rp(o.fee)],['Total',rp(o.amt+o.fee)],['Metode',o.method]])}<div class="btns"><button class="btn ghost" data-act="closeM">Batal</button><button class="btn" id="goPin">Lanjut</button></div>`);$('#goPin').onclick=()=>askPin(()=>exec(o))}
+function askPin(cb){modal(`<h3>Masukkan PIN</h3><input id="pin" type="password" inputmode="numeric" maxlength="6" placeholder="PIN 6 digit" style="text-align:center;font-size:20px;letter-spacing:6px"><div class="btns"><button class="btn ghost" data-act="closeM">Batal</button><button class="btn" id="okPin">Konfirmasi</button></div>`);$('#pin').focus();$('#okPin').onclick=()=>{if($('#pin').value===S.pin)cb();else toast('PIN salah','err')}}
+let seq=0;
+function exec(o){closeM();loader(true);setTimeout(()=>{loader(false);const tot=o.amt+o.fee;
+if(!o.credit&&S.bal<tot)return toast('Saldo tidak mencukupi','err');
+const r=Math.random(),st=S.outcome==='rand'?(r<.75?'success':r<.9?'pending':'failed'):'success';
+if(st!=='failed')S.bal+=o.credit?o.amt:-tot;
+const t={id:'MZP'+Date.now().toString(36).toUpperCase()+(++seq).toString(36).toUpperCase()+Math.random().toString(36).slice(2,5).toUpperCase(),ts:Date.now(),type:o.type,label:o.label,detail:o.detail,amt:o.amt,fee:o.fee,tot,st,method:o.method};
+S.txs.unshift(t);if(S.push)S.notifs.unshift({id:Date.now(),t:`${o.label} ${SC[st].toLowerCase()}`,d:`${rp(tot)} • ${t.id}`,ts:Date.now(),r:0});
+save();render();rc(t.id,1)},900)}
+const tx=id=>S.txs.find(t=>t.id===id);
+function rc(id,proof){const t=tx(id);if(!t)return;modal(`${proof?`<div class="rc"><div class="logo" style="justify-content:center"><i>M</i>MuziPay</div><b>Bukti Transaksi</b><div style="margin-top:6px">${badge(t.st)}</div></div>`:'<h3>Detail Transaksi</h3>'}${rows([['ID transaksi',t.id],['Waktu',fd(t.ts)],['Jenis',TL[t.type]],['Keterangan',t.label],['Tujuan',t.detail],['Nominal',rp(t.amt)],['Biaya admin',rp(t.fee)],['Total pembayaran',rp(t.tot)],['Metode',t.method],['Status',SC[t.st]]])}<p class="mu" style="margin-top:10px;text-align:center">Transaksi simulasi dengan saldo virtual.</p><div class="btns">${proof?'':`<button class="btn ghost sm" data-act="proof" data-id="${id}">Lihat Bukti</button>`}<button class="btn ghost sm" data-act="print">Cetak</button><button class="btn ghost sm" data-act="saveTxt" data-id="${id}">Simpan</button><button class="btn sm" data-act="closeM">Tutup</button></div>`)}
+function settle(){let ch=0;const n=Date.now();S.txs.forEach(t=>{if(t.st==='pending'&&n-t.ts>6000){t.st='success';ch=1}});S.loans.forEach(l=>{if(l.st==='Menunggu'&&n-l.ts>5000){l.st='Disetujui (simulasi)';ch=1}});if(S.kyc.st==='pending'&&n-S.kyc.ts>6000){S.kyc.st='verified';ch=1}
+if(ch){save();const a=document.activeElement;if(!(a&&a.matches('input,select,textarea')))render()}}
+setInterval(settle,2000);
+const num=(s,a,b)=>/^\d+$/.test(s)&&+s>=a&&+s<=b;
+const amtOf=(sk,ck)=>v(ck)?+v(ck):+(SEL[sk]||0);
+const bad=m=>{toast(m,'err');return 0};
+const detectOp=n=>Object.keys(OPS).find(o=>OPS[o].includes(n.slice(0,4)));
+
+// ---------- Aksi ----------
+const ACT={
+back(){const p=HIST.pop()||'home';go(p,1)},closeM,print(){window.print()},
+toggleBal(){S.hide=!S.hide;save();render()},
+toggleSim(e){S.sim=e.checked;save();render();toast(S.sim?'Mode Simulasi diaktifkan':'Mode Simulasi dinonaktifkan')},
+togglePush(e){S.push=e.checked;save()},setOutcome(e){S.outcome=e.value;save()},
+blink(e){const l=e.dataset.l||'';if(l[0]==='#')go(l.slice(1));else if(/^https?:\/\//i.test(l))window.open(l,'_blank','noopener');else toast('Tautan promo belum diatur','err')},
+detail(e){rc(e.dataset.id)},proof(e){rc(e.dataset.id,1)},
+saveTxt(e){const t=tx(e.dataset.id);if(!t)return;const s=`MuziPay - Bukti Transaksi\nID: ${t.id}\nWaktu: ${fd(t.ts)}\nJenis: ${TL[t.type]}\nKeterangan: ${t.label}\nTujuan: ${t.detail}\nNominal: ${rp(t.amt)}\nBiaya admin: ${rp(t.fee)}\nTotal: ${rp(t.tot)}\nMetode: ${t.method}\nStatus: ${SC[t.st]}\n`;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([s],{type:'text/plain'}));a.download=t.id+'.txt';a.click();URL.revokeObjectURL(a.href)},
+doTopup(){const a=amtOf('amt','ca');if(!(a>=10000&&a<=10000000))return bad('Nominal top up Rp10.000 - Rp10.000.000');review({type:'topup',label:'Top Up Saldo',detail:'Saldo MuziPay',amt:a,fee:1000,method:v('mt'),credit:1})},
+doGame(){const gi=SEL.game;if(gi==null)return bad('Pilih game terlebih dahulu');const g=GAMES[gi],u=v('uid'),z=v('zid');if(!num(u,5,15))return bad('User ID harus 5 - 15 digit');if(g[2]&&!num(z,2,6))return bad('Zone ID harus 2 - 6 digit');if(SEL.gi==null)return bad('Pilih nominal');const q=g[4][SEL.gi];review({type:'game',label:'Top Up '+g[0],detail:`ID ${u}${g[2]?' ('+z+')':''} • ${q} ${g[1]}`,amt:gp(g,q),fee:1000,method:'Saldo MuziPay'})},
+doPulsa(){const n=v('hp');if(!/^08\d{8,12}$/.test(n))return bad('Nomor HP tidak valid (08xxxxxxxxxx)');if(SEL.pi==null)return bad('Pilih nominal atau paket');const d=SEL.pt==='data',p=d?PD[SEL.pi]:null,a=d?p[1]:+SEL.pi+1500;review({type:'pulsa',label:`${d?'Paket Data':'Pulsa'} ${SEL.op}`,detail:`${n} • ${d?p[0]:rp(+SEL.pi)}`,amt:a,fee:500,method:'Saldo MuziPay'})},
+doTagihan(){if(!SEL.bl)return bad('Pilih jenis tagihan');const c=v('cn');if(!num(c,100000,9999999999999999))return bad('Nomor pelanggan 6 - 16 digit');const a=amtOf('bn','bm');if(!(a>=10000&&a<=5000000))return bad('Nominal Rp10.000 - Rp5.000.000');review({type:'tagihan',label:SEL.bl,detail:'No. '+c,amt:a,fee:2500,method:'Saldo MuziPay'})},
+doTransfer(){const n=v('tn'),a=+v('ta');if(!/^08\d{8,12}$/.test(n))return bad('Nomor tujuan tidak valid');if(n===S.user.phone)return bad('Tidak bisa transfer ke nomor sendiri');if(!(a>=10000&&a<=20000000))return bad('Nominal Rp10.000 - Rp20.000.000');review({type:'transfer',label:'Transfer ke '+n,detail:n+(v('tc')?' • '+v('tc'):''),amt:a,fee:500,method:'Saldo MuziPay'})},
+doTarik(){const r=v('tr'),a=+v('tt');if(!num(r,1000000000,9999999999999999))return bad('Nomor rekening 10 - 16 digit');if(!(a>=50000&&a<=10000000))return bad('Nominal Rp50.000 - Rp10.000.000');review({type:'tarik',label:'Tarik Saldo ke '+v('tb'),detail:`${v('tb')} ${r}`,amt:a,fee:6500,method:'Saldo MuziPay'})},
+loanSubmit(){if(!S.sim)return bad('Aktifkan Mode Simulasi untuk mengajukan');const c=lcalc();S.loans.unshift({a:LN.a,n:LN.n,c,ts:Date.now(),st:'Menunggu'});save();render();toast('Pengajuan simulasi terkirim')},
+kycSubmit(){const n=v('kn'),k=v('kk');if(n.length<3)return bad('Nama lengkap wajib diisi');if(!/^\d{16}$/.test(k))return bad('NIK harus 16 digit');if(!v('kt')||!v('kd')||v('ka').length<8)return bad('Lengkapi tempat, tanggal lahir, dan alamat');if(!/^08\d{8,12}$/.test(v('kp')))return bad('Nomor telepon tidak valid');if(!/^\S+@\S+\.\S+$/.test(v('ke')))return bad('Email tidak valid');if(!PH.id||!PH.selfie)return bad('Unggah foto identitas dan selfie');if(!$('#kc').checked)return bad('Setujui formulir privasi');S.kyc={st:'pending',ts:Date.now(),data:{name:n,nik:'************'+k.slice(-4)}};save();render();toast('Data dikirim untuk simulasi verifikasi')},
+chg(e){$('#fi-'+e.dataset.k).click()},
+delph(e){confirmBox('Hapus foto ini?',()=>{PH[e.dataset.k]=null;const i=$('#fi-'+e.dataset.k);if(i)i.value='';prev(e.dataset.k)})},
+readAll(){S.notifs.forEach(n=>n.r=1);save();render()},
+clearNotif(){confirmBox('Hapus semua notifikasi?',()=>{S.notifs=[];save();render()})},
+saveProfile(){const n=v('pn'),p=v('pp'),e=v('pe');if(n.length<3)return bad('Nama minimal 3 karakter');if(!/^08\d{8,12}$/.test(p))return bad('Nomor telepon tidak valid');if(!/^\S+@\S+\.\S+$/.test(e))return bad('Email tidak valid');Object.assign(S.user,{name:n,phone:p,email:e});save();render();toast('Profil disimpan')},
+savePin(){if(v('po')!==S.pin)return bad('PIN lama salah');if(!/^\d{6}$/.test(v('pb')))return bad('PIN baru harus 6 digit angka');if(v('pb')!==v('pu'))return bad('Konfirmasi PIN tidak sama');S.pin=v('pb');save();render();toast('PIN berhasil diubah')},
+savePass(){const n=v('wn');if(!v('wo'))return bad('Isi password lama');if(!/^(?=.*[A-Za-z])(?=.*\d).{8,}$/.test(n))return bad('Password minimal 8 karakter dengan huruf dan angka');if(n!==v('wu'))return bad('Konfirmasi password tidak sama');render();toast('Password diperbarui (tidak disimpan oleh aplikasi)')},
+csSend(){if(v('cm').length<10)return bad('Pesan minimal 10 karakter');const id='CS'+Date.now().toString(36).toUpperCase();S.notifs.unshift({id:Date.now(),t:'Pesan ke customer service terkirim',d:'Nomor tiket '+id,ts:Date.now(),r:0});save();render();toast('Terkirim. Tiket '+id)},
+resetAll(){confirmBox('Reset seluruh data simulasi? Saldo, transaksi, dan pengaturan akan kembali ke awal.',()=>{S=DEF();save();AV=null;PH={id:null,selfie:null};render();toast('Data simulasi direset')})},
+logout(){confirmBox('Keluar dari akun?',()=>{S.locked=true;save();$('#lock').hidden=false})},
+unlock(){if($('#lpin').value===S.pin){S.locked=false;save();$('#lock').hidden=true;$('#lpin').value=''}else toast('PIN salah','err')},
+bSave(e){const i=+e.dataset.i,l=v('bl'+i);if(!v('bt'+i))return bad('Judul wajib diisi');if(l&&!/^(#[a-z]+|https?:\/\/\S+)$/i.test(l))return bad('Tautan harus #halaman atau https://');const g=v('bg'+i);if(g&&!/^https?:\/\//i.test(g))return bad('URL gambar harus diawali https://');S.banners[i]={t:v('bt'+i),d:v('bd'+i),l,img:g,ad:$('#ba'+i).checked?1:0};save();render();toast('Banner disimpan')},
+bDel(e){confirmBox('Hapus banner ini?',()=>{S.banners.splice(+e.dataset.i,1);bi=0;save();render()})},
+bAdd(){S.banners.push({t:'Banner Baru',d:'Ubah teks promo di sini.',l:'#promo',img:'',ad:1});save();render()}};
+function confirmBox(m,yes){modal(`<h3>Konfirmasi</h3><p class="d">${m}</p><div class="btns"><button class="btn ghost" data-act="closeM">Batal</button><button class="btn red" id="yes">Ya, lanjutkan</button></div>`);$('#yes').onclick=()=>{closeM();yes()}}
+function prev(k){const b=$('#pv-'+k);if(!b)return;b.innerHTML=PH[k]?`<img src="${PH[k]}" alt="Pratinjau"><div class="btns" style="justify-content:center"><button class="btn sm" data-act="chg" data-k="${k}">Ganti</button><button class="btn sm ghost" data-act="delph" data-k="${k}">Hapus</button></div>`:'<p class="mu">Belum ada foto</p>'}
+function pick(i,k){const f=i.files[0];if(!f)return;if(!/^image\/(jpe?g|png|webp)$/.test(f.type)||f.size>5e6){i.value='';return toast('Gunakan JPG, PNG, atau WebP maksimal 5 MB','err')}const r=new FileReader();r.onload=()=>{if(k==='avatar'){AV=r.result;render()}else{PH[k]=r.result;prev(k)}};r.readAsDataURL(f)}
+
+// ---------- Event ----------
+document.addEventListener('click',e=>{const c=e.target.closest('.chip');if(c){const w=c.closest('.chips');$$('.chip',w).forEach(x=>x.classList.remove('on'));c.classList.add('on');const n=w.dataset.n;SEL[n]=n==='game'||n==='gi'||n==='pi'||n==='op'||n==='pt'||n==='bl'||n==='bn'||n==='amt'?(isNaN(c.dataset.v)||n==='op'||n==='pt'||n==='bl'?c.dataset.v:+c.dataset.v):c.dataset.v;if(CH[n])CH[n](n==='tenor'||n==='game'?+c.dataset.v:c.dataset.v);return}
+const a=e.target.closest('[data-act],[data-go]');if(!a)return;if(a.dataset.go){go(a.dataset.go);return}if(a.tagName==='INPUT'||a.tagName==='SELECT')return;const f=ACT[a.dataset.act];if(f)f(a,e)});
+document.addEventListener('change',e=>{const t=e.target;if(t.dataset.pick)pick(t,t.dataset.pick);else if(t.tagName==='INPUT'&&t.dataset.act==='toggleSim'||t.tagName==='INPUT'&&t.dataset.act==='togglePush'||t.tagName==='SELECT'&&t.dataset.act)ACT[t.dataset.act](t)});
+document.addEventListener('input',e=>{const t=e.target;if(t.id==='lr'){LN.a=+t.value;lcalc()}else if(t.id==='hp'){const o=detectOp(t.value);if(o){SEL.op=o;$$('[data-n=op] .chip').forEach(c=>c.classList.toggle('on',c.dataset.v===o))}}else if(t.id==='ca'||t.id==='bm'){$$('.chips[data-n=amt] .chip,.chips[data-n=bn] .chip').forEach(c=>c.classList.remove('on'))}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM();if(e.key==='Enter'&&e.target.id==='lpin')ACT.unlock()});
+if(S.locked)$('#lock').hidden=false;
+go('home');
 </script></body></html>
